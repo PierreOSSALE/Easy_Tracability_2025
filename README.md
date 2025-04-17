@@ -3,72 +3,172 @@ Comprehensive solution for coding, stock management, and product traceability fo
 
 ---
 
-## 📚 Table des Matières
+## 📚 Table of Contents
 
 - [🧭 Introduction](#-introduction)
-- [🛠️ Fonctionnalités](#️-fonctionnalités)
+- [🛠️ Features](#️-features)
 - [📦 Technologies](#-technologies)
 - [📥 Installation](#-installation)
-- [🚀 Utilisation](#-utilisation)
+- [🚀 Usage](#-usage)
 - [⚙️ Configuration](#️-configuration)
-- [🧪 Tests](#-tests)
-- [📊 Exemple d’Utilisation](#-exemple-dutilisation)
-- [🚧 Problèmes Fréquents](#-problèmes-fréquents)
-- [👨‍💻 Contributeurs](#-contributeurs)
-- [📝 Licence](#-licence)
+- [🧪 Testing](#-testing)
+- [📊 Example Usage](#-example-usage)
+- [🚧 Troubleshooting](#-troubleshooting)
+- [👨‍💻 Contributors](#-contributors)
+- [📝 License](#-license)
 
 ---
 
 ## 🧭 Introduction
 
-**Easy Traçability** est une application web destinée à faciliter la **gestion des stocks, le suivi logistique et la traçabilité** des produits pour les commerçants et acteurs de la chaîne d'approvisionnement.
+**Easy Traçability** is a web application designed to simplify **inventory management, logistics tracking, and product traceability** for merchants and supply chain actors.
 
-Grâce à une combinaison d’**imprimantes à code-barres**, d’un **terminal mobile**, d’un **tableau de bord interactif** et d’un **backend sécurisé**, cette solution permet :
+Through a combination of **barcode printers**, a **mobile terminal**, an **interactive dashboard**, and a **secure backend**, this solution enables:
 
-- L’étiquetage et la codification personnalisée de produits
-- La collecte et transmission des données en temps réel
-- La centralisation des inventaires, ventes et achats
+- Custom product labeling and barcode generation
+- Real-time data collection and synchronization
+- Centralized management of stock, sales, and purchases
 
 ---
 
-## 🛠️ Fonctionnalités
+## 🛠️ Features
 
-### ✅ Fonctionnalités principales
+### ✅ Core Features
 
-- 🧾 **Codification & Étiquetage** : génération de code-barres (Code128), impression.
-- 📲 **Collecte de données** : scan par terminal simulé ou saisie manuelle.
-- 📦 **Gestion d’inventaire** : mouvements (entrées/sorties), seuils critiques, alertes.
-- 🔒 **Transmission & Sécurité** : API REST sécurisée (JWT + TLS).
-- 📈 **Reporting** : interface React.js avec graphiques DevExtreme.
-- 🧪 **Tests** : couverture unitaire et d’intégration (Jest + Supertest).
+- 🧾 **Labeling & Encoding**: Generate and print custom Code128 barcodes.
+- 📲 **Data Collection**: Scan via simulated terminal or manual entry.
+- 📦 **Inventory Management**: Track entries/exits, critical thresholds, and alerts.
+- 🔒 **Secure Transmission**: Secure REST API with JWT & TLS encryption.
+- 📈 **Reporting**: React.js dashboard with DevExtreme charts.
+- 🧪 **Testing**: Unit and integration testing with Jest and Supertest.
 
-### 🕗 Fonctionnalités futures
+### 🕗 Future Enhancements
 
-- Intégration ERP / IoT physique
-- Optimisation logistique avancée
-- Mode offline et reporting enrichi
+- ERP and real IoT integration
+- Advanced logistics optimization
+- Offline mode and enhanced reporting
 
 ---
 
 ## 📦 Technologies
 
-| Couche       | Outils/Librairies                                  |
-|--------------|----------------------------------------------------|
-| Frontend     | React.js + TypeScript + DevExtreme                |
-| Backend      | Node.js + Express + Sequelize                     |
-| Base de données | MySQL                                           |
-| Authentification | JWT, TLS, Helmet, express-session (Redis)     |
-| Tests        | Jest, Supertest                                   |
-| CI/CD        | GitHub Actions                                    |
-| Modélisation | UML, ER (via Draw.io ou Lucidchart)               |
-| Déploiement  | Netlify (frontend), Heroku/AWS (backend, Redis)   |
+| Layer         | Tools/Libraries                                  |
+|---------------|--------------------------------------------------|
+| Frontend      | React.js + TypeScript + DevExtreme               |
+| Backend       | Node.js + Express + Sequelize                    |
+| Database      | MySQL                                            |
+| Authentication| JWT, TLS, Helmet, express-session (Redis)       |
+| Testing       | Jest, Supertest                                  |
+| CI/CD         | GitHub Actions                                   |
+| Modeling      | UML, ER diagrams (Draw.io, Lucidchart)           |
+| Deployment    | Netlify (frontend), Heroku/AWS (backend, Redis)  |
 
 ---
 
 ## 📥 Installation
 
-### 1. Cloner le dépôt
+### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/ton-org/easy-tracability.git
+git clone https://github.com/your-org/easy-tracability.git
 cd easy-tracability
+```
+
+### 2. Backend Setup
+
+```bash
+cd backend
+npm install
+cp .env.example .env
+```
+
+> Fill in the required environment variables (`DB_URL`, `SESSION_SECRET`, etc.)
+
+### 3. Frontend Setup
+
+```bash
+cd ../frontend
+npm install
+```
+
+---
+
+## 🚀 Usage
+
+### Run in Development Mode
+
+```bash
+# Backend
+cd backend
+npm run dev
+
+# Frontend
+cd ../frontend
+npm run dev
+```
+
+> The frontend will be accessible at `http://localhost:3000`
+
+---
+
+## ⚙️ Configuration
+
+Environment variables are defined in `.env`. Example:
+
+```dotenv
+DB_URL=mysql://user:password@localhost:3306/easydb
+SESSION_SECRET=yourSecret
+REDIS_URL=redis://localhost:6379
+```
+
+---
+
+## 🧪 Testing
+
+Run tests using:
+
+```bash
+# Backend
+npm run test
+
+# Frontend (if applicable)
+npm run test
+```
+
+Tests included:
+
+- ✅ Unit tests with Jest
+- ✅ Integration tests with Supertest
+- ✅ CI/CD with GitHub Actions (`.github/workflows/ci.yml`)
+
+---
+
+## 📊 Example Usage
+
+- 🔐 **Login**: Authenticate based on role (Admin, Manager, Operator)
+- 📇 **Scan Product**: Use mobile interface to scan a barcode
+- 📈 **Dashboard**: View product activity, stock levels, and statistics
+
+---
+
+## 🚧 Troubleshooting
+
+| Issue                            | Solution                                               |
+|----------------------------------|--------------------------------------------------------|
+| `Error: Cannot connect to DB`    | Check the DB connection string in `.env`              |
+| `CORS Error`                     | Enable `withCredentials` on frontend API calls        |
+| Barcode printing not working     | Check printer configuration and network port          |
+| Scan not working                 | Use manual entry fallback                             |
+
+---
+
+## 👨‍💻 Contributors
+
+- **Student Name** – Full Stack Developer
+- [Supervisor / Technical Mentor]
+
+---
+
+## 📝 License
+
+This project is licensed under the **MIT License**. See `LICENSE.md` for more details.
