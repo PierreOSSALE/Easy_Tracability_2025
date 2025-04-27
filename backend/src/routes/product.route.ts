@@ -8,83 +8,68 @@ import { authorizeRole } from "../middlewares/authorizeRole.middleware";
 
 const router = Router();
 
-// Middleware d'authentification obligatoire pour tout
 router.use(hybridAuth);
 
-// 🔒 Admin uniquement pour créer un produit
-router.post(
-  "/",
-  authorizeRole(["Admin"]),
-  catchAsync(ProductController.createProduct)
-);
-
-// 🔒 Admin, Gestionnaire, Opérateur : peuvent voir tous les produits
-router.get(
-  "/",
-  authorizeRole(["Admin", "Gestionnaire", "Opérateur"]),
-  catchAsync(ProductController.getAllProducts)
-);
-
-// 🔒 Lecture produit par UUID
-router.get(
-  "/:uuid",
-  authorizeRole(["Admin", "Gestionnaire", "Opérateur"]),
-  catchAsync(ProductController.getProductByUUID)
-);
-
-// 🔒 Recherche par nom
-router.get(
-  "/search/name/:name",
-  authorizeRole(["Admin", "Gestionnaire", "Opérateur"]),
-  catchAsync(ProductController.getProductByName)
-);
-
-// 🔒 Recherche par code-barres (important pour scan)
-router.get(
-  "/search/barcode/:barcode",
-  authorizeRole(["Admin", "Gestionnaire", "Opérateur"]),
-  catchAsync(ProductController.getProductByBarcode)
-);
+// 🔥 Lecture produits spécifiques doit venir avant ":uuid" pour éviter les 404
 
 // 🔒 Liste produits en stock
 router.get(
   "/in-stock",
-  authorizeRole(["Admin", "Gestionnaire", "Opérateur"]),
+  authorizeRole(["Administrateur", "Gestionnaire", "Operateur"]),
   catchAsync(ProductController.getProductsInStock)
-);
-
-// 🔒 Liste produits faible stock
-router.get(
-  "/low-stock/:threshold",
-  authorizeRole(["Admin", "Gestionnaire", "Opérateur"]),
-  catchAsync(ProductController.getProductsLowStock)
 );
 
 // 🔒 Liste produits rupture de stock
 router.get(
   "/out-of-stock",
-  authorizeRole(["Admin", "Gestionnaire", "Opérateur"]),
+  authorizeRole(["Administrateur", "Gestionnaire", "Operateur"]),
   catchAsync(ProductController.getProductsOutOfStock)
 );
 
 // 🔒 Liste produits au-dessus d'un prix
 router.get(
-  "/above-price/:price",
-  authorizeRole(["Admin", "Gestionnaire", "Opérateur"]),
+  "/above-price",
+  authorizeRole(["Administrateur", "Gestionnaire", "Operateur"]),
   catchAsync(ProductController.getProductsAbovePrice)
 );
 
-// 🔒 Admin uniquement pour modifier un produit
-router.patch(
+// 🔒 Recherche produit par name en query : /products/search?name=ProduitTest
+router.get(
+  "/search",
+  authorizeRole(["Administrateur", "Gestionnaire", "Operateur"]),
+  catchAsync(ProductController.searchProducts)
+);
+
+router.post(
+  "/",
+  authorizeRole(["Administrateur"]),
+  catchAsync(ProductController.createProduct)
+);
+
+router.get(
+  "/",
+  authorizeRole(["Administrateur", "Gestionnaire", "Operateur"]),
+  catchAsync(ProductController.getAllProducts)
+);
+
+// 🔥 Lecture produit par UUID
+router.get(
   "/:uuid",
-  authorizeRole(["Admin"]),
+  authorizeRole(["Administrateur", "Gestionnaire", "Operateur"]),
+  catchAsync(ProductController.getProductByUUID)
+);
+
+// 🔥 Modifier un produit
+router.put(
+  "/:uuid",
+  authorizeRole(["Administrateur"]),
   catchAsync(ProductController.updateProduct)
 );
 
-// 🔒 Admin uniquement pour supprimer un produit
+// 🔥 Supprimer un produit
 router.delete(
   "/:uuid",
-  authorizeRole(["Admin"]),
+  authorizeRole(["Administrateur"]),
   catchAsync(ProductController.deleteProduct)
 );
 

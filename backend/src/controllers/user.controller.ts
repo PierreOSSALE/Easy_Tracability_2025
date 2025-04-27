@@ -1,5 +1,7 @@
 //EASY-TRACABILITY: backend/src/controllers/user.controller.ts
 
+// backend/src/controllers/user.controller.ts
+
 import { Request, Response } from "express";
 import { UserService } from "../services/user.service";
 
@@ -16,10 +18,10 @@ export class UserController {
     res.status(200).json(users);
   }
 
-  // Recherche d'un utilisateur via l'UUID en utilisant le scope "byUUID"
   static async getUserById(req: Request, res: Response): Promise<void> {
     const userService = new UserService();
-    const user = await userService.getUserById(req.params.id);
+    const { uuid } = req.params; // ✅ Utilisation de uuid
+    const user = await userService.getUserById(uuid);
     if (user) {
       res.status(200).json(user);
     } else {
@@ -27,7 +29,6 @@ export class UserController {
     }
   }
 
-  // Récupération des utilisateurs selon leur rôle (utilise le scope "byRole")
   static async getUsersByRole(req: Request, res: Response): Promise<void> {
     const role = req.query.role as string;
     const userService = new UserService();
@@ -35,7 +36,6 @@ export class UserController {
     res.status(200).json(users);
   }
 
-  // Recherche des utilisateurs par nom d'utilisateur (utilise le scope "byUsername")
   static async getUsersByUsername(req: Request, res: Response): Promise<void> {
     const username = req.query.username as string;
     const userService = new UserService();
@@ -43,10 +43,10 @@ export class UserController {
     res.status(200).json(users);
   }
 
-  // Modification d'un utilisateur (réservé aux Admins)
   static async updateUser(req: Request, res: Response): Promise<void> {
     const userService = new UserService();
-    const user = await userService.updateUser(req.params.id, req.body);
+    const { uuid } = req.params; // ✅ Utilisation de uuid
+    const user = await userService.updateUser(uuid, req.body);
     if (user) {
       res.status(200).json(user);
     } else {
@@ -54,18 +54,16 @@ export class UserController {
     }
   }
 
-  // Suppression d'un utilisateur (réservé aux Admins)
   static async deleteUser(req: Request, res: Response): Promise<void> {
     const userService = new UserService();
-    await userService.deleteUser(req.params.id);
+    const { uuid } = req.params; // ✅ Utilisation de uuid
+    await userService.deleteUser(uuid);
     res.status(204).send();
   }
 
-  // Mise à jour du profil personnel (email uniquement)
   static async updateProfile(req: Request, res: Response): Promise<void> {
     const userService = new UserService();
-
-    // ⚡ Maintenant uniquement l'email modifiable
+    const { uuid } = req.params; // ✅ Utilisation de uuid
     const { email } = req.body;
 
     if (!email) {
@@ -77,7 +75,7 @@ export class UserController {
 
     const allowedUpdates = { email };
 
-    const user = await userService.updateUser(req.params.id, allowedUpdates);
+    const user = await userService.updateUser(uuid, allowedUpdates);
 
     if (user) {
       res.status(200).json(user);

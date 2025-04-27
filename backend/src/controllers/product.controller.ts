@@ -1,6 +1,5 @@
 //EASY-TRACABILITY: backend/src/controllers/product.controller.ts
 
-// backend/src/controllers/product.controller.ts
 import { Request, Response, NextFunction } from "express";
 import { ProductService } from "../services/product.service";
 
@@ -39,13 +38,48 @@ export class ProductController {
     next: NextFunction
   ): Promise<void> => {
     try {
-      const { uuid } = req.params;
+      const { uuid } = req.params; // ✅ Utilisation de uuid
       const product = await ProductService.getProductByUUID(uuid);
       if (!product) {
         res.status(404).json({ message: "Produit non trouvé" });
         return;
       }
       res.status(200).json({ data: product });
+    } catch (error) {
+      next(error);
+    }
+  };
+  // Ajout dans ProductController
+
+  static searchProducts = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
+    try {
+      const { name, barcode } = req.query;
+
+      if (name) {
+        const products = await ProductService.getProductByName(name.toString());
+        res.status(200).json({ data: products });
+        return;
+      }
+
+      if (barcode) {
+        const product = await ProductService.getProductByBarcode(
+          barcode.toString()
+        );
+        if (!product) {
+          res.status(404).json({ message: "Produit non trouvé" });
+          return;
+        }
+        res.status(200).json({ data: product });
+        return;
+      }
+
+      res
+        .status(400)
+        .json({ message: "Paramètre de recherche manquant (name ou barcode)" });
     } catch (error) {
       next(error);
     }
@@ -147,7 +181,7 @@ export class ProductController {
     next: NextFunction
   ): Promise<void> => {
     try {
-      const { uuid } = req.params;
+      const { uuid } = req.params; // ✅ Utilisation de uuid
       const product = await ProductService.updateProduct(uuid, req.body);
       res
         .status(200)
@@ -163,7 +197,7 @@ export class ProductController {
     next: NextFunction
   ): Promise<void> => {
     try {
-      const { uuid } = req.params;
+      const { uuid } = req.params; // ✅ Utilisation de uuid
       await ProductService.deleteProduct(uuid);
       res.status(200).json({ message: "Produit supprimé avec succès" });
     } catch (error) {

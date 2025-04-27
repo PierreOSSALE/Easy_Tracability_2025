@@ -8,56 +8,45 @@ import { authorizeRole } from "../middlewares/authorizeRole.middleware";
 
 const router = Router();
 
-// Toutes les routes sont désormais sécurisées : hybridAuth obligatoire
 router.use(hybridAuth);
 
-// Route pour rechercher des utilisateurs par nom d'utilisateur (accessible à tous les connectés)
-// Exemple : GET /users/search?username=john
 router.get(
   "/search",
   authorizeRole(["Administrateur"]),
   catchAsync(UserController.getUsersByUsername)
 );
-// Route pour filtrer les utilisateurs par rôle (accessible à tous les connectés)
-// Exemple : GET /users/role?role=Admin
+
 router.get(
   "/role",
   authorizeRole(["Administrateur"]),
   catchAsync(UserController.getUsersByRole)
 );
 
-// Route pour récupérer tous les utilisateurs (accessible à tous les connectés)
-// Exemple : GET /users
 router.get(
   "/",
   authorizeRole(["Administrateur"]),
   catchAsync(UserController.getAllUsers)
 );
 
-// Route pour récupérer un utilisateur par son UUID (accessible à tous les connectés)
-// Exemple : GET /users/:id
-router.get("/:id", catchAsync(UserController.getUserById));
+// ✅ Correction : :uuid
+router.get("/:uuid", catchAsync(UserController.getUserById));
 
-// Route pour créer un nouvel utilisateur (réservé aux Admins)
-// Exemple : POST /users
 router.post(
   "/",
   authorizeRole(["Administrateur"]),
   catchAsync(UserController.createUser)
 );
 
-// Route pour mettre à jour un utilisateur existant (réservé aux Admins)
-// Exemple : PUT /users/:id
+// ✅ Correction : :uuid
 router.put(
-  "/:id",
+  "/:uuid",
   authorizeRole(["Administrateur"]),
   catchAsync(UserController.updateUser)
 );
 
-// Route pour supprimer un utilisateur (réservé aux Admins)
-// Exemple : DELETE /users/:id
+// ✅ Correction : :uuid
 router.delete(
-  "/:id",
+  "/:uuid",
   authorizeRole(["Administrateur"]),
   catchAsync(UserController.deleteUser)
 );

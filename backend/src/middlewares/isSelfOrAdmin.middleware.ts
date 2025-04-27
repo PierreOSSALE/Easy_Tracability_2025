@@ -8,6 +8,7 @@ export function isSelfOrAdmin(
   res: Response,
   next: NextFunction
 ): void {
+  console.log("DEBUG - req.user :", req.user); // Ajoute ça !!
   const userId = req.params.id;
   const currentUser = req.user as { uuid: string; role: UserRole };
 

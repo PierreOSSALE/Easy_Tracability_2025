@@ -1,8 +1,9 @@
 {
   "info": {
     "name": "Easy Tracability API",
-    "_postman_id": "e0001-tracability-collection",
-    "description": "Tests de toutes les routes pour Easy Tracability",
+    "_postman_id": "e-tracability-api",
+    "version": "1.0.0",
+    "description": "Collection complète de tests Easy Tracability avec préfixe /api",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -19,9 +20,9 @@
               "raw": "{ \"username\": \"admin\", \"password\": \"adminpass\", \"mode\": \"jwt\" }"
             },
             "url": {
-              "raw": "{{baseUrl}}/auth/login",
+              "raw": "{{baseUrl}}/api/auth/login",
               "host": ["{{baseUrl}}"],
-              "path": ["auth", "login"]
+              "path": ["api", "auth", "login"]
             }
           }
         },
@@ -35,9 +36,9 @@
               "raw": "{ \"token\": \"{{refreshToken}}\" }"
             },
             "url": {
-              "raw": "{{baseUrl}}/auth/refresh",
+              "raw": "{{baseUrl}}/api/auth/refresh",
               "host": ["{{baseUrl}}"],
-              "path": ["auth", "refresh"]
+              "path": ["api", "auth", "refresh"]
             }
           }
         },
@@ -49,9 +50,9 @@
               { "key": "Authorization", "value": "Bearer {{accessToken}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/auth/logout",
+              "raw": "{{baseUrl}}/api/auth/logout",
               "host": ["{{baseUrl}}"],
-              "path": ["auth", "logout"]
+              "path": ["api", "auth", "logout"]
             }
           }
         },
@@ -65,9 +66,9 @@
               "raw": "{ \"email\": \"admin@example.com\" }"
             },
             "url": {
-              "raw": "{{baseUrl}}/auth/request-reset-password",
+              "raw": "{{baseUrl}}/api/auth/request-reset-password",
               "host": ["{{baseUrl}}"],
-              "path": ["auth", "request-reset-password"]
+              "path": ["api", "auth", "request-reset-password"]
             }
           }
         },
@@ -81,9 +82,9 @@
               "raw": "{ \"token\": \"resetTokenHere\", \"newPassword\": \"newPassword123\" }"
             },
             "url": {
-              "raw": "{{baseUrl}}/auth/reset-password",
+              "raw": "{{baseUrl}}/api/auth/reset-password",
               "host": ["{{baseUrl}}"],
-              "path": ["auth", "reset-password"]
+              "path": ["api", "auth", "reset-password"]
             }
           }
         }
@@ -102,12 +103,12 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{ \"username\": \"newuser\", \"hashedPassword\": \"Password123!\", \"email\": \"newuser@example.com\", \"role\": \"Admin\" }"
+              "raw": "{ \"username\": \"newuser\", \"hashedPassword\": \"Password123!\", \"email\": \"newuser@example.com\", \"role\": \"Administrateur\" }"
             },
             "url": {
-              "raw": "{{baseUrl}}/users",
+              "raw": "{{baseUrl}}/api/users",
               "host": ["{{baseUrl}}"],
-              "path": ["users"]
+              "path": ["api", "users"]
             }
           }
         },
@@ -119,23 +120,23 @@
               { "key": "Authorization", "value": "Bearer {{accessToken}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/users",
+              "raw": "{{baseUrl}}/api/users",
               "host": ["{{baseUrl}}"],
-              "path": ["users"]
+              "path": ["api", "users"]
             }
           }
         },
         {
-          "name": "Get User by ID",
+          "name": "Get User by UUID",
           "request": {
             "method": "GET",
             "header": [
               { "key": "Authorization", "value": "Bearer {{accessToken}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/users/:id",
+              "raw": "{{baseUrl}}/api/users/:uuid",
               "host": ["{{baseUrl}}"],
-              "path": ["users", ":id"]
+              "path": ["api", "users", ":uuid"]
             }
           }
         },
@@ -147,30 +148,30 @@
               { "key": "Authorization", "value": "Bearer {{accessToken}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/users/search?username=newuser",
+              "raw": "{{baseUrl}}/api/users/search?username=newuser",
               "host": ["{{baseUrl}}"],
-              "path": ["users", "search"],
+              "path": ["api", "users", "search"],
               "query": [{ "key": "username", "value": "newuser" }]
             }
           }
         },
         {
-          "name": "Get Users by Role",
+          "name": "Search User by Role",
           "request": {
             "method": "GET",
             "header": [
               { "key": "Authorization", "value": "Bearer {{accessToken}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/users/role?role=Admin",
+              "raw": "{{baseUrl}}/api/users/search?role=Administrateur",
               "host": ["{{baseUrl}}"],
-              "path": ["users", "role"],
-              "query": [{ "key": "role", "value": "Admin" }]
+              "path": ["api", "users", "search"],
+              "query": [{ "key": "role", "value": "Administrateur" }]
             }
           }
         },
         {
-          "name": "Update User",
+          "name": "Update User by UUID",
           "request": {
             "method": "PUT",
             "header": [
@@ -179,26 +180,76 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{ \"email\": \"updateduser@example.com\" }"
+              "raw": "{ \"username\": \"updateduser\", \"email\": \"updated@example.com\", \"role\": \"Administrateur\" }"
             },
             "url": {
-              "raw": "{{baseUrl}}/users/:id",
+              "raw": "{{baseUrl}}/api/users/:uuid",
               "host": ["{{baseUrl}}"],
-              "path": ["users", ":id"]
+              "path": ["api", "users", ":uuid"]
             }
           }
         },
         {
-          "name": "Delete User",
+          "name": "Delete User by UUID",
           "request": {
             "method": "DELETE",
             "header": [
               { "key": "Authorization", "value": "Bearer {{accessToken}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/users/:id",
+              "raw": "{{baseUrl}}/api/users/:uuid",
               "host": ["{{baseUrl}}"],
-              "path": ["users", ":id"]
+              "path": ["api", "users", ":uuid"]
+            }
+          }
+        },
+        {
+          "name": "Update My Profile (email & picture)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "email",
+                  "value": "newemail@example.com",
+                  "type": "text"
+                },
+                { "key": "profilePicture", "type": "file", "src": "" }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/profile/:uuid",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "profile", ":uuid"]
+            }
+          }
+        },
+        {
+          "name": "Update My Profile [NEW]",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "email",
+                  "value": "nouvelemail@example.com",
+                  "type": "text"
+                },
+                { "key": "profilePicture", "type": "file", "src": "" }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/profile/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "profile", "me"]
             }
           }
         }
@@ -217,12 +268,12 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{ \"name\": \"Test Product\", \"barcode\": \"1234567890123\", \"description\": \"Produit de test\", \"price\": 99.99, \"stockQuantity\": 10 }"
+              "raw": "{ \"name\": \"ProduitTest\", \"barcode\": \"123456789\", \"description\": \"Test produit\", \"price\": 19.99, \"stockQuantity\": 100 }"
             },
             "url": {
-              "raw": "{{baseUrl}}/products",
+              "raw": "{{baseUrl}}/api/products",
               "host": ["{{baseUrl}}"],
-              "path": ["products"]
+              "path": ["api", "products"]
             }
           }
         },
@@ -234,9 +285,9 @@
               { "key": "Authorization", "value": "Bearer {{accessToken}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/products",
+              "raw": "{{baseUrl}}/api/products",
               "host": ["{{baseUrl}}"],
-              "path": ["products"]
+              "path": ["api", "products"]
             }
           }
         },
@@ -248,9 +299,9 @@
               { "key": "Authorization", "value": "Bearer {{accessToken}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/products/:uuid",
+              "raw": "{{baseUrl}}/api/products/:uuid",
               "host": ["{{baseUrl}}"],
-              "path": ["products", ":uuid"]
+              "path": ["api", "products", ":uuid"]
             }
           }
         },
@@ -262,9 +313,10 @@
               { "key": "Authorization", "value": "Bearer {{accessToken}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/products/search/name/:name",
+              "raw": "{{baseUrl}}/api/products/search?name=ProduitTest",
               "host": ["{{baseUrl}}"],
-              "path": ["products", "search", "name", ":name"]
+              "path": ["api", "products", "search"],
+              "query": [{ "key": "name", "value": "ProduitTest" }]
             }
           }
         },
@@ -276,81 +328,84 @@
               { "key": "Authorization", "value": "Bearer {{accessToken}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/products/search/barcode/:barcode",
+              "raw": "{{baseUrl}}/api/products/search?barcode=123456789",
               "host": ["{{baseUrl}}"],
-              "path": ["products", "search", "barcode", ":barcode"]
+              "path": ["api", "products", "search"],
+              "query": [{ "key": "barcode", "value": "123456789" }]
             }
           }
         },
         {
-          "name": "Get In-Stock Products",
+          "name": "Products In Stock",
           "request": {
             "method": "GET",
             "header": [
               { "key": "Authorization", "value": "Bearer {{accessToken}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/products/in-stock",
+              "raw": "{{baseUrl}}/api/products/in-stock",
               "host": ["{{baseUrl}}"],
-              "path": ["products", "in-stock"]
+              "path": ["api", "products", "in-stock"]
             }
           }
         },
         {
-          "name": "Get Low-Stock Products",
+          "name": "Products Low Stock",
           "request": {
             "method": "GET",
             "header": [
               { "key": "Authorization", "value": "Bearer {{accessToken}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/products/low-stock/:threshold",
+              "raw": "{{baseUrl}}/api/products/low-stock?threshold=5",
               "host": ["{{baseUrl}}"],
-              "path": ["products", "low-stock", ":threshold"]
+              "path": ["api", "products", "low-stock"],
+              "query": [{ "key": "threshold", "value": "5" }]
             }
           }
         },
         {
-          "name": "Get Out-of-Stock Products",
+          "name": "Products Out of Stock",
           "request": {
             "method": "GET",
             "header": [
               { "key": "Authorization", "value": "Bearer {{accessToken}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/products/out-of-stock",
+              "raw": "{{baseUrl}}/api/products/out-of-stock",
               "host": ["{{baseUrl}}"],
-              "path": ["products", "out-of-stock"]
+              "path": ["api", "products", "out-of-stock"]
             }
           }
         },
         {
-          "name": "Get Products Above Price",
+          "name": "Products Above Price",
           "request": {
             "method": "GET",
             "header": [
               { "key": "Authorization", "value": "Bearer {{accessToken}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/products/above-price/:price",
+              "raw": "{{baseUrl}}/api/products/above-price?price=50",
               "host": ["{{baseUrl}}"],
-              "path": ["products", "above-price", ":price"]
+              "path": ["api", "products", "above-price"],
+              "query": [{ "key": "price", "value": "50" }]
             }
           }
         },
         {
           "name": "Update Product",
           "request": {
-            "method": "PATCH",
+            "method": "PUT",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
               { "key": "Authorization", "value": "Bearer {{accessToken}}" }
             ],
             "body": { "mode": "raw", "raw": "{ \"price\": 149.99 }" },
             "url": {
-              "raw": "{{baseUrl}}/products/:uuid",
+              "raw": "{{baseUrl}}/api/products/:uuid",
               "host": ["{{baseUrl}}"],
-              "path": ["products", ":uuid"]
+              "path": ["api", "products", ":uuid"]
             }
           }
         },
@@ -362,9 +417,9 @@
               { "key": "Authorization", "value": "Bearer {{accessToken}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/products/:uuid",
+              "raw": "{{baseUrl}}/api/products/:uuid",
               "host": ["{{baseUrl}}"],
-              "path": ["products", ":uuid"]
+              "path": ["api", "products", ":uuid"]
             }
           }
         }
@@ -372,7 +427,7 @@
     }
   ],
   "variable": [
-    { "key": "baseUrl", "value": "http://localhost:3000/api" },
+    { "key": "baseUrl", "value": "http://localhost:3001" },
     { "key": "accessToken", "value": "" },
     { "key": "refreshToken", "value": "" }
   ]
