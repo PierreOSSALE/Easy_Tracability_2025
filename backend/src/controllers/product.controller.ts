@@ -130,22 +130,6 @@ export class ProductController {
     }
   };
 
-  static getProductsLowStock = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> => {
-    try {
-      const { threshold } = req.params;
-      const products = await ProductService.getProductsLowStock(
-        Number(threshold)
-      );
-      res.status(200).json({ data: products });
-    } catch (error) {
-      next(error);
-    }
-  };
-
   static getProductsOutOfStock = async (
     req: Request,
     res: Response,
@@ -159,22 +143,52 @@ export class ProductController {
     }
   };
 
-  static getProductsAbovePrice = async (
+  static getProductsLowStock = async (
     req: Request,
     res: Response,
     next: NextFunction
   ): Promise<void> => {
     try {
-      const { price } = req.params;
-      const products = await ProductService.getProductsAbovePrice(
-        Number(price)
-      );
+      // console.log("DEBUG - getProductsLowStock appelé");
+      // console.log("DEBUG - req.query:", req.query);
+
+      const queryThreshold = req.query.threshold;
+      if (!queryThreshold) {
+        res.status(400).json({
+          message: "Le paramètre 'threshold' est requis dans la query.",
+        });
+        return;
+      }
+
+      const threshold = parseInt(queryThreshold as string, 10);
+      // console.log("DEBUG - Seuil parsé:", threshold);
+
+      if (isNaN(threshold) || threshold < 0) {
+        res.status(400).json({ message: "Paramètre threshold invalide." });
+        return;
+      }
+
+      const products = await ProductService.getProductsLowStock(threshold);
+      // console.log(
+      //   "DEBUG - Produits récupérés pour un seuil de",
+      //   threshold,
+      //   ":",
+      //   products
+      // );
+
+      if (!products || products.length === 0) {
+        res.status(404).json({
+          message: "Aucun produit avec un stock inférieur au seuil spécifié.",
+        });
+        return;
+      }
+
       res.status(200).json({ data: products });
     } catch (error) {
+      console.error("Erreur dans getProductsLowStock:", error);
       next(error);
     }
   };
-
   static updateProduct = async (
     req: Request,
     res: Response,
@@ -200,6 +214,20 @@ export class ProductController {
       const { uuid } = req.params; // ✅ Utilisation de uuid
       await ProductService.deleteProduct(uuid);
       res.status(200).json({ message: "Produit supprimé avec succès" });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  static getProductsAbovePrice = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
+    try {
+      const price = Number(req.query.price);
+      const products = await ProductService.getProductsAbovePrice(price);
+      res.status(200).json({ data: products });
     } catch (error) {
       next(error);
     }

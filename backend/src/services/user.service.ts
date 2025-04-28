@@ -30,11 +30,21 @@ export class UserService {
     return users.map((user) => user.toJSON() as IUser);
   }
 
-  async getUserById(id: string): Promise<IUser | null> {
-    const user = await UserModel.scope({ method: ["byUUID", id] }).findOne();
+  async getUserById(uuid: string): Promise<IUser | null> {
+    console.log("DEBUG - Requête avec UUID:", uuid); // <--- ce log est capital
+    const user = await UserModel.scope({ method: ["byUUID", uuid] }).findOne();
+    console.log("DEBUG - Résultat trouvé:", user); // <--- ce log est capital
     return user ? (user.toJSON() as IUser) : null;
   }
 
+  async updateUser(uuid: string, userData: IUserUpdate): Promise<IUser | null> {
+    const user = await UserModel.scope({ method: ["byUUID", uuid] }).findOne();
+    if (user) {
+      await user.update(userData);
+      return user.toJSON() as IUser;
+    }
+    return null;
+  }
   async getUsersByRole(role: string): Promise<IUser[]> {
     const users = await UserModel.scope({ method: ["byRole", role] }).findAll();
     return users.map((user) => user.toJSON() as IUser);
@@ -52,17 +62,8 @@ export class UserService {
     return user ? (user.toJSON() as IUser) : null;
   }
 
-  async updateUser(id: string, userData: IUserUpdate): Promise<IUser | null> {
-    const user = await UserModel.scope({ method: ["byUUID", id] }).findOne();
-    if (user) {
-      await user.update(userData);
-      return user.toJSON() as IUser;
-    }
-    return null;
-  }
-
-  async deleteUser(id: string): Promise<void> {
-    const user = await UserModel.scope({ method: ["byUUID", id] }).findOne();
+  async deleteUser(uuid: string): Promise<void> {
+    const user = await UserModel.scope({ method: ["byUUID", uuid] }).findOne();
     if (user) {
       await user.destroy();
     }

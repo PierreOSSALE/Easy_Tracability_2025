@@ -6,22 +6,29 @@ import fs from "fs";
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const userId = req.params.id;
+    const userId = req.params.uuid || (req.user as any)?.uuid; // ✅
+
+    if (!userId) {
+      return cb(
+        new Error("Impossible de déterminer l'utilisateur pour l'upload"),
+        ""
+      );
+    }
+
     const dir = `uploads/profile-pictures/${userId}`;
 
     if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true }); // Crée le dossier utilisateur si il n'existe pas
+      fs.mkdirSync(dir, { recursive: true });
     }
     cb(null, dir);
   },
   filename: (req, file, cb) => {
     const extension = path.extname(file.originalname).toLowerCase();
-    const filename = `profile-${Date.now()}${extension}`; // Ex: profile-1712351255.jpg
+    const filename = `profile-${Date.now()}${extension}`;
     cb(null, filename);
   },
 });
 
-// Filtrage des fichiers
 function fileFilter(
   req: Express.Request,
   file: Express.Multer.File,
@@ -40,7 +47,6 @@ function fileFilter(
   }
 }
 
-// Limitation de taille
 const upload = multer({
   storage,
   limits: { fileSize: 2 * 1024 * 1024 },

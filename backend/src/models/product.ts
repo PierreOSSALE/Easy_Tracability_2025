@@ -67,7 +67,6 @@ export const ProductModel = ProductInstance.init(
       type: DataTypes.STRING,
       allowNull: true,
       validate: {
-        isUrl: true,
         len: [0, 500],
       },
     },

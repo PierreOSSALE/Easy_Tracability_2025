@@ -26,6 +26,13 @@ router.get(
   catchAsync(ProductController.getProductsOutOfStock)
 );
 
+// 🔥 Liste produits avec stock inférieur à un seuil donné
+router.get(
+  "/low-stock",
+  authorizeRole(["Administrateur", "Gestionnaire", "Operateur"]),
+  catchAsync(ProductController.getProductsLowStock)
+);
+
 // 🔒 Liste produits au-dessus d'un prix
 router.get(
   "/above-price",

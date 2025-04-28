@@ -1,7 +1,5 @@
 //EASY-TRACABILITY: backend/src/controllers/user.controller.ts
 
-// backend/src/controllers/user.controller.ts
-
 import { Request, Response } from "express";
 import { UserService } from "../services/user.service";
 

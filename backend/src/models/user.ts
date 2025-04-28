@@ -73,7 +73,6 @@ export const UserModel = UserInstance.init(
       type: DataTypes.STRING,
       allowNull: true,
       validate: {
-        isUrl: true,
         len: [0, 500],
       },
     },
