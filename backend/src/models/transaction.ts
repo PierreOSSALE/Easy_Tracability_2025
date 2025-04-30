@@ -12,20 +12,28 @@ export class TransactionInstance
   extends Model<ITransaction, ITransactionCreation>
   implements ITransaction
 {
-  // Le mot-clé "declare" informe TypeScript que ces propriétés seront injectées par Sequelize dans le runtime
   declare uuid: string;
   declare transactionType: TransactionType;
   declare totalPrice: number;
+  declare inventoryMovementUUID: string;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
 }
 
-// Utilisation de Model.init pour définir le schéma du modèle et le lier à l'instance de connexion à la base de données
 export const TransactionModel = TransactionInstance.init(
   {
     uuid: {
       type: DataTypes.UUID,
       primaryKey: true,
-      allowNull: false,
       defaultValue: DataTypes.UUIDV4,
+    },
+    inventoryMovementUUID: {
+      type: DataTypes.UUID,
+      allowNull: false,
+      references: {
+        model: "inventory_movements",
+        key: "uuid",
+      },
     },
     transactionType: {
       type: DataTypes.ENUM(...Object.values(TransactionType)),
@@ -33,12 +41,10 @@ export const TransactionModel = TransactionInstance.init(
       validate: {
         isIn: {
           args: [Object.values(TransactionType)],
-          msg:
-            "Le type de transaction doit être l'un des suivants : " +
-            Object.values(TransactionType).join(", "),
+          msg: "Le type de transaction est invalide",
         },
         isEmpty(value: string) {
-          if (value.trim() === "") {
+          if (typeof value !== "string" || value.trim() === "") {
             throw new Error("Le type de transaction ne peut pas être vide.");
           }
         },
@@ -48,12 +54,7 @@ export const TransactionModel = TransactionInstance.init(
       type: DataTypes.FLOAT,
       allowNull: false,
       validate: {
-        isFloat: true, // Validation pour s'assurer que c'est un nombre à virgule flottante
-        isEmpty: (value: string) => {
-          if (value.trim() === "") {
-            throw new Error("Le prix total ne peut pas être vide.");
-          }
-        },
+        isFloat: true,
         isPositive(value: number) {
           if (value <= 0) {
             throw new Error("Le prix total doit être supérieur à zéro.");
@@ -63,46 +64,26 @@ export const TransactionModel = TransactionInstance.init(
     },
   },
   {
-    sequelize, // Instance importée depuis "../config/database"
-    tableName: "transactions", // Nom de la table
-    timestamps: true, // Ajoute automatiquement les champs createdAt et updatedAt
+    sequelize,
+    tableName: "transactions",
+    timestamps: true,
     scopes: {
       byUUID(uuid: string) {
-        // Scope pour filtrer par UUID
         return {
-          where: {
-            uuid: uuid,
-          },
+          where: { uuid },
         };
       },
-      byTransactionType(transactionType: TransactionType) {
-        // Scope pour filtrer par type de transaction
+      byTransactionType(type: TransactionType) {
         return {
-          where: {
-            transactionType: transactionType,
-          },
+          where: { transactionType: type },
         };
       },
-      byTotalPrice(totalPrice: number) {
-        // Scope pour filtrer par prix total
+      byInventoryMovement(uuid: string) {
         return {
-          where: {
-            totalPrice: totalPrice,
-          },
-        };
-      },
-      byDateRange(startDate: Date, endDate: Date) {
-        // Scope pour filtrer par plage de dates
-        return {
-          where: {
-            createdAt: {
-              [Op.between]: [startDate, endDate],
-            },
-          },
+          where: { inventoryMovementUUID: uuid },
         };
       },
       recent(limit: number = 10) {
-        // Scope pour obtenir les transactions récentes
         return {
           order: [["createdAt", "DESC"]],
           limit,

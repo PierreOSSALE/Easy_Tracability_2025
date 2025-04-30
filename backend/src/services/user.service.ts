@@ -31,9 +31,9 @@ export class UserService {
   }
 
   async getUserById(uuid: string): Promise<IUser | null> {
-    console.log("DEBUG - Requête avec UUID:", uuid); // <--- ce log est capital
+    // console.log("DEBUG - Requête avec UUID:", uuid); // <--- ce log est capital
     const user = await UserModel.scope({ method: ["byUUID", uuid] }).findOne();
-    console.log("DEBUG - Résultat trouvé:", user); // <--- ce log est capital
+    // console.log("DEBUG - Résultat trouvé:", user); // <--- ce log est capital
     return user ? (user.toJSON() as IUser) : null;
   }
 

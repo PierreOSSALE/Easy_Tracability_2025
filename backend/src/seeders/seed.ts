@@ -6,6 +6,7 @@ import { seedTransactions } from "./transaction.seeder";
 import { seedInventoryMovements } from "./inventoryMovement.seeder";
 import { UserModel } from "../models/user";
 import { ProductModel } from "../models/product";
+import { seedConfigurations } from "./configuration.seeder";
 
 (async () => {
   try {
@@ -14,23 +15,33 @@ import { ProductModel } from "../models/product";
 
     await seedUsers();
     await seedProducts();
+    await seedConfigurations();
 
-    // On prend 1 user et 1 produit au hasard pour les mouvements
     const user = await UserModel.findOne();
     const product = await ProductModel.findOne();
 
-    if (user && product) {
-      await seedInventoryMovements(user.uuid, product.uuid);
-    }
-    if (user && product) {
-      await seedInventoryMovements(user.uuid, product.uuid);
-      await seedTransactions(); // ⬅️ ICI
+    if (!user || !product) {
+      throw new Error("❌ Aucun utilisateur ou produit trouvé après seeding");
     }
 
-    console.log("🌱 All seeders ran successfully");
+    // Créer les mouvements d'inventaire
+    const inventoryMovements = await seedInventoryMovements(
+      user.uuid,
+      product.uuid
+    );
+
+    if (inventoryMovements.length === 0) {
+      throw new Error("❌ Aucune entrée de mouvement d'inventaire créée");
+    }
+
+    // Utiliser le premier mouvement pour créer une transaction
+    const firstMovementUUID = inventoryMovements[0].uuid;
+    await seedTransactions(firstMovementUUID);
+
+    console.log("🌱 Tous les seeders ont été exécutés avec succès !");
     process.exit(0);
   } catch (err) {
-    console.error("❌ Seeder error:", err);
+    console.error("❌ Erreur durant le seeding:", err);
     process.exit(1);
   }
 })();

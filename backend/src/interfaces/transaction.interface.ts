@@ -9,15 +9,18 @@ export interface ITransaction {
   uuid: string;
   transactionType: TransactionType;
   totalPrice: number;
+  inventoryMovementUUID: string;
 }
 
 export interface ITransactionCreation {
   uuid?: string;
   transactionType: TransactionType;
   totalPrice: number;
+  inventoryMovementUUID: string;
 }
 
 export interface ITransactionUpdate {
   transactionType?: TransactionType;
   totalPrice?: number;
+  inventoryMovementUUID?: string;
 }

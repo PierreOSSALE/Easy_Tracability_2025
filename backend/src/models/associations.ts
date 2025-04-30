@@ -27,13 +27,12 @@ IInventoryMovementModel.belongsTo(ProductModel, {
 });
 
 // Association: Une Transaction est liée à un InventoryMovement.
-// Ici, nous utilisons le même UUID pour représenter l'extension logique du mouvement.
 IInventoryMovementModel.hasOne(TransactionModel, {
-  foreignKey: "uuid", // même clé identique à celle du mouvement
+  foreignKey: "inventoryMovementUUID",
   as: "transaction",
 });
 TransactionModel.belongsTo(IInventoryMovementModel, {
-  foreignKey: "uuid",
+  foreignKey: "inventoryMovementUUID",
   as: "inventoryMovement",
 });
 

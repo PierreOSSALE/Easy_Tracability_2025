@@ -8,17 +8,7 @@ export interface IConfiguration {
   lastModifiedBy: string;
 }
 
-export interface IConfigurationCreation {
-  uuid?: string;
-  parameterName: string;
-  parameterValue: string;
-  lastModifiedAt: Date;
-  lastModifiedBy: string;
-}
-
 export interface IConfigurationUpdate {
-  parameterName?: string;
-  parameterValue?: string;
-  lastModifiedAt?: Date;
-  lastModifiedBy?: string;
+  parameterValue: string;
+  lastModifiedBy: string;
 }

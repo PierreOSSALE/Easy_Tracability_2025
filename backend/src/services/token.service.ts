@@ -46,25 +46,26 @@ export class TokenService {
     const payload = jwt.verify(
       oldToken,
       process.env.JWT_SECRET!
-    ) as UserSessionDTO;
+    ) as UserSessionDTO & { exp?: number; iat?: number };
 
-    // Check if old token is blacklisted
+    // ✨ Nettoyage du payload pour éviter exp/iât dans la signature
+    const { exp, iat, ...cleanPayload } = payload;
+
     const isBlacklisted = await this.isBlacklisted(oldToken);
     if (isBlacklisted) throw new Error("Token déjà utilisé (blacklist)");
 
     const isValid = await this.isRefreshTokenValid(payload.uuid, oldToken);
     if (!isValid) throw new Error("Token invalide ou mismatch");
 
-    // Blacklist l’ancien token
     const decoded = jwt.decode(oldToken) as any;
     const expInSeconds = decoded.exp
       ? decoded.exp - Math.floor(Date.now() / 1000)
       : 60 * 60 * 24;
     await this.blacklistToken(oldToken, expInSeconds);
 
-    const newAccessToken = generateAccessToken(payload);
-    const newRefreshToken = generateRefreshToken(payload);
-    await this.storeRefreshToken(payload, newRefreshToken);
+    const newAccessToken = generateAccessToken(cleanPayload); // ✅ plus clean
+    const newRefreshToken = generateRefreshToken(cleanPayload); // ✅ plus clean
+    await this.storeRefreshToken(cleanPayload, newRefreshToken);
 
     return { accessToken: newAccessToken, refreshToken: newRefreshToken };
   }

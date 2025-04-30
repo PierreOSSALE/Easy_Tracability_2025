@@ -1,25 +1,18 @@
 // EASY-TRACABILITY: backend/src/models/configuration.ts
 
+// EASY-TRACABILITY: backend/src/models/configuration.ts
+
 import { DataTypes, Model } from "sequelize";
 import sequelize from "../config/database";
-import {
-  IConfiguration,
-  IConfigurationCreation,
-} from "../interfaces/configuration.interface";
 
-export class ConfigurationInstance
-  extends Model<IConfiguration, IConfigurationCreation>
-  implements IConfiguration
-{
-  // Ces propriétés seront injectées par Sequelize au runtime
+export class ConfigurationInstance extends Model {
   declare uuid: string;
-  declare parameterName: string;
+  declare parameterKey: string;
   declare parameterValue: string;
-  declare lastModifiedAt: Date;
-  declare lastModifiedBy: string;
+  declare lastModifiedBy?: string; // UUID utilisateur
+  declare lastModifiedAt?: Date;
 }
 
-// Utilisation de Model.init pour définir le schéma du modèle
 export const ConfigurationModel = ConfigurationInstance.init(
   {
     uuid: {
@@ -28,27 +21,27 @@ export const ConfigurationModel = ConfigurationInstance.init(
       allowNull: false,
       defaultValue: DataTypes.UUIDV4,
     },
-    parameterName: {
+    parameterKey: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
     },
     parameterValue: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: false,
+    },
+    lastModifiedBy: {
+      type: DataTypes.UUID,
+      allowNull: true,
     },
     lastModifiedAt: {
       type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
-    },
-    // Modification réalisée ici : le type passe de STRING à UUID pour être compatible avec UserModel.uuid
-    lastModifiedBy: {
-      type: DataTypes.UUID,
-      allowNull: false,
+      allowNull: true,
     },
   },
   {
-    sequelize, // Instance importée depuis "../config/database"
-    tableName: "configurations", // Nom de la table
-    timestamps: true, // Ajoute automatiquement les champs createdAt et updatedAt
+    sequelize,
+    tableName: "configurations",
+    timestamps: false,
   }
 );
