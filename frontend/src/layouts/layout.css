@@ -1,0 +1,27 @@
+/* src/layouts/layout.css */
+
+@import "../index.css";
+
+.layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.mainColumn {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  position: relative;
+  background-color: var(--color-gray-lightest);
+  overflow: hidden;
+  padding-top: 60px;
+  padding-left: 20px;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: auto;
+}

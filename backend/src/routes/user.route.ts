@@ -7,25 +7,19 @@ import { hybridAuth } from "../middlewares/hybridAuth.middleware";
 import { authorizeRole } from "../middlewares/authorizeRole.middleware";
 
 const router = Router();
-
+router.get("/", catchAsync(UserController.getAllUsers));
 router.use(hybridAuth);
 
 router.get(
   "/search",
-  authorizeRole(["Administrateur"]),
+  authorizeRole(["Admin"]),
   catchAsync(UserController.getUsersByUsername)
 );
 
 router.get(
   "/role",
-  authorizeRole(["Administrateur"]),
+  authorizeRole(["Admin"]),
   catchAsync(UserController.getUsersByRole)
-);
-
-router.get(
-  "/",
-  authorizeRole(["Administrateur"]),
-  catchAsync(UserController.getAllUsers)
 );
 
 // ✅ Correction : :uuid
@@ -33,21 +27,21 @@ router.get("/:uuid", catchAsync(UserController.getUserById));
 
 router.post(
   "/",
-  authorizeRole(["Administrateur"]),
+  authorizeRole(["Admin"]),
   catchAsync(UserController.createUser)
 );
 
 // ✅ Correction : :uuid
 router.put(
   "/:uuid",
-  authorizeRole(["Administrateur"]),
+  authorizeRole(["Admin"]),
   catchAsync(UserController.updateUser)
 );
 
 // ✅ Correction : :uuid
 router.delete(
   "/:uuid",
-  authorizeRole(["Administrateur"]),
+  authorizeRole(["Admin"]),
   catchAsync(UserController.deleteUser)
 );
 

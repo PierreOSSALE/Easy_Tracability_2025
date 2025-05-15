@@ -1,9 +1,9 @@
-// EASY-TRACABILITY: backend/src/interface/user.interface.ts
+// EASY-TRACABILITY: backend/src/interfaces/user.interface.ts
 
 export enum UserRole {
-  ADMINISTRATEUR = "Administrateur",
-  GESTIONNAIRE = "Gestionnaire",
-  OPERATEUR = "Operateur",
+  ADMIN = "Admin",
+  MANAGER = "Manager",
+  OPERATOR = "Operator",
 }
 
 export interface IUser {
@@ -12,7 +12,7 @@ export interface IUser {
   email: string;
   hashedPassword: string;
   role: UserRole;
-  profilePicture?: string; // 🆕 ajouté
+  profilePicture?: string;
   resetPasswordToken?: string;
   resetPasswordExpires?: Date;
 }
@@ -23,7 +23,7 @@ export interface IUserCreation {
   email: string;
   hashedPassword: string;
   role: UserRole;
-  profilePicture?: string; // 🆕 ajouté
+  profilePicture?: string;
 }
 
 export interface IUserUpdate {
@@ -31,7 +31,7 @@ export interface IUserUpdate {
   email?: string;
   hashedPassword?: string;
   role?: UserRole;
-  profilePicture?: string; // 🆕 ajouté
+  profilePicture?: string;
   resetPasswordToken?: string;
   resetPasswordExpires?: Date;
 }

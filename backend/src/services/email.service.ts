@@ -16,7 +16,7 @@ export const sendResetPasswordEmail = async (
   resetToken: string,
   username: string // 👈 Ajouté
 ) => {
-  const resetUrl = `http://localhost:3000/reset-password?token=${resetToken}`;
+  const resetUrl = `http://localhost:3000/reset-password/${resetToken}`;
 
   // Charger le template
   const templatePath = path.join(
@@ -28,6 +28,7 @@ export const sendResetPasswordEmail = async (
   // Remplacer les variables dynamiques
   htmlContent = htmlContent
     .replace("{{RESET_LINK}}", resetUrl)
+    .replace("{{RESET_TOKEN}}", resetToken)
     .replace("{{USERNAME}}", username);
 
   const mailOptions = {

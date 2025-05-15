@@ -16,21 +16,9 @@ const router = Router();
 // Toutes les routes sont désormais sécurisées : hybridAuth obligatoire
 router.use(hybridAuth);
 // POST /api/configurations
-router.post(
-  "/",
-  authorizeRole(["Administrateur"]),
-  catchAsync(createConfiguration)
-);
+router.post("/", authorizeRole(["Admin"]), catchAsync(createConfiguration));
 
-router.get(
-  "/",
-  authorizeRole(["Administrateur"]),
-  catchAsync(getAllConfigurations)
-);
-router.put(
-  "/:name",
-  authorizeRole(["Administrateur"]),
-  catchAsync(updateConfiguration)
-);
+router.get("/", authorizeRole(["Admin"]), catchAsync(getAllConfigurations));
+router.put("/:name", authorizeRole(["Admin"]), catchAsync(updateConfiguration));
 
 export default router;

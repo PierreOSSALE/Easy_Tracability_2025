@@ -11,5 +11,6 @@ router.post("/refresh", AuthController.refresh);
 router.post("/logout", hybridAuth, AuthController.logout);
 router.post("/request-reset-password", AuthController.requestResetPassword);
 router.post("/reset-password", AuthController.resetPassword);
+router.get("/me", hybridAuth, AuthController.getMe);
 
 export default router;

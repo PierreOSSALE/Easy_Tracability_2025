@@ -43,7 +43,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/products", productRoutes);
-app.use("/api/inventoryMovement", inventoryMovementRoutes);
+app.use("/api/inventoryMovements", inventoryMovementRoutes);
 app.use("/api/transactions", transactionRoutes);
 app.use("/api/states", stateRoutes);
 app.use("/api/configurations", configurationRoutes);

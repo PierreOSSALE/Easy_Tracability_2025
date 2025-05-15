@@ -1,0 +1,76 @@
+/* src/features/admin/components/DashboardCharts.module.css */
+@import "../../../index.css";
+.dx-chart {
+  --dx-color1: var(--color-success);
+  --dx-color2: var(--color-error);
+  --dx-color3: var(--color-primary);
+}
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 2.5rem 0px;
+  justify-content: space-between;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .chartBox {
+    flex: 1 1 100%;
+    padding: 15px;
+    margin: 0 -2px;
+  }
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.controls label {
+  font-size: 0.9rem;
+  color: var(--color-gray-dark);
+  display: flex;
+  flex-direction: column;
+}
+
+.exportBtn {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background-color 0.2s;
+}
+
+.exportBtn:hover {
+  background-color: var(--color-primary-50);
+}
+
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.chartBox {
+  flex: 1 1 450px;
+  min-width: 250px;
+  max-width: 100%;
+  background: var(--color-gray-light);
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Breakpoint tablette */
+@media (max-width: 768px) {
+  .chartBox {
+    flex: 1 1 100%;
+  }
+}

@@ -47,21 +47,21 @@ router.get(
 // Créer mouvement (Opérateur + Gestionnaire + Admin)
 router.post(
   "/",
-  authorizeRole(["Administrateur", "Gestionnaire", "Operateur"]),
+  authorizeRole(["Admin", "Manager", "Operator"]),
   catchAsync(InventoryMovementController.createInventoryMovement)
 );
 
 // Modifier mouvement (Gestionnaire + Admin)
 router.put(
   "/:uuid",
-  authorizeRole(["Administrateur", "Gestionnaire"]),
+  authorizeRole(["Admin", "Manager"]),
   catchAsync(InventoryMovementController.updateInventoryMovement)
 );
 
 // Supprimer mouvement (Admin seulement)
 router.delete(
   "/:uuid",
-  authorizeRole(["Administrateur"]),
+  authorizeRole(["Admin"]),
   catchAsync(InventoryMovementController.deleteInventoryMovement)
 );
 

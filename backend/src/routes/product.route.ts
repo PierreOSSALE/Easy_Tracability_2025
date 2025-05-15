@@ -15,68 +15,68 @@ router.use(hybridAuth);
 // 🔒 Liste produits en stock
 router.get(
   "/in-stock",
-  authorizeRole(["Administrateur", "Gestionnaire", "Operateur"]),
+  authorizeRole(["Admin", "Manager", "Operator"]),
   catchAsync(ProductController.getProductsInStock)
 );
 
 // 🔒 Liste produits rupture de stock
 router.get(
   "/out-of-stock",
-  authorizeRole(["Administrateur", "Gestionnaire", "Operateur"]),
+  authorizeRole(["Admin", "Manager", "Operator"]),
   catchAsync(ProductController.getProductsOutOfStock)
 );
 
 // 🔥 Liste produits avec stock inférieur à un seuil donné
 router.get(
   "/low-stock",
-  authorizeRole(["Administrateur", "Gestionnaire", "Operateur"]),
+  authorizeRole(["Admin", "Manager", "Operator"]),
   catchAsync(ProductController.getProductsLowStock)
 );
 
 // 🔒 Liste produits au-dessus d'un prix
 router.get(
   "/above-price",
-  authorizeRole(["Administrateur", "Gestionnaire", "Operateur"]),
+  authorizeRole(["Admin", "Manager", "Operator"]),
   catchAsync(ProductController.getProductsAbovePrice)
 );
 
 // 🔒 Recherche produit par name en query : /products/search?name=ProduitTest
 router.get(
   "/search",
-  authorizeRole(["Administrateur", "Gestionnaire", "Operateur"]),
+  authorizeRole(["Admin", "Manager", "Operator"]),
   catchAsync(ProductController.searchProducts)
 );
 
 router.post(
   "/",
-  authorizeRole(["Administrateur"]),
+  authorizeRole(["Admin"]),
   catchAsync(ProductController.createProduct)
 );
 
 router.get(
   "/",
-  authorizeRole(["Administrateur", "Gestionnaire", "Operateur"]),
+  authorizeRole(["Admin", "Manager", "Operator"]),
   catchAsync(ProductController.getAllProducts)
 );
 
 // 🔥 Lecture produit par UUID
 router.get(
   "/:uuid",
-  authorizeRole(["Administrateur", "Gestionnaire", "Operateur"]),
+  authorizeRole(["Admin", "Manager", "Operator"]),
   catchAsync(ProductController.getProductByUUID)
 );
 
 // 🔥 Modifier un produit
 router.put(
   "/:uuid",
-  authorizeRole(["Administrateur"]),
+  authorizeRole(["Admin"]),
   catchAsync(ProductController.updateProduct)
 );
 
 // 🔥 Supprimer un produit
 router.delete(
   "/:uuid",
-  authorizeRole(["Administrateur"]),
+  authorizeRole(["Admin"]),
   catchAsync(ProductController.deleteProduct)
 );
 

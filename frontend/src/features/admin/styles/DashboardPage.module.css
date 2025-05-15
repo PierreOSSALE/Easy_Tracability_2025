@@ -1,0 +1,22 @@
+/* src/features/admin/styles/DashboardPage.module.css */
+
+.dashboardContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 1rem;
+  overflow-x: hidden;
+}
+
+.kpiRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.chartRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}

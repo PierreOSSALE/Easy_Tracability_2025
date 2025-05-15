@@ -2,7 +2,7 @@
 
 export interface IConfiguration {
   uuid: string;
-  parameterName: string;
+  parameterKey: string;
   parameterValue: string;
   lastModifiedAt: Date;
   lastModifiedBy: string;

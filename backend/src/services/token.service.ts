@@ -43,31 +43,42 @@ export class TokenService {
   async rotateRefreshToken(
     oldToken: string
   ): Promise<{ accessToken: string; refreshToken: string }> {
-    const payload = jwt.verify(
-      oldToken,
-      process.env.JWT_SECRET!
-    ) as UserSessionDTO & { exp?: number; iat?: number };
+    try {
+      const payload = jwt.verify(
+        oldToken,
+        process.env.JWT_SECRET!
+      ) as UserSessionDTO & { exp?: number; iat?: number };
 
-    // ✨ Nettoyage du payload pour éviter exp/iât dans la signature
-    const { exp, iat, ...cleanPayload } = payload;
+      const { exp, iat, ...cleanPayload } = payload;
 
-    const isBlacklisted = await this.isBlacklisted(oldToken);
-    if (isBlacklisted) throw new Error("Token déjà utilisé (blacklist)");
+      const isBlacklisted = await this.isBlacklisted(oldToken);
+      if (isBlacklisted) throw new Error("Token déjà utilisé (blacklist)");
 
-    const isValid = await this.isRefreshTokenValid(payload.uuid, oldToken);
-    if (!isValid) throw new Error("Token invalide ou mismatch");
+      const isValid = await this.isRefreshTokenValid(payload.uuid, oldToken);
+      if (!isValid) throw new Error("Token invalide ou mismatch");
 
-    const decoded = jwt.decode(oldToken) as any;
-    const expInSeconds = decoded.exp
-      ? decoded.exp - Math.floor(Date.now() / 1000)
-      : 60 * 60 * 24;
-    await this.blacklistToken(oldToken, expInSeconds);
+      const decoded = jwt.decode(oldToken) as any;
+      const expInSeconds = decoded.exp
+        ? decoded.exp - Math.floor(Date.now() / 1000)
+        : 60 * 60 * 24;
+      await this.blacklistToken(oldToken, expInSeconds);
 
-    const newAccessToken = generateAccessToken(cleanPayload); // ✅ plus clean
-    const newRefreshToken = generateRefreshToken(cleanPayload); // ✅ plus clean
-    await this.storeRefreshToken(cleanPayload, newRefreshToken);
+      const newAccessToken = generateAccessToken(cleanPayload);
+      const newRefreshToken = generateRefreshToken(cleanPayload);
+      await this.storeRefreshToken(cleanPayload, newRefreshToken);
 
-    return { accessToken: newAccessToken, refreshToken: newRefreshToken };
+      return { accessToken: newAccessToken, refreshToken: newRefreshToken };
+    } catch (error) {
+      // Gérer les erreurs spécifiques de JWT
+      if (error instanceof jwt.TokenExpiredError) {
+        throw new Error("Le token de rafraîchissement a expiré.");
+      } else if (error instanceof jwt.JsonWebTokenError) {
+        throw new Error("Token de rafraîchissement invalide.");
+      } else {
+        // Pour les autres erreurs, les relancer ou les gérer selon le besoin
+        throw error;
+      }
+    }
   }
 
   async revokeAll(user: UserSessionDTO): Promise<void> {

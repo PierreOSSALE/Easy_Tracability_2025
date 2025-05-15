@@ -1,0 +1,146 @@
+/* EASY-TRACABILITY:frontend/src/components/ui/Sidebar/Sidebar.module.css */
+
+@import "../../../index.css";
+
+/* Desktop & mobile collapsed */
+.sidebar {
+  position: relative;
+  height: 100vh;
+  background-color: var(--color-gray-light);
+  color: var(--color-gray-medium);
+  border-right: 1px solid var(--color-gray-lightest);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  transition: width 0.3s ease;
+}
+.sidebar.open {
+  width: 193px;
+}
+.sidebar.closed {
+  width: 64px;
+}
+.sidebar,
+.drawer {
+  z-index: 1000;
+}
+
+/* Header */
+.header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  width: 100%;
+}
+.logoTop {
+  height: 36px;
+  margin-right: auto;
+}
+
+/* Collapse/expand button (desktop) */
+.toggleButton {
+  font-size: 18px;
+  font-weight: bold;
+  background-color: var(--color-gray-light);
+  color: var(--color-gray-dark);
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+  border: 1px solid var(--color-gray-lightest);
+}
+
+/* ☰ button (collapsed desktop & mobile) */
+.headerToggle {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 2;
+}
+
+/* Menu & Footer */
+.menu {
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.menu li {
+  padding: 10px 12px;
+}
+.menuSection {
+  margin: 0;
+  padding: 0;
+}
+.separator {
+  border-top: 1px solid var(--color-gray-lightest);
+  margin: 8px 0;
+}
+.footer {
+  padding: 10px;
+  text-align: center;
+}
+.logoBottom {
+  height: 40px;
+}
+
+/* Drawer overlay mobile full-text */
+.drawer {
+  display: none;
+}
+.backdrop {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 75vw;
+    max-width: 300px;
+    height: 100vh;
+    background-color: var(--color-gray-light);
+    transform: translateX(-100%);
+    transition: transform 0.3s ease; /* même durée et timing qu’en desktop :contentReference[oaicite:1]{index=1} */
+    z-index: 2000;
+  }
+  .drawer.open {
+    transform: translateX(0);
+  }
+
+  .backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    z-index: 1990;
+  }
+
+  /* MobileToggle button positioning */
+  .mobileToggle {
+    display: block;
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background-color: var(--color-gray-light) !important;
+    border: 1px solid var(--color-gray-lightest) !important;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 200000 !important;
+  }
+  .drawer .headerToggle {
+    display: none;
+  }
+}
+
+/* Hide drawer/backdrop/mobileToggle by default */
+.drawer,
+.backdrop,
+.mobileToggle {
+  display: none;
+}

@@ -13,7 +13,7 @@ router.use(hybridAuth);
 
 router.get(
   "/overview",
-  authorizeRole(["Administrateur", "Gestionnaire"]),
+  authorizeRole(["Admin", "Manager"]),
   catchAsync(StatsController.getOverview)
 );
 

@@ -14,40 +14,40 @@ router.use(hybridAuth);
 // Routes sécurisées
 router.get(
   "/",
-  authorizeRole(["Administrateur", "Gestionnaire", "Operateur"]),
+  authorizeRole(["Admin", "Manager", "Operator"]),
   catchAsync(TransactionController.getAllTransactions)
 );
 
 router.post(
   "/",
-  authorizeRole(["Administrateur", "Gestionnaire"]),
+  authorizeRole(["Admin", "Manager"]),
   catchAsync(TransactionController.createTransaction)
 );
 router.get(
   "/export/csv",
-  authorizeRole(["Administrateur", "Gestionnaire"]),
+  authorizeRole(["Admin", "Manager"]),
   catchAsync(TransactionController.exportTransactionsCSV)
 );
 router.get(
   "/:uuid",
-  authorizeRole(["Administrateur", "Gestionnaire", "Operateur"]),
+  authorizeRole(["Admin", "Manager", "Operator"]),
 
   catchAsync(TransactionController.getTransactionById)
 );
 router.put(
   "/:uuid",
-  authorizeRole(["Administrateur", "Gestionnaire"]),
+  authorizeRole(["Admin", "Manager"]),
   catchAsync(TransactionController.updateTransaction)
 );
 router.delete(
   "/:uuid",
-  authorizeRole(["Administrateur"]),
+  authorizeRole(["Admin"]),
   catchAsync(TransactionController.deleteTransaction)
 );
 
 router.get(
   "/:uuid/invoice",
-  authorizeRole(["Administrateur", "Gestionnaire"]),
+  authorizeRole(["Admin", "Manager"]),
   catchAsync(TransactionController.generateInvoice)
 );
 export default router;

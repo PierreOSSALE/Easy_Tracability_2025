@@ -1,0 +1,87 @@
+/* src/components/common/MovementTable.module.css */
+
+/* Wrapper scrollable */
+.movementTableWrapper {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  /* overflow-x: auto; */
+  margin-top: 1rem;
+}
+
+/* Style de base du tableau */
+.table {
+  width: 100%;
+  /* min-width: 600px; */
+  table-layout: auto;
+  border-collapse: collapse;
+  border-spacing: 0;
+  background: #fff;
+  border-radius: 8px; /* coins arrondis */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  font-family: system-ui, sans-serif;
+}
+.table caption {
+  caption-side: top; /* place au-dessus du tableau (valeur par défaut) */
+  text-align: left;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  color: var(--color-primary);
+}
+
+/* En‑tête */
+.table thead th {
+  background-color: #2b517a; /* même que --color-primary */
+  color: #fff;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  position: sticky;
+  top: 0; /* header fixe en scroll */
+  z-index: 1;
+}
+
+/* Lignes alternées (zebra) */
+.table tbody tr:nth-of-type(even) {
+  background-color: #f9f9f9; /* fond léger :contentReference[oaicite:3]{index=3} */
+}
+
+/* Effet hover */
+.table tbody tr:hover {
+  background-color: #e6f7ff; /* bleu très clair sur ligne active :contentReference[oaicite:4]{index=4} */
+}
+
+/* Cellules */
+.table th,
+.table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #ececec;
+  vertical-align: middle;
+  font-size: 0.9rem;
+}
+
+/* Première cellule arrondie à gauche, dernière à droite */
+.table tbody tr:first-child td:first-child,
+.table thead tr th:first-child {
+  border-top-left-radius: 8px;
+}
+
+.table tbody tr:last-child td:last-child,
+.table thead tr th:last-child {
+  border-top-right-radius: 8px;
+}
+
+/* Responsive : réduire le padding sur mobile */
+@media (max-width: 768px) {
+  .table {
+    margin: 0 -10px;
+  }
+  .table thead th,
+  .table th,
+  .table td {
+    padding: 0.5rem;
+  }
+}
