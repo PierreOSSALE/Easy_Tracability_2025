@@ -72,8 +72,8 @@ export const useProducts = () => {
     setProducts(out);
   }, []);
 
-  const loadProductsLowStock = useCallback(async () => {
-    const low = await productService.getProductsLowStock();
+  const loadProductsLowStock = useCallback(async (threshold: number = 100) => {
+    const low = await productService.getProductsLowStock(threshold);
     setProducts(low);
   }, []);
 

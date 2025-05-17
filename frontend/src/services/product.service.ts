@@ -8,7 +8,7 @@ import { Product } from "../types/product";
 export const fetchAllProducts = (): Promise<Product[]> => {
   return apiWrapper(async () => {
     const res = await apiClient.get("/products");
-    return res.data;
+    return res.data.data;
   });
 };
 
@@ -16,7 +16,7 @@ export const fetchAllProducts = (): Promise<Product[]> => {
 export const fetchProductById = (uuid: string): Promise<Product> => {
   return apiWrapper(async () => {
     const res = await apiClient.get(`/products/${uuid}`);
-    return res.data;
+    return res.data.data;
   });
 };
 
@@ -26,7 +26,7 @@ export const createProduct = (
 ): Promise<Product> => {
   return apiWrapper(async () => {
     const res = await apiClient.post("/products", productData);
-    return res.data;
+    return res.data.data;
   });
 };
 
@@ -37,7 +37,7 @@ export const updateProduct = (
 ): Promise<Product> => {
   return apiWrapper(async () => {
     const res = await apiClient.put(`/products/${uuid}`, productData);
-    return res.data;
+    return res.data.data;
   });
 };
 
@@ -54,7 +54,7 @@ export const searchProducts = (name: string): Promise<Product[]> => {
     const res = await apiClient.get("/products/search", {
       params: { name },
     });
-    return res.data;
+    return res.data.data;
   });
 };
 
@@ -80,7 +80,7 @@ export const getProductsLowStock = (threshold: number): Promise<Product[]> => {
 export const getProductsOutOfStock = (): Promise<Product[]> => {
   return apiWrapper(async () => {
     const res = await apiClient.get("/products/out-of-stock");
-    return res.data;
+    return res.data.data;
   });
 };
 
@@ -90,6 +90,6 @@ export const getProductsAbovePrice = (price: number): Promise<Product[]> => {
     const res = await apiClient.get("/products/above-price", {
       params: { price },
     });
-    return res.data;
+    return res.data.data;
   });
 };

@@ -1,0 +1,71 @@
+/* EASY-TRACABILITY:frontend/src/components/common/styles/InputField.css */
+
+@import "../../../index.css";
+
+/* Formulaire */
+.form-group {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.form-label {
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: var(--color-black);
+}
+
+input,
+select,
+.dx-texteditor-input,
+.dx-numberbox-input {
+  height: 2.5rem;
+  padding: 6px 10px;
+  font-size: 1rem;
+  border: none;
+  color: var(--color-gray-dark);
+  background-color: var(--color-white);
+  transition: border-color 0.2s ease-in-out;
+}
+
+input:focus,
+select:focus,
+.dx-texteditor-input:focus {
+  border-color: var(--color-primary);
+  outline: none;
+}
+select {
+  cursor: pointer;
+}
+.with-icon .dx-texteditor-input,
+.with-icon .dx-numberbox-input {
+  padding-left: 2.5rem !important;
+}
+
+.with-icon .icon {
+  position: absolute;
+  left: 0;
+  top: 0%;
+  z-index: 2;
+  color: var(--color-gray-medium);
+  font-size: 1.5rem;
+  background: var(--color-gray-lightest);
+  padding: 8px 10px;
+}
+
+.toggle-visibility {
+  position: absolute;
+  right: 10px;
+  top: 12px;
+  cursor: pointer;
+  color: var(--color-gray-medium);
+}
+.input-number-field {
+  border: none !important;
+  border-radius: none;
+}
+.dx-texteditor.dx-editor-outlined {
+  border: none !important;
+  border-radius: none;
+}

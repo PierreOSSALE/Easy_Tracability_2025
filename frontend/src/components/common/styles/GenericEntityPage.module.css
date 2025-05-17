@@ -1,0 +1,107 @@
+/* EASY-TRACABILITY:frontend/src/components/common/styles/GenericEntityPage.module.css */
+
+@import "../../../index.css";
+.actionBar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.exportButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  color: var(--color-black);
+  font-size: 0.6rem !important;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 0px 1px rgba(0, 0, 0, 0.181);
+}
+.exportButton:hover {
+  background-color: var(--color-gray-light);
+}
+.exportIcon {
+  font-size: 1.5rem;
+}
+.importLabel {
+  display: inline-block;
+  padding: 8px 12px;
+  background-color: #d0e6f5;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.pageSizeWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.pageSizeWrapper select {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  border: 1px solid var(--color-gray-light);
+}
+
+.filterBar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  align-items: center;
+  background: var(--color-gray-lightest);
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.filterBar select,
+.filterBar input {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-gray-light);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  width: 200px;
+  background: var(--color-white);
+}
+
+.filterBar input:focus {
+  outline: none;
+}
+
+.filterBar button {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  border: none;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.filterBar button:hover {
+  background-color: var(--color-primary-50);
+}
+
+/* Harmonisation du titre et marges */
+.UsersPage {
+  padding: 2rem;
+  background: var(--color-bg-light);
+}
+
+.UsersPage h1 {
+  font-size: 1.75rem;
+  color: var(--color-gray-dark);
+  margin-bottom: 1.5rem;
+}
+
+/* Intégration avec DynamicTable */
+.pagination {
+  margin-top: 1rem;
+}

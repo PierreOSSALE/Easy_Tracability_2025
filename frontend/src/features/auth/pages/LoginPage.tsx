@@ -69,8 +69,7 @@ const LoginPage: React.FC = () => {
           <PasswordField
             value={password}
             onChange={setPassword}
-
-            // placeholder="Password"
+            placeholder="Password"
           />
         </div>
 
@@ -79,7 +78,7 @@ const LoginPage: React.FC = () => {
         )}
 
         <div className="form-actions">
-          <button className="btn-primary" type="submit" disabled={loading}>
+          <button className="btn-primary-auth" type="submit" disabled={loading}>
             LOGIN
           </button>
         </div>

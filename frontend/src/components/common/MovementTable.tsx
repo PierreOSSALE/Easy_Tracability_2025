@@ -1,7 +1,7 @@
-// src/components/common/MovementTable.tsx
+// EASY-TRACABILITY:frontend/src/components/common/MovementTable.tsx
 
-import React from "react";
-import styles from "./MovementTable.module.css";
+import React, { useMemo } from "react";
+import DynamicTable from "./DynamicTable";
 import {
   InventoryMovement,
   OperationType,
@@ -11,32 +11,73 @@ interface Props {
   movements: InventoryMovement[];
 }
 
-export const MovementTable: React.FC<Props> = ({ movements }) => (
-  <div className={styles.movementTableWrapper}>
-    <table className={styles.table}>
-      <caption aria-label="Derniers mouvements">Derniers mouvements</caption>
-      <thead>
-        <tr>
-          <th>Produit</th>
-          <th>Type</th>
-          <th>Quantité</th>
-          <th>Date</th>
-          <th>Opérateur</th>
-        </tr>
-      </thead>
-      <tbody>
-        {movements.map((mvt) => (
-          <tr key={mvt.uuid}>
-            <td>{mvt.productUUID}</td>
-            <td>
-              {mvt.operationType === OperationType.ENTREE ? "Entrée" : "Sortie"}
-            </td>
-            <td>{mvt.quantity}</td>
-            <td>{new Date(mvt.date).toLocaleDateString()}</td>
-            <td>{mvt.userUUID}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-);
+export const MovementTable: React.FC<Props> = ({ movements }) => {
+  // Calcul des totaux
+  const { totalIn, totalOut } = useMemo(() => {
+    let inSum = 0,
+      outSum = 0;
+    movements.forEach((m) => {
+      if (m.operationType === OperationType.ENTREE) inSum += m.quantity;
+      else outSum += m.quantity;
+    });
+    return { totalIn: inSum, totalOut: outSum };
+  }, [movements]);
+
+  const columns = [
+    {
+      header: "Produit",
+      accessor: "productUUID" as const,
+      render: (m: InventoryMovement) => m.productUUID,
+    },
+    {
+      header: "Type",
+      accessor: "operationType" as const,
+      render: (m: InventoryMovement) =>
+        m.operationType === OperationType.ENTREE ? (
+          <span style={{ color: "green" }}>Entrée</span>
+        ) : (
+          <span style={{ color: "red" }}>Sortie</span>
+        ),
+    },
+    {
+      header: "Quantité",
+      accessor: "quantity" as const,
+      render: (m: InventoryMovement) => m.quantity,
+    },
+    {
+      header: "Date",
+      accessor: "date" as const,
+      render: (m: InventoryMovement) => new Date(m.date).toLocaleDateString(),
+    },
+    {
+      header: "Opérateur",
+      accessor: "userUUID" as const,
+      render: (m: InventoryMovement) => m.userUUID,
+    },
+  ];
+
+  return (
+    <div style={{ padding: "1rem" }}>
+      <DynamicTable<InventoryMovement>
+        data={movements}
+        columns={columns}
+        showActions={false}
+        rowKey="uuid"
+        footerData={{
+          quantity: (
+            <>
+              Entrées :{" "}
+              <span style={{ color: "green", fontWeight: "bold" }}>
+                {totalIn}
+              </span>{" "}
+              — Sorties :{" "}
+              <span style={{ color: "red", fontWeight: "bold" }}>
+                {totalOut}
+              </span>
+            </>
+          ),
+        }}
+      />
+    </div>
+  );
+};

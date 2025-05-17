@@ -73,6 +73,40 @@
 .table thead tr th:last-child {
   border-top-right-radius: 8px;
 }
+.table tfoot {
+  background-color: var(--color-gray-light);
+  right: 0;
+}
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.pageButton .dx-button-content {
+  font-size: 1.2rem;
+}
+
+.pageInfo {
+  margin: 0 1rem;
+  font-weight: 500;
+  color: var(--color-gray-dark);
+}
+
+.pageSizeControl {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+.pageSizeControl label {
+  margin-right: 0.5rem;
+}
+.pageSizeControl select {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  border: 1px solid var(--color-gray-light);
+}
 
 /* Responsive : réduire le padding sur mobile */
 @media (max-width: 768px) {

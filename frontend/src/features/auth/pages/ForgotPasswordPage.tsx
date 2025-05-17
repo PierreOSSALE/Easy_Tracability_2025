@@ -70,7 +70,7 @@ const ForgotPasswordPage: React.FC = () => {
         )}
 
         <div className="form-actions">
-          <button className="btn-primary" type="submit">
+          <button className="btn-primary-auth" type="submit">
             SEND RESET LINK
           </button>
         </div>

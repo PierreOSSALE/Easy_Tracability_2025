@@ -2,7 +2,7 @@
 
 import { apiClient } from "../../../services/api.service";
 import { apiWrapper } from "../../../utils/apiWrapper";
-import { User } from "../../../types/user";
+import { User } from "../types/user";
 
 // Récupérer tous les utilisateurs
 export const fetchUsers = (): Promise<User[]> => {

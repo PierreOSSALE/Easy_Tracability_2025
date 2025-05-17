@@ -16,7 +16,7 @@
   --color-white: #ffffff;
 
   --color-primary: #2b517a;
-  --color-primary-50: rgba(43, 81, 122, 0.53); /* 53% d'opacité */
+  --color-primary-50: #217785; /* 53% d'opacité */
 
   --color-accent-purple: #9747ff;
   --color-error: #c62828;
@@ -48,4 +48,19 @@ h2 {
   font-size: 1.5rem;
   font-weight: 600;
   color: var(--color-gray-dark);
+}
+
+h4 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--color-primary);
+  transition: all 0.3s ease;
+  font-weight: 600;
+}
+
+@media screen and (max-width: 768px) {
+  h2,
+  h4 {
+    font-size: 1.25rem;
+  }
 }

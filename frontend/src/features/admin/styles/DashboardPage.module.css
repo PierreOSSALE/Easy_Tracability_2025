@@ -20,3 +20,13 @@
   flex-wrap: wrap;
   gap: 1rem;
 }
+
+.filterRow {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  /* align-items: center; */
+  column-gap: 2rem;
+  row-gap: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}

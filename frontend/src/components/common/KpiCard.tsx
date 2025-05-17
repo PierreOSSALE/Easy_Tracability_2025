@@ -1,6 +1,6 @@
 // src/components/common/KpiCard.tsx
 import React from "react";
-import styles from "./KpiCard.module.css";
+import styles from "./styles/KpiCard.module.css";
 
 interface KpiCardProps {
   title: string;

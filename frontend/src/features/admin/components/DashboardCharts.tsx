@@ -19,7 +19,7 @@ import PieChart, {
 import { fetchInventoryMovements } from "../../../services/InventoryMovement.service";
 import { fetchUsers } from "../services/user.service";
 import { InventoryMovement } from "../../../types/inventoryMovement";
-import { User, UserRole } from "../../../types/user";
+import { User, UserRole } from "../types/user";
 import styles from "../styles/DashboardCharts.module.css";
 import html2canvas from "html2canvas/dist/html2canvas.esm.js";
 import jsPDF from "jspdf";

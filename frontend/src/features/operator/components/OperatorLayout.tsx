@@ -1,49 +1,74 @@
 // EASY-TRACABILITY:frontend/src/features/operator/components/OperatorLayout.tsx
+
+import { useLocation, Outlet } from "react-router-dom";
 import { SidebarProvider } from "../../../components/ui/SidebarContext";
 import { Sidebar } from "../../../components/ui/Sidebar/Sidebar";
 import { TopBar } from "../../../components/ui/TopBar/TopBar";
-import { Outlet } from "react-router-dom";
+import "../../../../src/layouts/layout.css";
 
-const OperatorLayout = () => (
-  <SidebarProvider>
-    <div
-      className="layout"
-      style={{
-        display: "flex",
-        height: "100vh",
-        overflow: "hidden",
-      }}
-    >
-      {/* 1. Sidebar à gauche */}
-      <Sidebar />
+// Mapping chemin → libellé
+const TITLE_MAP: Record<string, string> = {
+  "/operator": "Operator Dashboard",
+  // Ajouter ici d'autres sous-routes opérateur si nécessaire
+  // "/operator/xyz": "Votre Page XYZ",
+};
 
-      {/* 2. Colonne principale (TopBar + contenu) */}
+const OperatorLayout = () => {
+  const { pathname } = useLocation();
+  const baseTitle =
+    TITLE_MAP[pathname] ??
+    TITLE_MAP[pathname.replace(/\/$/, "")] ??
+    "Operator Dashboard";
+
+  const titleWithIcon = (
+    <>
+      {baseTitle}
+      <i className="fa-solid fa-angles-right" style={{ marginLeft: 8 }} />
+    </>
+  );
+
+  return (
+    <SidebarProvider>
       <div
-        className="main-column"
+        className="layout"
         style={{
           display: "flex",
-          flexDirection: "column",
-          flex: 1,
-          position: "relative",
+          height: "100vh",
+          overflow: "hidden",
         }}
       >
-        {/* 2a. TopBar */}
-        <TopBar title="Operator Dashboard" />
-        {/* 2b. Contenu chargé par react-router */}
-        <main
-          className="content"
+        {/* 1. Sidebar à gauche */}
+        <Sidebar />
+
+        {/* 2. Colonne principale */}
+        <div
+          className="main-column"
           style={{
+            display: "flex",
+            flexDirection: "column",
             flex: 1,
-            overflowY: "auto",
-            padding: "20px",
-            marginTop: "60px", // correspond à la hauteur de la TopBar
+            position: "relative",
           }}
         >
-          <Outlet />
-        </main>
+          {/* TopBar affiche le titre dynamique */}
+          <TopBar title={titleWithIcon} />
+
+          {/* Contenu chargé par React Router */}
+          <main
+            className="content"
+            style={{
+              flex: 1,
+              overflowY: "auto",
+              padding: "20px",
+              marginTop: "60px",
+            }}
+          >
+            <Outlet />
+          </main>
+        </div>
       </div>
-    </div>
-  </SidebarProvider>
-);
+    </SidebarProvider>
+  );
+};
 
 export default OperatorLayout;

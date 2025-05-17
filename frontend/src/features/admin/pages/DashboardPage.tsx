@@ -45,7 +45,7 @@ const DashboardPage = () => {
 
   return (
     <div className={styles.dashboardContainer}>
-      <h2 className="text-2xl font-bold mb-4">Dashboard</h2>
+      <h4>Dashboard</h4>
 
       {/* Bloc KPI avec icônes et couleurs */}
       <div className={styles.kpiRow}>

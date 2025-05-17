@@ -7,7 +7,7 @@ import { Profile } from "../types/profile";
 // Récupérer le profil connecté
 export const fetchMyProfile = (): Promise<Profile> => {
   return apiWrapper(async () => {
-    const res = await apiClient.get("/profile/me");
+    const res = await apiClient.get("/auth/me");
     return res.data;
   });
 };
@@ -23,7 +23,7 @@ export const updateMyProfile = (payload: {
     formData.append("profilePicture", payload.profilePicture);
 
   return apiWrapper(async () => {
-    const res = await apiClient.put("/profile/me", formData, {
+    const res = await apiClient.put("/auth/me", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
     return res.data;

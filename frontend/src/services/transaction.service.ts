@@ -8,7 +8,9 @@ import { Transaction } from "../types/transaction";
 export const fetchAllTransactions = (): Promise<Transaction[]> => {
   return apiWrapper(async () => {
     const res = await apiClient.get("/transactions");
-    return res.data;
+    // L'API renvoie { count, rows }
+    const payload = res.data as { count: number; rows: Transaction[] };
+    return payload.rows;
   });
 };
 

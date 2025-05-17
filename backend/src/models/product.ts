@@ -64,11 +64,8 @@ export const ProductModel = ProductInstance.init(
       },
     },
     imageUrl: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: true,
-      validate: {
-        len: [0, 500],
-      },
     },
   },
   {

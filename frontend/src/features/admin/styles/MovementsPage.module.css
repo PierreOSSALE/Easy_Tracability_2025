@@ -1,0 +1,53 @@
+/* EASY-TRACABILITY:frontend/src/features/admin/pages/MovementsPage.module.css */
+
+.filterBar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  align-items: center;
+  background: var(--color-gray-lightest);
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.filterItem {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.filterItem .icon {
+  position: absolute;
+  left: 8px;
+  font-size: 1rem;
+  color: var(--color-gray-dark);
+  pointer-events: none;
+}
+
+.filterItem input[type="date"],
+.filterItem input[type="text"] {
+  padding: 0.5rem 0.75rem 0.5rem 2.5rem;
+  border: 1px solid var(--color-gray-light);
+  border-radius: 4px;
+  background: var(--color-white);
+  font-size: 0.9rem;
+}
+
+.filterButton {
+  background-color: var(--color-primary);
+  color: var(--color-gray-dark);
+  border: none;
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.filterButton .dx-button-content {
+  font-weight: 500;
+}
+.filterButton:hover {
+  background-color: var(--color-primary-50);
+}

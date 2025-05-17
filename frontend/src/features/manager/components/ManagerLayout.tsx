@@ -1,50 +1,51 @@
 // EASY-TRACABILITY:frontend/src/features/manager/components/ManagerLayout.tsx
 
+import { useLocation, Outlet } from "react-router-dom";
 import { SidebarProvider } from "../../../components/ui/SidebarContext";
 import { Sidebar } from "../../../components/ui/Sidebar/Sidebar";
 import { TopBar } from "../../../components/ui/TopBar/TopBar";
-import { Outlet } from "react-router-dom";
+import "../../../../src/layouts/layout.css";
 
-const ManagerLayout = () => (
-  <SidebarProvider>
-    <div
-      className="layout"
-      style={{
-        display: "flex",
-        height: "100vh",
-        overflow: "hidden",
-      }}
-    >
-      {/* 1. Sidebar à gauche */}
-      <Sidebar />
+// Mapping des routes manager → titres dynamiques
+const TITLE_MAP: Record<string, string> = {
+  "/manager": "Dashboard",
+  "/manager/products": "Produits",
+  "/manager/movements": "Mouvements",
+  "/manager/transactions": "Transactions",
+  "/manager/statistics": "Statistiques",
+};
 
-      {/* 2. Colonne principale (TopBar + contenu) */}
-      <div
-        className="main-column"
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          flex: 1,
-          position: "relative",
-        }}
-      >
-        {/* 2a. TopBar */}
-        <TopBar title="Manager Dashboard" />
-        {/* 2b. Contenu chargé par react-router */}
-        <main
-          className="content"
-          style={{
-            flex: 1,
-            overflowY: "auto",
-            padding: "20px",
-            marginTop: "60px", // correspond à la hauteur de la TopBar
-          }}
-        >
-          <Outlet />
-        </main>
+const ManagerLayout = () => {
+  const { pathname } = useLocation();
+
+  const baseTitle =
+    TITLE_MAP[pathname] ??
+    TITLE_MAP[pathname.replace(/\/$/, "")] ??
+    "Manager Dashboard";
+
+  const titleWithIcon = (
+    <>
+      {baseTitle}
+      <i className="fa-solid fa-angles-right" style={{ marginLeft: 8 }} />
+    </>
+  );
+
+  return (
+    <SidebarProvider>
+      <div className="layout">
+        {/* Sidebar à gauche */}
+        <Sidebar />
+
+        {/* Colonne principale */}
+        <div className="mainColumn">
+          <TopBar title={titleWithIcon} />
+          <main className="content">
+            <Outlet />
+          </main>
+        </div>
       </div>
-    </div>
-  </SidebarProvider>
-);
+    </SidebarProvider>
+  );
+};
 
 export default ManagerLayout;

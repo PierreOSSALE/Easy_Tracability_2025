@@ -1,19 +1,22 @@
 // EASY-TRACABILITY:frontend/src/components/ui/TopBar/TopBar.tsx
 
+// EASY-TRACABILITY:frontend/src/components/ui/TopBar/TopBar.tsx
+
 import "./TopBar.css";
 import { Button } from "devextreme-react/button";
 import { useAuthContext } from "../../../features/auth/hooks/useAuthContext";
 import { useSidebar } from "../SidebarContext";
+import { ReactNode } from "react";
 
 interface TopBarProps {
-  title: string;
+  title: ReactNode; // on passe de `string` à `ReactNode`
 }
 
 export const TopBar = ({ title }: TopBarProps) => {
   const { user } = useAuthContext();
   const { isOpen } = useSidebar();
 
-  // largeur de la sidebar (collapsed=64, expanded=193) utilisé tout le temps
+  // largeur de la sidebar (collapsed=64, expanded=193)
   const sidebarWidth = isOpen ? 193 : 64;
 
   return (
@@ -25,6 +28,7 @@ export const TopBar = ({ title }: TopBarProps) => {
       }}
     >
       <div className="topbar-left">
+        {/* Affichage de notre ReactNode (texte + icône) */}
         <span className="title">{title}</span>
       </div>
       <div className="topbar-right">

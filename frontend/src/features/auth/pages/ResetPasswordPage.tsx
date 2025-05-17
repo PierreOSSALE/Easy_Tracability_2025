@@ -78,7 +78,7 @@ const ResetPasswordPage: React.FC = () => {
         )}
 
         <div className="form-actions">
-          <button className="btn-primary" type="submit">
+          <button className="btn-primary-auth" type="submit">
             UPDATE PASSWORD
           </button>
         </div>

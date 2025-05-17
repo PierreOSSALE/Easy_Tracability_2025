@@ -13,7 +13,7 @@ export const useInventoryMovements = () => {
     setLoading(true);
     try {
       const data = await InventoryService.fetchInventoryMovements();
-      setMovements(data);
+      setMovements(data.rows);
     } catch (err: unknown) {
       setError(err as Error);
     } finally {

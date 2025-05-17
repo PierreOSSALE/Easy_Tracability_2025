@@ -5,8 +5,8 @@ import ms from "ms";
 
 const JWT_SECRET: Secret = process.env.JWT_SECRET || "defaultSecret";
 
-const accessExpiresEnv = process.env.ACCESS_TOKEN_EXPIRES_IN || "15m";
-const refreshExpiresEnv = process.env.REFRESH_TOKEN_EXPIRES_IN || "7d";
+const accessExpiresEnv = process.env.ACCESS_TOKEN_EXPIRES_IN || "48h";
+const refreshExpiresEnv = process.env.REFRESH_TOKEN_EXPIRES_IN || "30d";
 
 const accessTokenExpiresInSeconds = Math.floor(
   ms(accessExpiresEnv as ms.StringValue) / 1000

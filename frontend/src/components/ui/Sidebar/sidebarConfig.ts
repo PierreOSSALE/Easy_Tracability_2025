@@ -32,24 +32,27 @@ export const sidebarConfig: SidebarConfig = {
         items: [{ icon: "chart", label: "Statistics" }],
       },
       {
-        items: [
-          { icon: "lock", label: "Secure" },
-          { icon: "preferences", label: "Settings" },
-        ],
+        items: [{ icon: "preferences", label: "Settings" }],
       },
     ],
     Manager: [
       {
+        title: "Vue d'ensemble",
         items: [{ icon: "home", label: "Dashboard" }],
       },
       {
+        title: "Stock & Produits",
         items: [
           { icon: "product", label: "Products" },
           { icon: "repeat", label: "Movements" },
-          { icon: "money", label: "Transaction" },
         ],
       },
       {
+        title: "Suivi Transactions",
+        items: [{ icon: "money", label: "Transactions" }],
+      },
+      {
+        title: "Analyse",
         items: [{ icon: "chart", label: "Statistics" }],
       },
     ],

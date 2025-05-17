@@ -7,11 +7,6 @@ import { useAuthContext } from "../features/auth/hooks/useAuthContext";
 const RoleProtectedRoute: React.FC = () => {
   const { user, loading } = useAuthContext();
   const location = useLocation();
-  // console.log("[RoleProtectedRoute] render", {
-  //   user,
-  //   loading,
-  //   pathname: location.pathname,
-  // });
 
   if (loading) {
     return <div>Vérification en cours…</div>;
