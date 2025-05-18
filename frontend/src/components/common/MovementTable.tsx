@@ -6,12 +6,15 @@ import {
   InventoryMovement,
   OperationType,
 } from "../../types/inventoryMovement";
+import { useProducts } from "../../hooks/useProduct";
 
 interface Props {
   movements: InventoryMovement[];
 }
 
 export const MovementTable: React.FC<Props> = ({ movements }) => {
+  const { products } = useProducts();
+
   // Calcul des totaux
   const { totalIn, totalOut } = useMemo(() => {
     let inSum = 0,
@@ -23,15 +26,22 @@ export const MovementTable: React.FC<Props> = ({ movements }) => {
     return { totalIn: inSum, totalOut: outSum };
   }, [movements]);
 
-  const columns = [
+  const columns: {
+    header: string;
+    accessor: keyof InventoryMovement;
+    render?: (m: InventoryMovement) => React.ReactNode;
+  }[] = [
     {
       header: "Produit",
-      accessor: "productUUID" as const,
-      render: (m: InventoryMovement) => m.productUUID,
+      accessor: "productBarcode",
+      render: (m: InventoryMovement) => {
+        const prod = products.find((p) => p.barcode === m.productBarcode);
+        return prod?.name || "—";
+      },
     },
     {
       header: "Type",
-      accessor: "operationType" as const,
+      accessor: "operationType",
       render: (m: InventoryMovement) =>
         m.operationType === OperationType.ENTREE ? (
           <span style={{ color: "green" }}>Entrée</span>
@@ -41,17 +51,18 @@ export const MovementTable: React.FC<Props> = ({ movements }) => {
     },
     {
       header: "Quantité",
-      accessor: "quantity" as const,
+      accessor: "quantity",
       render: (m: InventoryMovement) => m.quantity,
     },
     {
       header: "Date",
-      accessor: "date" as const,
-      render: (m: InventoryMovement) => new Date(m.date).toLocaleDateString(),
+      accessor: "date",
+      render: (m: InventoryMovement) =>
+        new Date(m.date).toLocaleDateString("fr-FR"),
     },
     {
       header: "Opérateur",
-      accessor: "userUUID" as const,
+      accessor: "userUUID",
       render: (m: InventoryMovement) => m.userUUID,
     },
   ];

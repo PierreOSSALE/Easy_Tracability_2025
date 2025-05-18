@@ -3,10 +3,15 @@
 import jwt, { Secret, SignOptions } from "jsonwebtoken";
 import ms from "ms";
 
-const JWT_SECRET: Secret = process.env.JWT_SECRET || "defaultSecret";
+const JWT_SECRET: Secret = (() => {
+  if (!process.env.JWT_SECRET) {
+    throw new Error("JWT_SECRET environment variable is not defined");
+  }
+  return process.env.JWT_SECRET;
+})();
 
-const accessExpiresEnv = process.env.ACCESS_TOKEN_EXPIRES_IN || "48h";
-const refreshExpiresEnv = process.env.REFRESH_TOKEN_EXPIRES_IN || "30d";
+const accessExpiresEnv = process.env.ACCESS_TOKEN_EXPIRES_IN;
+const refreshExpiresEnv = process.env.REFRESH_TOKEN_EXPIRES_IN;
 
 const accessTokenExpiresInSeconds = Math.floor(
   ms(accessExpiresEnv as ms.StringValue) / 1000

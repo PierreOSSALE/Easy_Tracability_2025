@@ -20,21 +20,22 @@ export const useAuth = (): UseAuthResult => {
   const [loading, setLoading] = useState<boolean>(true);
   const navigate = useNavigate();
 
-  const login = useCallback(async (credentials: LoginPayload) => {
-    // console.log("[useAuth] login start");
-    setLoading(true);
-    const { user: loggedUser, accessToken } =
-      await authService.login(credentials);
-    // console.log("[useAuth] login token:", accessToken);
-    setAccessToken(accessToken ?? null);
-    // console.log(
-    //   "[useAuth] storage after set:",
-    //   sessionStorage.getItem("accessToken")
-    // );
-    setUser(loggedUser);
-    setLoading(false);
-    return loggedUser;
-  }, []);
+  const login = useCallback(
+    async (credentials: LoginPayload) => {
+      // console.log("[useAuth] login start");
+      setLoading(true);
+      try {
+        const { user: loggedUser, accessToken } =
+          await authService.login(credentials);
+        setAccessToken(accessToken ?? null);
+        setUser(loggedUser);
+        return loggedUser;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [setLoading]
+  );
 
   const logout = useCallback(async () => {
     // console.log("[useAuth] logout start");

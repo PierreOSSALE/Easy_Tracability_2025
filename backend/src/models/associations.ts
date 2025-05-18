@@ -18,11 +18,13 @@ IInventoryMovementModel.belongsTo(UserModel, {
 
 // Association: Un Product peut être impliqué dans plusieurs InventoryMovements.
 ProductModel.hasMany(IInventoryMovementModel, {
-  foreignKey: "productUUID",
+  foreignKey: "productBarcode",
+  sourceKey: "barcode",
   as: "movements",
 });
 IInventoryMovementModel.belongsTo(ProductModel, {
-  foreignKey: "productUUID",
+  foreignKey: "productBarcode",
+  targetKey: "barcode",
   as: "product",
 });
 

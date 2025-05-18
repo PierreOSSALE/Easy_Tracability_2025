@@ -7,17 +7,17 @@ export interface IProduct {
   description: string;
   price: number;
   stockQuantity: number;
-  imageUrl?: string; // 🆕 Image facultative
+  imageUrl?: string; // optional image URL
 }
 
 export interface IProductCreation {
   uuid?: string;
   name: string;
-  barcode: string;
+  barcode?: string; // rendu optionnel, sera généré automatiquement
   description: string;
   price: number;
   stockQuantity: number;
-  imageUrl?: string; // 🆕
+  imageUrl?: string;
 }
 
 export interface IProductUpdate {
@@ -26,5 +26,5 @@ export interface IProductUpdate {
   description?: string;
   price?: number;
   stockQuantity?: number;
-  imageUrl?: string; // 🆕
+  imageUrl?: string;
 }

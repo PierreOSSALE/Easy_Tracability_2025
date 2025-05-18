@@ -34,7 +34,7 @@ app.listen(port, async () => {
     // 🔁 Créer les mouvements d'inventaire
     const inventoryMovements = await seedInventoryMovements(
       user.uuid,
-      product.uuid
+      product.barcode
     );
 
     if (inventoryMovements.length > 0) {

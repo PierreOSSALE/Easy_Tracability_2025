@@ -45,7 +45,7 @@ export default function MovementsPage() {
       })
       .filter((m) =>
         productFilter
-          ? m.productUUID.toLowerCase().includes(productFilter.toLowerCase())
+          ? m.productBarcode.toLowerCase().includes(productFilter.toLowerCase())
           : true
       )
       .filter((m) =>
@@ -59,7 +59,7 @@ export default function MovementsPage() {
   const columns = [
     {
       header: "Produit",
-      accessor: "productUUID" as const,
+      accessor: "productBarcode" as const,
     },
     {
       header: "Type",

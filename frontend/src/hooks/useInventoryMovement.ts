@@ -2,7 +2,11 @@
 
 import { useEffect, useState, useCallback } from "react";
 import * as InventoryService from "../services/InventoryMovement.service";
-import { InventoryMovement, OperationType } from "../types/inventoryMovement";
+import {
+  NewInventoryMovement,
+  InventoryMovement,
+  OperationType,
+} from "../types/inventoryMovement";
 
 export const useInventoryMovements = () => {
   const [movements, setMovements] = useState<InventoryMovement[]>([]);
@@ -37,14 +41,12 @@ export const useInventoryMovements = () => {
     []
   );
 
-  const addMovement = useCallback(
-    async (movement: Omit<InventoryMovement, "uuid">) => {
-      const newMovement =
-        await InventoryService.createInventoryMovement(movement);
-      setMovements((prev) => [...prev, newMovement]);
-    },
-    []
-  );
+  const addMovement = useCallback(async (movement: NewInventoryMovement) => {
+    const newMovement =
+      await InventoryService.createInventoryMovement(movement);
+    setMovements((prev) => [...prev, newMovement]);
+    return newMovement;
+  }, []);
 
   const removeMovement = useCallback(async (uuid: string) => {
     await InventoryService.deleteInventoryMovement(uuid);

@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import * as productService from "../services/product.service";
-import { Product } from "../types/product";
+import { Product, NewProductPayload } from "../types/product";
 
 export const useProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -39,7 +39,7 @@ export const useProducts = () => {
     []
   );
 
-  const addProduct = useCallback(async (product: Omit<Product, "uuid">) => {
+  const addProduct = useCallback(async (product: NewProductPayload) => {
     const newProduct = await productService.createProduct(product);
     setProducts((prev) => [...prev, newProduct]);
   }, []);

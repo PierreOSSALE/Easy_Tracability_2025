@@ -1,11 +1,19 @@
 //EASY-TRACABILITY: backend/src/services/stats.service.ts
 
-import { IInventoryMovementModel } from "../models/associations";
+import {
+  IInventoryMovementModel,
+  ProductModel,
+  TransactionModel,
+} from "../models/associations";
 import { Op } from "sequelize";
 
 export class StatsService {
   async getOverview() {
-    const [totalEntree, totalSortie] = await Promise.all([
+    // 1) Nombre total de produits
+    const totalProducts = await ProductModel.count();
+
+    // 2) Somme des quantités IN (ENTREE) et OUT (SORTIE)
+    const [totalInventoryIn, totalInventoryOut] = await Promise.all([
       IInventoryMovementModel.sum("quantity", {
         where: { operationType: "ENTREE" },
       }),
@@ -14,10 +22,26 @@ export class StatsService {
       }),
     ]);
 
+    // 3) Nombre total de transactions
+    const totalTransactions = await TransactionModel.count();
+
+    // 4) Chiffre d’affaires (VENTE) et achats (ACHAT)
+    const [totalSales, totalPurchases] = await Promise.all([
+      TransactionModel.sum("totalPrice", {
+        where: { transactionType: "VENTE" },
+      }),
+      TransactionModel.sum("totalPrice", {
+        where: { transactionType: "ACHAT" },
+      }),
+    ]);
+
     return {
-      totalEntree,
-      totalSortie,
-      stockNet: totalEntree - totalSortie,
+      totalProducts,
+      totalInventoryIn: totalInventoryIn || 0,
+      totalInventoryOut: totalInventoryOut || 0,
+      totalTransactions,
+      totalSales: totalSales || 0,
+      totalPurchases: totalPurchases || 0,
     };
   }
 }

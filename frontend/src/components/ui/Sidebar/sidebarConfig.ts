@@ -63,9 +63,6 @@ export const sidebarConfig: SidebarConfig = {
       {
         items: [{ icon: "add", label: "New Movement" }],
       },
-      {
-        items: [{ icon: "chart", label: "Statistics" }],
-      },
     ],
   },
   logos: {

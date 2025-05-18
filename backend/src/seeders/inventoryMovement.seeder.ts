@@ -5,7 +5,7 @@ import { OperationType } from "../interfaces/inventoryMovement.interface";
 
 export async function seedInventoryMovements(
   userUUID: string,
-  productUUID: string
+  productBarcode: string
 ) {
   const now = new Date();
   const oneMinuteLater = new Date(now.getTime() + 60000); // +1 minute
@@ -16,35 +16,35 @@ export async function seedInventoryMovements(
   const movements = [
     {
       userUUID,
-      productUUID,
+      productBarcode: productBarcode,
       date: now,
       operationType: OperationType.ENTREE,
       quantity: 100,
     },
     {
       userUUID,
-      productUUID,
+      productBarcode: productBarcode,
       date: oneMinuteLater,
       operationType: OperationType.SORTIE,
       quantity: 20,
     },
     {
       userUUID,
-      productUUID,
+      productBarcode: productBarcode,
       date: twoMinutesLater,
       operationType: OperationType.ENTREE,
       quantity: 50,
     },
     {
       userUUID,
-      productUUID,
+      productBarcode: productBarcode,
       date: threeMinutesLater,
       operationType: OperationType.SORTIE,
       quantity: 30,
     },
     {
       userUUID,
-      productUUID,
+      productBarcode: productBarcode,
       date: fourMinutesLater,
       operationType: OperationType.ENTREE,
       quantity: 70,

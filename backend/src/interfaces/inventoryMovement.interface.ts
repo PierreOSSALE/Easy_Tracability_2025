@@ -7,7 +7,7 @@ export enum OperationType {
 
 export interface IInventoryMovement {
   uuid: string;
-  productUUID: string;
+  productBarcode: string;
   userUUID: string;
   date: Date;
   operationType: OperationType;
@@ -16,7 +16,7 @@ export interface IInventoryMovement {
 
 export interface IInventoryMovementCreation {
   uuid?: string;
-  productUUID: string;
+  productBarcode: string;
   userUUID: string;
   date: Date;
   operationType: OperationType;
@@ -24,7 +24,7 @@ export interface IInventoryMovementCreation {
 }
 
 export interface IInventoryMovementUpdate {
-  productUUID?: string;
+  productBarcode?: string;
   userUUID?: string;
   date?: Date;
   operationType?: OperationType;

@@ -8,6 +8,7 @@ import { ProductModel } from "../models/associations";
 
 export class ProductService {
   static async createProduct(data: IProductCreation) {
+    // Le hook beforeCreate sur le modèle gère la génération du barcode
     const product = await ProductModel.create(data);
     return product;
   }
@@ -54,9 +55,7 @@ export class ProductService {
     const product = await ProductModel.scope({
       method: ["byUUID", uuid],
     }).findOne();
-    if (!product) {
-      throw new Error("Produit non trouvé");
-    }
+    if (!product) throw new Error("Produit non trouvé");
     await product.update(data);
     return product;
   }
@@ -65,10 +64,7 @@ export class ProductService {
     const product = await ProductModel.scope({
       method: ["byUUID", uuid],
     }).findOne();
-    if (!product) {
-      throw new Error("Produit non trouvé");
-    }
+    if (!product) throw new Error("Produit non trouvé");
     await product.destroy();
-    return;
   }
 }

@@ -7,6 +7,7 @@ import {
   IInventoryMovementCreation,
   OperationType,
 } from "../interfaces/inventoryMovement.interface";
+import { ProductModel } from "./product";
 
 export class InventoryMovementInstance
   extends Model<IInventoryMovement, IInventoryMovementCreation>
@@ -14,7 +15,7 @@ export class InventoryMovementInstance
 {
   // Le mot-clé "declare" informe TypeScript que ces propriétés seront injectées par Sequelize dans le runtime
   declare uuid: string;
-  declare productUUID: string;
+  declare productBarcode: string;
   declare userUUID: string;
   declare date: Date;
   declare operationType: OperationType;
@@ -30,20 +31,18 @@ export const IInventoryMovementModel = InventoryMovementInstance.init(
       allowNull: false,
       defaultValue: DataTypes.UUIDV4,
     },
-    productUUID: {
-      type: DataTypes.UUID,
+    productBarcode: {
+      type: DataTypes.STRING(13),
       allowNull: false,
-      validate: {
-        isEmpty: (value: string) => {
-          if (value == null) {
-            throw new Error("L'UUID du produit ne peut pas être vide.");
-          }
-        },
+
+      references: {
+        model: ProductModel,
+        key: "barcode",
       },
     },
     userUUID: {
       type: DataTypes.UUID,
-      allowNull: false,
+      allowNull: true,
       validate: {
         isEmpty: (value: string) => {
           if (value == null) {
@@ -115,6 +114,9 @@ export const IInventoryMovementModel = InventoryMovementInstance.init(
             operationType: type,
           },
         };
+      },
+      byBarcode(barcode: string) {
+        return { where: { productBarcode: barcode } };
       },
     },
   }

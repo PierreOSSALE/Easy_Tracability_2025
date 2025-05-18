@@ -8,12 +8,25 @@ import { Op } from "sequelize";
 const inventoryMovementService = new InventoryMovementService();
 
 export class InventoryMovementController {
-  static async createInventoryMovement(
-    req: Request,
-    res: Response
-  ): Promise<void> {
-    const movement = await inventoryMovementService.createMovement(req.body);
-    res.status(201).json(movement);
+  static async createInventoryMovement(req: Request, res: Response) {
+    const userUUID = (req.user as any).uuid;
+    const {
+      barcode /* correspond à productBarcode */,
+      date,
+      operationType,
+      quantity,
+    } = req.body;
+
+    // on passe simplement productBarcode
+    const movement = await inventoryMovementService.createMovement({
+      productBarcode: barcode,
+      userUUID,
+      date: new Date(date),
+      operationType,
+      quantity,
+    });
+
+    return res.status(201).json(movement);
   }
 
   static async getAllInventoryMovements(

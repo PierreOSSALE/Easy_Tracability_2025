@@ -31,6 +31,7 @@ import ManagerStatisticsPage from "../features/manager/pages/ManagerStatisticsPa
 
 // Operator pages
 import OperatorDashboardPage from "../features/operator/pages/OperatorDashboardPage";
+import OperatorNewMovementPage from "../features/operator/pages/OperatorNewMovementPage";
 
 const AppRoutes: React.FC = () => {
   const routes = useRoutes([
@@ -145,7 +146,12 @@ const AppRoutes: React.FC = () => {
             {
               index: true,
               element: <OperatorDashboardPage />,
-              handle: { title: "Operator Dashboard" },
+              handle: { title: "Dashboard" },
+            },
+            {
+              path: "newmovement",
+              element: <OperatorNewMovementPage />,
+              handle: { title: "New Movement" },
             },
             {
               path: "*",

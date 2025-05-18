@@ -5,7 +5,6 @@ import { RedisStore } from "connect-redis";
 import redisClient from "./config/redis";
 import { configureMiddlewares } from "./middlewares/mid.middleware";
 import { errorHandler } from "./middlewares/errorHandler.middleware";
-
 // Routes
 import authRoutes from "./routes/auth.route";
 import userRoutes from "./routes/user.route";

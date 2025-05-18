@@ -47,7 +47,7 @@ router.get(
 // Créer mouvement (Opérateur + Gestionnaire + Admin)
 router.post(
   "/",
-  authorizeRole(["Admin", "Manager", "Operator"]),
+  authorizeRole(["Operator"]),
   catchAsync(InventoryMovementController.createInventoryMovement)
 );
 

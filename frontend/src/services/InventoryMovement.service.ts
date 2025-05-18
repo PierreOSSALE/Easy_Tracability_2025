@@ -2,7 +2,10 @@
 
 import { apiClient } from "./api.service";
 import { apiWrapper } from "../utils/apiWrapper";
-import { InventoryMovement } from "../types/inventoryMovement";
+import {
+  InventoryMovement,
+  NewInventoryMovement,
+} from "../types/inventoryMovement";
 
 // Obtenir tous les mouvements
 export interface InventoryMovementPaginated {
@@ -62,7 +65,7 @@ export const getInventoryMovementById = (
 
 // Créer un mouvement
 export const createInventoryMovement = (
-  movement: Omit<InventoryMovement, "uuid">
+  movement: NewInventoryMovement
 ): Promise<InventoryMovement> => {
   return apiWrapper(async () => {
     const res = await apiClient.post("/inventoryMovements", movement);

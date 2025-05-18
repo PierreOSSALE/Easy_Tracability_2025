@@ -56,7 +56,11 @@ export const BaseProductsPage: React.FC<BaseProductsPageProps> = ({
       render: (p) =>
         p.imageUrl ? (
           <img
-            src={p.imageUrl}
+            src={
+              p.imageUrl.startsWith("data:")
+                ? p.imageUrl
+                : `${import.meta.env.VITE_API_BASE_URL}${p.imageUrl}`
+            }
             alt={p.name}
             style={{ width: 40, height: 40, borderRadius: 4 }}
           />
@@ -120,7 +124,6 @@ export const BaseProductsPage: React.FC<BaseProductsPageProps> = ({
       columns={columns}
       defaultNewItemState={{
         name: "",
-        barcode: "",
         description: "",
         price: undefined,
         stockQuantity: undefined,
@@ -134,12 +137,6 @@ export const BaseProductsPage: React.FC<BaseProductsPageProps> = ({
               onChange={(v) => setState({ ...state, name: v })}
               placeholder="Nom du produit"
               icon="fa fa-tag"
-            />
-            <InputField
-              value={state.barcode}
-              onChange={(v) => setState({ ...state, barcode: v })}
-              placeholder="Code‑barres"
-              icon="fa fa-barcode"
             />
             <InputNumberField
               icon="fa fa-boxes"

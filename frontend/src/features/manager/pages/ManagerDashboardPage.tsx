@@ -42,7 +42,7 @@ const ManagerDashboardPage: React.FC = () => {
     const d = new Date(m.date);
     if (d < startDate || d > endDate) return false;
     if (productFilter) {
-      const prod = products.find((p) => p.uuid === m.productUUID);
+      const prod = products.find((p) => p.barcode === m.productBarcode);
       if (
         !prod ||
         !prod.name.toLowerCase().includes(productFilter.toLowerCase())
@@ -59,8 +59,7 @@ const ManagerDashboardPage: React.FC = () => {
       return false;
     if (productFilter) {
       const mv = movements.find((m) => m.uuid === tx.inventoryMovementUUID);
-      const prodUUID = mv?.productUUID;
-      const prod = products.find((p) => p.uuid === prodUUID);
+      const prod = mv && products.find((p) => p.barcode === mv.productBarcode);
       if (
         !prod ||
         !prod.name.toLowerCase().includes(productFilter.toLowerCase())

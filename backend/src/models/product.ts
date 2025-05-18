@@ -1,7 +1,9 @@
 // EASY-TRACABILITY: backend/src/models/product.ts
+
 import { DataTypes, Model, Op } from "sequelize";
 import sequelize from "../config/database";
 import { IProduct, IProductCreation } from "../interfaces/product.interface";
+import { generateUniqueBarcode } from "../utils/barcodeGenerator";
 
 export class ProductInstance
   extends Model<IProduct, IProductCreation>
@@ -13,7 +15,7 @@ export class ProductInstance
   declare description: string;
   declare price: number;
   declare stockQuantity: number;
-  declare imageUrl?: string; // 🆕 Ajout de l'image
+  declare imageUrl?: string;
 }
 
 export const ProductModel = ProductInstance.init(
@@ -27,51 +29,55 @@ export const ProductModel = ProductInstance.init(
     name: {
       type: DataTypes.STRING,
       allowNull: false,
-      validate: {
-        len: [1, 255],
-      },
+      validate: { len: [1, 255] },
     },
     barcode: {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
       validate: {
-        len: [1, 255],
+        len: [12, 13],
+        async isUnique(value: string) {
+          const exists = await ProductModel.findOne({
+            where: { barcode: value },
+          });
+          if (exists) throw new Error("Code‑barres déjà utilisé");
+        },
       },
     },
     description: {
       type: DataTypes.TEXT,
       allowNull: true,
-      validate: {
-        len: [0, 500],
-      },
+      validate: { len: [0, 500] },
     },
     price: {
       type: DataTypes.FLOAT,
       allowNull: false,
-      validate: {
-        isFloat: true,
-        min: 0,
-      },
+      validate: { isFloat: true, min: 0 },
     },
     stockQuantity: {
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0,
-      validate: {
-        isInt: true,
-        min: 0,
-      },
+      validate: { isInt: true, min: 0 },
     },
     imageUrl: {
-      type: DataTypes.TEXT,
+      type: DataTypes.TEXT("long"),
       allowNull: true,
+      field: process.env.SEQ_UNDERSCORED === "true" ? "image_url" : "imageUrl",
     },
   },
   {
     sequelize,
     tableName: "products",
     timestamps: true,
+    hooks: {
+      beforeValidate: async (product) => {
+        if (!product.barcode) {
+          product.barcode = await generateUniqueBarcode();
+        }
+      },
+    },
     scopes: {
       byUUID(uuid: string) {
         return { where: { uuid } };

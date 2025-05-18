@@ -14,12 +14,13 @@
   --color-gray-light: #f2f2f2;
   --color-black: #000000;
   --color-white: #ffffff;
+  --color-yellow: #fbc02d;
 
   --color-primary: #2b517a;
   --color-primary-50: #217785; /* 53% d'opacité */
 
-  --color-accent-purple: #9747ff;
   --color-error: #c62828;
+  --color-accent-purple: #9747ff;
   --color-success: #388e3c;
 
   --color-bg-light: #e0f7fa;
@@ -57,10 +58,43 @@ h4 {
   transition: all 0.3s ease;
   font-weight: 600;
 }
+.FiltresActions {
+  margin: 1.25rem 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  column-gap: 1.25rem;
+  row-gap: 0.8rem;
+  box-shadow: 5px 4px 20px rgba(0, 0, 0, 0.05);
+}
+.FiltresActions .form-group {
+  margin-bottom: 0;
+  border-radius: 5px !important;
+}
+.FiltresActions input,
+.SelectField,
+.btn {
+  padding: 5px 5px;
+  height: 40px;
+  border-radius: 5px !important;
+  min-width: 150px;
+  width: auto;
+  text-align: center;
+  margin-bottom: 0 !important;
+}
+
+.statsContainer {
+  margin: 10px 10px 10px 0;
+}
 
 @media screen and (max-width: 768px) {
   h2,
   h4 {
     font-size: 1.25rem;
+  }
+  .FiltresActions {
+    column-gap: 0;
+    justify-content: none !important;
   }
 }

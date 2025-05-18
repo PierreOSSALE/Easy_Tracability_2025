@@ -1,143 +1,107 @@
 //EASY-TRACABILITY: backend/src/controllers/product.controller.ts
 
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { ProductService } from "../services/product.service";
+import { catchAsync } from "../utils/catchAsync.utils";
 
 export class ProductController {
-  static async createProduct(req: Request, res: Response): Promise<void> {
-    const product = await ProductService.createProduct(req.body);
+  static createProduct = catchAsync(async (req: Request, res: Response) => {
+    const { barcode, ...rest } = req.body; // on ignore le barcode fourni
+    const product = await ProductService.createProduct(rest);
     res
       .status(201)
       .json({ message: "Produit créé avec succès", data: product });
-  }
+  });
 
-  static async getAllProducts(req: Request, res: Response): Promise<void> {
+  static getAllProducts = catchAsync(async (_req: Request, res: Response) => {
     const products = await ProductService.getAllProducts();
     res.status(200).json({ data: products });
-  }
+  });
 
-  static async getProductByUUID(req: Request, res: Response): Promise<void> {
-    const { uuid } = req.params; // ✅ Utilisation de uuid
+  static getProductByUUID = catchAsync(async (req: Request, res: Response) => {
+    const { uuid } = req.params;
     const product = await ProductService.getProductByUUID(uuid);
     if (!product) {
       res.status(404).json({ message: "Produit non trouvé" });
       return;
     }
     res.status(200).json({ data: product });
-  }
-  // Ajout dans ProductController
+  });
 
-  static async searchProducts(req: Request, res: Response): Promise<void> {
+  static searchProducts = catchAsync(async (req: Request, res: Response) => {
     const { name, barcode } = req.query;
-
     if (name) {
       const products = await ProductService.getProductByName(name.toString());
-      res.status(200).json({ data: products });
-      return;
+      return res.status(200).json({ data: products });
     }
-
     if (barcode) {
       const product = await ProductService.getProductByBarcode(
         barcode.toString()
       );
-      if (!product) {
-        res.status(404).json({ message: "Produit non trouvé" });
-        return;
-      }
-      res.status(200).json({ data: product });
-      return;
+      if (!product)
+        return res.status(404).json({ message: "Produit non trouvé" });
+      return res.status(200).json({ data: product });
     }
+    res.status(400).json({ message: "Paramètre manquant (name ou barcode)" });
+  });
 
-    res
-      .status(400)
-      .json({ message: "Paramètre de recherche manquant (name ou barcode)" });
-  }
-
-  static async getProductByName(req: Request, res: Response): Promise<void> {
-    const { name } = req.params;
-    const products = await ProductService.getProductByName(name);
-    res.status(200).json({ data: products });
-  }
-
-  static async getProductByBarcode(req: Request, res: Response): Promise<void> {
-    const { barcode } = req.params;
-    const product = await ProductService.getProductByBarcode(barcode);
-    if (!product) {
-      res.status(404).json({ message: "Produit non trouvé" });
-      return;
-    }
-    res.status(200).json({ data: product });
-  }
-
-  static async getProductsInStock(req: Request, res: Response): Promise<void> {
-    const products = await ProductService.getProductsInStock();
-    res.status(200).json({ data: products });
-  }
-
-  static async getProductsOutOfStock(
-    req: Request,
-    res: Response
-  ): Promise<void> {
-    const products = await ProductService.getProductsOutOfStock();
-    res.status(200).json({ data: products });
-  }
-
-  static async getProductsLowStock(req: Request, res: Response): Promise<void> {
-    // console.log("DEBUG - getProductsLowStock appelé");
-    // console.log("DEBUG - req.query:", req.query);
-
-    const queryThreshold = req.query.threshold;
-    if (!queryThreshold) {
-      res.status(400).json({
-        message: "Le paramètre 'threshold' est requis dans la query.",
-      });
-      return;
-    }
-
-    const threshold = parseInt(queryThreshold as string, 10);
-    // console.log("DEBUG - Seuil parsé:", threshold);
-
-    if (isNaN(threshold) || threshold < 0) {
-      res.status(400).json({ message: "Paramètre threshold invalide." });
-      return;
-    }
-
-    const products = await ProductService.getProductsLowStock(threshold);
-    // console.log(
-    //   "DEBUG - Produits récupérés pour un seuil de",
-    //   threshold,
-    //   ":",
-    //   products
-    // );
-
-    if (!products || products.length === 0) {
-      res.status(404).json({
-        message: "Aucun produit avec un stock inférieur au seuil spécifié.",
-      });
-      return;
-    }
-    res.status(200).json({ data: products });
-  }
-  static async updateProduct(req: Request, res: Response): Promise<void> {
-    const { uuid } = req.params; // ✅ Utilisation de uuid
+  static updateProduct = catchAsync(async (req: Request, res: Response) => {
+    const { uuid } = req.params;
     const product = await ProductService.updateProduct(uuid, req.body);
     res
       .status(200)
       .json({ message: "Produit mis à jour avec succès", data: product });
-  }
+  });
 
-  static async deleteProduct(req: Request, res: Response): Promise<void> {
-    const { uuid } = req.params; // ✅ Utilisation de uuid
+  static deleteProduct = catchAsync(async (req: Request, res: Response) => {
+    const { uuid } = req.params;
     await ProductService.deleteProduct(uuid);
     res.status(200).json({ message: "Produit supprimé avec succès" });
-  }
+  });
 
-  static async getProductsAbovePrice(
-    req: Request,
-    res: Response
-  ): Promise<void> {
-    const price = Number(req.query.price);
-    const products = await ProductService.getProductsAbovePrice(price);
-    res.status(200).json({ data: products });
-  }
+  static getProductsInStock = catchAsync(
+    async (_req: Request, res: Response) => {
+      const products = await ProductService.getProductsInStock();
+      res.status(200).json({ data: products });
+    }
+  );
+
+  static getProductsLowStock = catchAsync(
+    async (req: Request, res: Response) => {
+      const thresholdParam = req.query.threshold;
+      if (!thresholdParam) {
+        return res
+          .status(400)
+          .json({ message: "Paramètre 'threshold' requis" });
+      }
+      const threshold = parseInt(thresholdParam as string, 10);
+      if (isNaN(threshold) || threshold < 0) {
+        return res
+          .status(400)
+          .json({ message: "Paramètre 'threshold' invalide" });
+      }
+      const products = await ProductService.getProductsLowStock(threshold);
+      if (products.length === 0) {
+        return res
+          .status(404)
+          .json({ message: "Aucun produit sous le seuil spécifié" });
+      }
+      res.status(200).json({ data: products });
+    }
+  );
+
+  static getProductsOutOfStock = catchAsync(
+    async (_req: Request, res: Response) => {
+      const products = await ProductService.getProductsOutOfStock();
+      res.status(200).json({ data: products });
+    }
+  );
+
+  static getProductsAbovePrice = catchAsync(
+    async (req: Request, res: Response) => {
+      const price = Number(req.query.price);
+      const products = await ProductService.getProductsAbovePrice(price);
+      res.status(200).json({ data: products });
+    }
+  );
 }

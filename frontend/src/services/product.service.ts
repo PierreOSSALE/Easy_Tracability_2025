@@ -2,7 +2,7 @@
 
 import { apiClient } from "./api.service";
 import { apiWrapper } from "../utils/apiWrapper";
-import { Product } from "../types/product";
+import { Product, NewProductPayload } from "../types/product";
 
 // 🔄 Récupérer tous les produits
 export const fetchAllProducts = (): Promise<Product[]> => {
@@ -22,7 +22,7 @@ export const fetchProductById = (uuid: string): Promise<Product> => {
 
 // ➕ Créer un produit
 export const createProduct = (
-  productData: Omit<Product, "uuid">
+  productData: NewProductPayload
 ): Promise<Product> => {
   return apiWrapper(async () => {
     const res = await apiClient.post("/products", productData);
