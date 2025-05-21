@@ -1,9 +1,9 @@
 /* EASY-TRACABILITY:frontend/src/components/NotificationBar.css*/
 
 .notification-bar {
-  margin-bottom: 16px;
-  padding: 10px 14px;
-  border-radius: 6px;
+  margin-bottom: 14px;
+  padding: 4px 8px;
+  border-radius: 4px;
   font-size: 14px;
   font-weight: 500;
   color: #f2f2f2;

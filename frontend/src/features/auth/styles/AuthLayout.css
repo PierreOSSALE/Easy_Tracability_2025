@@ -13,7 +13,7 @@
 }
 
 .auth-container {
-  border-radius: 8px;
+  border-radius: 0.5rem;
   padding: 40px 60px;
   box-shadow: 0px 0px 3.3px -1px rgb(0, 0, 0);
   width: 100%;
@@ -34,7 +34,7 @@
 
 .auth-title {
   margin-top: 3rem;
-  margin-bottom: 32px;
+  margin-bottom: 2.25rem !important;
   font-size: 24px;
   color: var(--color-gray-medium);
   font-weight: bold;
@@ -56,7 +56,8 @@
 }
 
 .form-actions {
-  margin-top: 8px;
+  margin-top: 60px;
+  background: #000 !important;
 }
 
 /* Bouton primaire */
@@ -204,4 +205,126 @@
 .back-button:hover {
   background: var(--color-gray-medium);
   color: var(--color-white);
+}
+
+/* ============================= */
+/* 📱 Responsive Styles */
+/* ============================= */
+
+/* Tablettes (jusqu’à 1024px) */
+@media screen and (max-width: 1024px) {
+  .auth-container {
+    padding: 30px 40px !important;
+    height: auto !important;
+    /* background: #000; */
+    width: 90% !important;
+  }
+
+  .auth-title {
+    font-size: 22px !important;
+  }
+
+  .btn-primary-auth {
+    font-size: 0.85rem !important;
+    padding: 0.7rem !important;
+  }
+
+  .decor-top-left,
+  .decor-top-right,
+  .decor-bottom-left,
+  .decor-bottom-right,
+  .logo-bottom-left {
+    height: 130px;
+  }
+  .logo-bottom-left {
+    height: 55px;
+  }
+}
+
+/* Mobiles (jusqu’à 768px) */
+@media screen and (max-width: 768px) {
+  .auth-layout {
+    padding: 1rem !important;
+  }
+
+  .auth-container {
+    padding: 25px 20px !important;
+    width: 90% !important;
+    border-radius: 0.5rem;
+  }
+
+  .auth-title {
+    margin-top: 2rem !important;
+    font-size: 20px !important;
+  }
+
+  .form-group {
+    margin-bottom: 20px !important;
+  }
+
+  .btn-primary-auth {
+    font-size: 0.8rem !important;
+    padding: 0.65rem !important;
+  }
+
+  .forgot-link {
+    text-align: center !important;
+    margin-top: 1.5rem !important;
+  }
+
+  .auth-logo {
+    top: 16px !important;
+    left: 16px !important;
+    width: 28px !important;
+    height: 28px !important;
+  }
+
+  .back-button {
+    top: 16px !important;
+    right: 16px !important;
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 1rem !important;
+  }
+
+  .logo-bottom-left {
+    width: 140px;
+    bottom: 20px;
+    left: 10px;
+  }
+}
+
+/* Très petits écrans (jusqu’à 480px) */
+@media screen and (max-width: 480px) {
+  .auth-title {
+    font-size: 18px;
+  }
+
+  .btn-primary-auth {
+    font-size: 0.75rem;
+    padding: 0.6rem;
+  }
+
+  .with-icon .icon,
+  .password-wrapper .icon {
+    font-size: 1.2rem;
+    padding: 6px 8px;
+  }
+
+  .toggle-visibility {
+    top: 10px;
+    font-size: 0.9rem;
+  }
+
+  .decor-top-left,
+  .decor-top-right,
+  .decor-bottom-left,
+  .decor-bottom-right,
+  .logo-bottom-left {
+    height: 80px !important;
+  }
+  .logo-bottom-left {
+    height: 45px !important;
+    bottom: 10px;
+  }
 }

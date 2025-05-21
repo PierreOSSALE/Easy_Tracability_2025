@@ -70,11 +70,12 @@ export const UserModel = UserInstance.init(
       },
     },
     profilePicture: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT("long"),
       allowNull: true,
-      validate: {
-        len: [0, 500],
-      },
+      field:
+        process.env.SEQ_UNDERSCORED === "true"
+          ? "profilePicture"
+          : "profilePicture",
     },
     resetPasswordToken: {
       type: DataTypes.STRING,

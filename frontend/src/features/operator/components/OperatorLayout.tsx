@@ -8,9 +8,8 @@ import "../../../../src/layouts/layout.css";
 
 // Mapping chemin → libellé
 const TITLE_MAP: Record<string, string> = {
-  "/operator": "Operator Dashboard",
-  // Ajouter ici d'autres sous-routes opérateur si nécessaire
-  // "/operator/xyz": "Votre Page XYZ",
+  "/operator": "operator dashboard",
+  "/operator/newmovement": "new mouvement",
 };
 
 const OperatorLayout = () => {

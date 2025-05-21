@@ -1,7 +1,5 @@
 // EASY-TRACABILITY: backend/src/models/configuration.ts
 
-// EASY-TRACABILITY: backend/src/models/configuration.ts
-
 import { DataTypes, Model } from "sequelize";
 import sequelize from "../config/database";
 

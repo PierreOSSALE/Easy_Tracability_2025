@@ -13,6 +13,7 @@ import fs from "fs";
 const router = Router();
 const userService = new UserService();
 
+// Toutes les routes suivantes nécessitent un token/session
 router.use(hybridAuth);
 
 // PUT /api/profile/me
@@ -22,35 +23,30 @@ router.put(
   uploadProfilePicture,
   catchAsync(async (req, res) => {
     const uuid = req.user!.uuid;
-    const { email } = req.body;
     const before = await userService.getUserById(uuid);
-    if (!before) {
-      return res.status(404).json({ message: "Utilisateur non trouvé" });
-    }
+    if (!before) return res.status(404).json({ message: "Non trouvé" });
 
     const updateData: Partial<{ email: string; profilePicture: string }> = {};
-    if (email) {
-      updateData.email = email;
-    }
-    if (req.file?.filename) {
-      const url = `${req.protocol}://${req.get(
-        "host"
-      )}/uploads/profile-pictures/${uuid}/${req.file.filename}`;
-      updateData.profilePicture = url;
+    if (req.body.email) updateData.email = req.body.email;
+
+    if (req.file) {
+      // Relatif à public/, ex "/profile-pictures/uuid/nom.jpg"
+      const rel = req.file.path.split("public")[1].replace(/\\/g, "/");
+      updateData.profilePicture = rel;
+
+      // Supprimer ancien fichier
       if (before.profilePicture) {
-        const rel = before.profilePicture
-          .replace(`${req.protocol}://${req.get("host")}`, "")
-          .replace(/\//g, path.sep);
-        const full = path.join(__dirname, "../../", rel);
-        if (fs.existsSync(full)) fs.unlinkSync(full);
+        const old = path.resolve(
+          __dirname,
+          "../../public",
+          before.profilePicture
+        );
+        if (fs.existsSync(old)) fs.unlinkSync(old);
       }
     }
 
     const updated = await userService.updateUser(uuid, updateData);
-    if (!updated) {
-      return res.status(404).json({ message: "Échec de la mise à jour" });
-    }
-    res.json({ message: "Profil mis à jour.", user: sanitizeUser(updated) });
+    res.json({ message: "Profil mis à jour", user: sanitizeUser(updated!) });
   })
 );
 

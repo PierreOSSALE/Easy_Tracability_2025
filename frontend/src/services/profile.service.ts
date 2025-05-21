@@ -23,7 +23,7 @@ export const updateMyProfile = (payload: {
     formData.append("profilePicture", payload.profilePicture);
 
   return apiWrapper(async () => {
-    const res = await apiClient.put("/auth/me", formData, {
+    const res = await apiClient.put("/profile/me", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
     return res.data;

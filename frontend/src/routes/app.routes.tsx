@@ -20,7 +20,6 @@ import UsersPage from "../features/admin/pages/UsersPage";
 import ProductsPage from "../features/admin/pages/ProductsPage";
 import MovementsPage from "../features/admin/pages/MovementsPage";
 import StatisticsPage from "../features/admin/pages/StatisticsPage";
-import SettingsPage from "../features/admin/pages/SettingsPage";
 
 // Manager pages
 import ManagerDashboardPage from "../features/manager/pages/ManagerDashboardPage";
@@ -81,11 +80,6 @@ const AppRoutes: React.FC = () => {
               path: "statistics",
               element: <StatisticsPage />,
               handle: { title: "Statistiques" },
-            },
-            {
-              path: "settings",
-              element: <SettingsPage />,
-              handle: { title: "Paramètres" },
             },
           ],
         },

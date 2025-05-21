@@ -10,16 +10,10 @@ const inventoryMovementService = new InventoryMovementService();
 export class InventoryMovementController {
   static async createInventoryMovement(req: Request, res: Response) {
     const userUUID = (req.user as any).uuid;
-    const {
-      barcode /* correspond à productBarcode */,
-      date,
-      operationType,
-      quantity,
-    } = req.body;
+    const { productBarcode, date, operationType, quantity } = req.body;
 
-    // on passe simplement productBarcode
     const movement = await inventoryMovementService.createMovement({
-      productBarcode: barcode,
+      productBarcode,
       userUUID,
       date: new Date(date),
       operationType,

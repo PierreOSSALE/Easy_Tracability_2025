@@ -8,14 +8,11 @@ import "../../../../src/layouts/layout.css";
 
 // 1. On définit le mapping chemin → titre
 const TITLE_MAP: Record<string, string> = {
-  "/admin": "Dashboard",
+  "/admin": "Admin Dashboard",
   "/admin/users": "Utilisateurs",
   "/admin/products": "Produits",
   "/admin/movements": "Mouvements",
   "/admin/statistics": "Statistiques",
-  "/admin/secure": "Sécurité",
-  "/admin/settings": "Paramètres",
-  // ... si vous voulez couvrir manager et operator côté AdminLayout
 };
 
 const AdminLayout = () => {

@@ -1,6 +1,5 @@
 // EASY-TRACABILITY: backend/src/middlewares/mid.middleware.ts
 import path from "path";
-
 import morgan from "morgan";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -21,9 +20,11 @@ export const configureMiddlewares = (app: Application): void => {
     })
   );
 
-  // ✅ Ajout des limites pour éviter erreur 413 Payload Too Large
+  // ✅ Éviter 413 Payload Too Large
   app.use(express.json({ limit: "5mb" }));
   app.use(express.urlencoded({ extended: true, limit: "5mb" }));
+
+  // Dossier des images de seed
   app.use(
     "/api/seeder-img",
     express.static(path.resolve(__dirname, "..", "..", "public", "seeder-img"))

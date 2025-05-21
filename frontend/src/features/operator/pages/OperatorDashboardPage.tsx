@@ -171,8 +171,15 @@ const OperatorDashboardPage: React.FC = () => {
           { header: "Type", accessor: "transactionType" as const },
           {
             header: "Produit",
-            accessor: "productName" as const,
-            render: (t: any) => t.productName,
+            accessor: "inventoryMovementUUID", // juste pour typer, pas de lookup direct
+            render: (tx: any) => {
+              const mv = movements.find(
+                (m) => m.uuid === tx.inventoryMovementUUID
+              );
+              const prod =
+                mv && products.find((p) => p.barcode === mv.productBarcode);
+              return prod?.name ?? "—";
+            },
           },
           {
             header: "Quantité",

@@ -37,10 +37,10 @@ select:focus,
 select {
   cursor: pointer;
 }
-.with-icon .dx-texteditor-input,
+/* .with-icon .dx-texteditor-input,
 .with-icon .dx-numberbox-input {
   padding-left: 2.5rem !important;
-}
+} */
 
 .with-icon .icon {
   position: absolute;

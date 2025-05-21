@@ -58,9 +58,13 @@ export const sidebarConfig: SidebarConfig = {
     ],
     Operator: [
       {
+        title: "Vue d'ensemble",
+
         items: [{ icon: "home", label: "Dashboard" }],
       },
       {
+        title: "Ajout de Mouvement",
+
         items: [{ icon: "add", label: "New Movement" }],
       },
     ],
