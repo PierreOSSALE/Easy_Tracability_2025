@@ -1,8 +1,8 @@
-// EASY-TRACABILITY: frontend/src/features/operateur/pages/OperatorNewMovementPage.tsx
+// EASY-TRACABILITY: frontend/src/features/operator/pages/OperatorNewMovementPage.tsx
 
 import React, { useState, useRef } from "react";
 import { useProducts } from "../../../hooks/useProduct";
-import { useInventoryMovements } from "../../../hooks/useInventoryMovement";
+import { createMovement } from "../../../services/InventoryMovement.service";
 import { OperationType } from "../../../types/inventoryMovement";
 import { Button } from "devextreme-react/button";
 import { TextBox } from "devextreme-react/text-box";
@@ -10,7 +10,6 @@ import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import "../styles/NewMovementPage.css";
 
-// On s'appuie sur le type Product renvoyé par le backend, qui contient stockQuantity
 interface CartItem {
   barcode: string;
   name: string;
@@ -21,13 +20,12 @@ interface CartItem {
 }
 
 const OperatorNewMovementPage: React.FC = () => {
-  const { products } = useProducts(); // products: Product[] avec stockQuantity
-  const { addMovement } = useInventoryMovements();
+  const { products } = useProducts();
 
-  const [productBarcode, setProductBarcode] = useState("");
+  const [productBarcode, setProductBarcode] = useState<string>("");
   const [cart, setCart] = useState<CartItem[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [ticketId] = useState(() => `TICKET-${Date.now()}`);
+  const [ticketId] = useState<string>(() => `TICKET-${Date.now()}`);
   const ticketRef = useRef<HTMLDivElement>(null);
 
   const totalAmount = cart.reduce(
@@ -41,32 +39,27 @@ const OperatorNewMovementPage: React.FC = () => {
       setError("Produit non trouvé");
       return;
     }
-
     const stock = found.stockQuantity;
-
-    setCart((prevCart) => {
-      const existing = prevCart.find((item) => item.barcode === found.barcode);
-
-      if (existing) {
-        const newQty = existing.quantity + 1;
+    setCart((prev) => {
+      const exist = prev.find((i) => i.barcode === found.barcode);
+      if (exist) {
+        const newQty = exist.quantity + 1;
         if (newQty > stock) {
           setError(`Quantité en stock insuffisante (max ${stock})`);
-          return prevCart;
+          return prev;
         }
         setError(null);
-        return prevCart.map((item) =>
-          item.barcode === found.barcode ? { ...item, quantity: newQty } : item
+        return prev.map((i) =>
+          i.barcode === found.barcode ? { ...i, quantity: newQty } : i
         );
       }
-
       if (stock < 1) {
-        setError("Aucun stock disponible pour ce produit");
-        return prevCart;
+        setError("Aucun stock disponible");
+        return prev;
       }
-
       setError(null);
       return [
-        ...prevCart,
+        ...prev,
         {
           barcode: found.barcode,
           name: found.name,
@@ -77,35 +70,31 @@ const OperatorNewMovementPage: React.FC = () => {
         },
       ];
     });
-
     setProductBarcode("");
   };
 
   const increaseQty = (barcode: string) => {
-    setCart((prevCart) =>
-      prevCart.map((item) => {
-        if (item.barcode === barcode) {
-          const newQty = item.quantity + 1;
-          if (newQty > item.stockQuantity) {
-            setError(
-              `Quantité en stock insuffisante (max ${item.stockQuantity})`
-            );
-            return item;
+    setCart((prev) =>
+      prev.map((i) => {
+        if (i.barcode === barcode) {
+          const newQty = i.quantity + 1;
+          if (newQty > i.stockQuantity) {
+            setError(`Quantité en stock insuffisante (max ${i.stockQuantity})`);
+            return i;
           }
           setError(null);
-          return { ...item, quantity: newQty };
+          return { ...i, quantity: newQty };
         }
-        return item;
+        return i;
       })
     );
   };
 
   const handlePrint = async () => {
-    if (cart.length === 0) {
+    if (!cart.length) {
       setError("Veuillez ajouter au moins un produit");
       return;
     }
-
     for (const item of cart) {
       if (item.quantity > item.stockQuantity) {
         setError(`Quantité pour ${item.name} dépasse le stock disponible`);
@@ -113,13 +102,22 @@ const OperatorNewMovementPage: React.FC = () => {
       }
     }
 
-    for (const item of cart) {
-      await addMovement({
-        productBarcode: item.barcode,
-        date: new Date(),
-        operationType: item.operationType,
-        quantity: item.quantity,
+    try {
+      // Appel unique pour créer ordre + lignes + transaction
+      await createMovement({
+        ticketId,
+        userUUID: "TODO_USER_UUID", // récupérer depuis contexte/auth
+        date: new Date().toISOString(),
+        lines: cart.map((item) => ({
+          productBarcode: item.barcode,
+          operationType: item.operationType,
+          quantity: item.quantity,
+          price: item.price,
+        })),
       });
+    } catch (err: unknown) {
+      setError((err as Error).message);
+      return;
     }
 
     if (ticketRef.current) {

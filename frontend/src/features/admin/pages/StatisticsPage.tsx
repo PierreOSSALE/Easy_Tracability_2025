@@ -21,8 +21,8 @@ import html2canvas from "html2canvas";
 import styles from "../styles/DashboardCharts.module.css";
 
 import {
-  fetchInventoryMovements,
-  exportInventoryMovementsCSV,
+  fetchMovementLines,
+  exportMovementLinesCSV,
 } from "../../../services/InventoryMovement.service";
 import { fetchAllProducts } from "../../../services/product.service";
 
@@ -54,24 +54,24 @@ export default function StatisticsPage() {
   useEffect(() => {
     const loadStats = async () => {
       const [movementsRes, products] = await Promise.all([
-        fetchInventoryMovements(),
+        fetchMovementLines(),
         fetchAllProducts(),
       ]);
 
       const filteredMovements = movementsRes.rows.filter((m: any) => {
-        const date = new Date(m.date).toISOString().slice(0, 10);
+        const date = new Date(m.createdAt).toISOString().slice(0, 10);
         return date >= startDate && date <= endDate;
       });
 
       // 🔺 Top 5 Produits
       const productMap: Record<string, number> = {};
       filteredMovements.forEach((m: any) => {
-        productMap[m.productUUID] = (productMap[m.productUUID] || 0) + 1;
+        productMap[m.productBarcode] = (productMap[m.productBarcode] || 0) + 1;
       });
 
       const top5 = Object.entries(productMap)
-        .map(([uuid, count]) => {
-          const product = products.find((p: any) => p.uuid === uuid);
+        .map(([barcode, count]) => {
+          const product = products.find((p: any) => p.barcode === barcode);
           return { name: product?.name || "Inconnu", count };
         })
         .sort((a, b) => b.count - a.count)
@@ -111,7 +111,7 @@ export default function StatisticsPage() {
   };
 
   const handleExportCSV = async () => {
-    await exportInventoryMovementsCSV();
+    await exportMovementLinesCSV();
   };
 
   return (
@@ -158,7 +158,6 @@ export default function StatisticsPage() {
               argumentField="name"
               type="bar"
               name="Mouvements"
-              color="var(--color-primary)"
             />
             <Tooltip enabled />
             <Legend visible={false} />
@@ -170,7 +169,6 @@ export default function StatisticsPage() {
         <div className={styles.chartBox}>
           <PieChart
             dataSource={operationCounts}
-            palette={["#c62828", "#388e3c", "#ffc107", "#2196f3"]}
             title="📦 Répartition des types d’opérations"
           >
             <PieSeries argumentField="type" valueField="count">

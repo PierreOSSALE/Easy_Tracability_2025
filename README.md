@@ -1,4 +1,10 @@
+<<<<<<< HEAD
 # Easy Traceability System
+=======
+# Easy_Tracability_2025
+
+Comprehensive solution for coding, stock management, and product traceability for merchants, incorporating IoT tools and an interactive dashboard.
+>>>>>>> 7580a4d (26/05/2025)
 
 ---
 
@@ -29,6 +35,7 @@ A full-stack, modular solution for warehouse inventory management and product tr
 
 ---
 
+<<<<<<< HEAD
 ## Features
 
 * **Barcode Generation**: Code128 barcodes for labelling.
@@ -350,3 +357,6 @@ Distributed under the MIT License. See [LICENSE](LICENSE).
 **Pierre Ossale** – Fullstack Developer
 Email: [pierre.ossale@example.com](mailto:pierre.ossale@example.com)
 GitHub: [PierreOSSALE](https://github.com/PierreOSSALE)
+=======
+## 🛠️ Features
+>>>>>>> 7580a4d (26/05/2025)

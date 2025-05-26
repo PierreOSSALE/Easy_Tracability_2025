@@ -1,32 +1,28 @@
-//EASY-TRACABILITY: backend//src/interface/inventoryMovement.interface.ts
+//EASY-TRACABILITY: backend//src/interface/MouvementLineModel.interface.ts
 
 export enum OperationType {
   ENTREE = "ENTREE",
   SORTIE = "SORTIE",
 }
 
-export interface IInventoryMovement {
+export interface IMovementLine {
   uuid: string;
+  movementOrderUUID: string;
   productBarcode: string;
-  userUUID: string;
-  date: Date;
   operationType: OperationType;
   quantity: number;
 }
 
-export interface IInventoryMovementCreation {
+export interface IMovementLineCreation {
   uuid?: string;
+  movementOrderUUID: string;
   productBarcode: string;
-  userUUID: string;
-  date: Date;
   operationType: OperationType;
   quantity: number;
 }
 
-export interface IInventoryMovementUpdate {
+export interface IMovementLineUpdate {
   productBarcode?: string;
-  userUUID?: string;
-  date?: Date;
   operationType?: OperationType;
   quantity?: number;
 }

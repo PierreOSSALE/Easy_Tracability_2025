@@ -3,17 +3,27 @@ export enum OperationType {
   ENTREE = "ENTREE",
   SORTIE = "SORTIE",
 }
-export interface InventoryMovement {
+
+export interface MovementOrder {
   uuid: string;
-  productBarcode: string;
+  ticketId: string;
   userUUID: string;
-  date: Date;
-  operationType: OperationType;
-  quantity: number;
+  date: string;
+  createdAt: string;
+  updatedAt: string;
 }
-export type NewInventoryMovement = {
+export interface NewMovementOrder {
+  ticketId: string;
+  userUUID: string;
+  date?: string;
+}
+
+export interface MovementLine {
+  uuid: string;
+  movementOrderUUID: string;
   productBarcode: string;
-  date: Date;
   operationType: OperationType;
   quantity: number;
-};
+  createdAt: string;
+  updatedAt: string;
+}

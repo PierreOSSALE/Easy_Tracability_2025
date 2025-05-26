@@ -2,91 +2,83 @@
 
 import { apiClient } from "./api.service";
 import { apiWrapper } from "../utils/apiWrapper";
-import {
-  InventoryMovement,
-  NewInventoryMovement,
-} from "../types/inventoryMovement";
+// 🔥 Importez les bons types :
+import { MovementLine } from "../types/inventoryMovement";
 
-// Obtenir tous les mouvements
-export interface InventoryMovementPaginated {
+// Pagination de lignes de mouvement
+export interface MovementLinePaginated {
   count: number;
-  rows: InventoryMovement[];
+  rows: MovementLine[];
 }
+// Récupérer toutes les lignes de mouvement
+export const fetchMovementLines = (): Promise<MovementLinePaginated> =>
+  apiWrapper(async () => {
+    const res = await apiClient.get("/inventoryMovements");
+    return res.data;
+  });
 
-export const fetchInventoryMovements =
-  (): Promise<InventoryMovementPaginated> => {
-    return apiWrapper(async () => {
-      const res = await apiClient.get("/inventoryMovements");
-      return res.data;
-    });
-  };
-
-// Obtenir les mouvements récents
-export const fetchRecentInventoryMovements = (): Promise<
-  InventoryMovement[]
-> => {
-  return apiWrapper(async () => {
+// Récupérer les lignes récentes
+export const fetchRecentMovementLines = (): Promise<MovementLine[]> =>
+  apiWrapper(async () => {
     const res = await apiClient.get("/inventoryMovements/recent");
     return res.data;
   });
-};
 
-// Obtenir les mouvements par type d’opération
-export const fetchInventoryMovementsByOperation = (
+// Filtrer par type d’opération
+export const fetchMovementLinesByOperation = (
   operationType: "ENTREE" | "SORTIE"
-): Promise<InventoryMovement[]> => {
-  return apiWrapper(async () => {
+): Promise<MovementLine[]> =>
+  apiWrapper(async () => {
     const res = await apiClient.get("/inventoryMovements/by-operation", {
       params: { operationType },
     });
     return res.data;
   });
-};
 
-// Exporter les mouvements en CSV
-export const exportInventoryMovementsCSV = (): Promise<Blob> => {
-  return apiWrapper(async () => {
+// Export CSV
+export const exportMovementLinesCSV = (): Promise<Blob> =>
+  apiWrapper(async () => {
     const res = await apiClient.get("/inventoryMovements/export", {
       responseType: "blob",
     });
     return res.data;
   });
-};
 
-// Obtenir un mouvement par UUID
-export const getInventoryMovementById = (
-  uuid: string
-): Promise<InventoryMovement> => {
-  return apiWrapper(async () => {
+// Détail d’une ligne
+export const getMovementLineById = (uuid: string): Promise<MovementLine> =>
+  apiWrapper(async () => {
     const res = await apiClient.get(`/inventoryMovements/${uuid}`);
     return res.data;
   });
-};
 
-// Créer un mouvement
-export const createInventoryMovement = (
-  movement: NewInventoryMovement
-): Promise<InventoryMovement> => {
-  return apiWrapper(async () => {
-    const res = await apiClient.post("/inventoryMovements", movement);
+// Création d’un mouvement complet (ordre + lignes + transaction)
+export const createMovement = (payload: {
+  ticketId: string;
+  userUUID: string;
+  date?: string;
+  lines: Array<{
+    productBarcode: string;
+    operationType: string;
+    quantity: number;
+    price: number;
+  }>;
+}): Promise<{ order: any; lines: MovementLine[]; transaction: any }> =>
+  apiWrapper(async () => {
+    const res = await apiClient.post("/inventoryMovements", payload);
     return res.data;
   });
-};
-
-// Mettre à jour un mouvement
-export const updateInventoryMovement = (
+// Mise à jour d’une ligne
+export const updateMovementLine = (
   uuid: string,
-  movement: Partial<Omit<InventoryMovement, "uuid">>
-): Promise<InventoryMovement> => {
-  return apiWrapper(async () => {
-    const res = await apiClient.put(`/inventoryMovements/${uuid}`, movement);
+  line: Partial<Omit<MovementLine, "uuid">>
+): Promise<MovementLine> =>
+  apiWrapper(async () => {
+    const res = await apiClient.put(`/inventoryMovements/lines/${uuid}`, line);
     return res.data;
   });
-};
 
-// Supprimer un mouvement
-export const deleteInventoryMovement = (uuid: string): Promise<void> => {
-  return apiWrapper(async () => {
-    await apiClient.delete(`/inventoryMovements/${uuid}`);
+// Suppression d’une ligne
+export const deleteMovementLine = (uuid: string): Promise<void> =>
+  apiWrapper(async () => {
+    await apiClient.delete(`/inventoryMovements/lines/${uuid}`);
   });
-};

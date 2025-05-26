@@ -9,7 +9,7 @@ import {
 export class TransactionService {
   async createTransaction(data: ITransactionCreation) {
     // ⚠️ Vérifie que inventoryMovementUUID est bien présent (foreign key obligatoire)
-    if (!data.inventoryMovementUUID) {
+    if (!data.movementOrderUUID) {
       throw new Error("Le champ 'inventoryMovementUUID' est requis.");
     }
 

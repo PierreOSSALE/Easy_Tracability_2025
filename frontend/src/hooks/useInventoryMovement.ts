@@ -1,23 +1,26 @@
 // EASY-TRACABILITY:frontend/src/hooks/useInventoryMovement.ts
 
 import { useEffect, useState, useCallback } from "react";
-import * as InventoryService from "../services/InventoryMovement.service";
 import {
-  NewInventoryMovement,
-  InventoryMovement,
-  OperationType,
-} from "../types/inventoryMovement";
+  fetchMovementLines,
+  fetchRecentMovementLines,
+  fetchMovementLinesByOperation,
+  exportMovementLinesCSV,
+  getMovementLineById,
+} from "../services/InventoryMovement.service";
+import { MovementLine } from "../types/inventoryMovement";
+import { OperationType } from "../types/inventoryMovement";
 
 export const useInventoryMovements = () => {
-  const [movements, setMovements] = useState<InventoryMovement[]>([]);
+  const [lines, setLines] = useState<MovementLine[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
 
-  const loadAllMovements = useCallback(async () => {
+  const loadAllLines = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await InventoryService.fetchInventoryMovements();
-      setMovements(data.rows);
+      const data = await fetchMovementLines();
+      setLines(data.rows);
     } catch (err: unknown) {
       setError(err as Error);
     } finally {
@@ -26,13 +29,14 @@ export const useInventoryMovements = () => {
   }, []);
 
   useEffect(() => {
-    loadAllMovements();
-  }, [loadAllMovements]);
+    loadAllLines();
+  }, [loadAllLines]);
 
-  const getMovementById = useCallback(
-    async (uuid: string): Promise<InventoryMovement | null> => {
+  const getLine = useCallback(
+    async (uuid: string): Promise<MovementLine | null> => {
       try {
-        return await InventoryService.getInventoryMovementById(uuid);
+        const line = await getMovementLineById(uuid);
+        return line;
       } catch (err: unknown) {
         setError(err as Error);
         return null;
@@ -41,48 +45,27 @@ export const useInventoryMovements = () => {
     []
   );
 
-  const addMovement = useCallback(async (movement: NewInventoryMovement) => {
-    const newMovement =
-      await InventoryService.createInventoryMovement(movement);
-    setMovements((prev) => [...prev, newMovement]);
-    return newMovement;
+  const loadRecent = useCallback(async () => {
+    try {
+      const recent = await fetchRecentMovementLines();
+      setLines(recent);
+    } catch (err: unknown) {
+      setError(err as Error);
+    }
   }, []);
 
-  const removeMovement = useCallback(async (uuid: string) => {
-    await InventoryService.deleteInventoryMovement(uuid);
-    setMovements((prev) => prev.filter((m) => m.uuid !== uuid));
+  const loadByOperation = useCallback(async (operation: OperationType) => {
+    try {
+      const filtered = await fetchMovementLinesByOperation(operation);
+      setLines(filtered);
+    } catch (err: unknown) {
+      setError(err as Error);
+    }
   }, []);
-
-  const modifyMovement = useCallback(
-    async (uuid: string, updates: Partial<Omit<InventoryMovement, "uuid">>) => {
-      const updated = await InventoryService.updateInventoryMovement(
-        uuid,
-        updates
-      );
-      setMovements((prev) => prev.map((m) => (m.uuid === uuid ? updated : m)));
-    },
-    []
-  );
-
-  const loadRecentMovements = useCallback(async () => {
-    const recent = await InventoryService.fetchRecentInventoryMovements();
-    setMovements(recent);
-  }, []);
-
-  const loadMovementsByOperation = useCallback(
-    async (operationType: OperationType) => {
-      const filtered =
-        await InventoryService.fetchInventoryMovementsByOperation(
-          operationType
-        );
-      setMovements(filtered);
-    },
-    []
-  );
 
   const exportCSV = useCallback(async (): Promise<Blob | null> => {
     try {
-      return await InventoryService.exportInventoryMovementsCSV();
+      return await exportMovementLinesCSV();
     } catch (err: unknown) {
       setError(err as Error);
       return null;
@@ -90,16 +73,13 @@ export const useInventoryMovements = () => {
   }, []);
 
   return {
-    movements,
+    lines,
     loading,
     error,
-    getMovementById,
-    addMovement,
-    removeMovement,
-    modifyMovement,
-    loadAllMovements,
-    loadRecentMovements,
-    loadMovementsByOperation,
+    loadAllLines,
+    getLine,
+    loadRecent,
+    loadByOperation,
     exportCSV,
   };
 };

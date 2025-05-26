@@ -5,101 +5,45 @@ import DynamicTable from "../../../components/common/DynamicTable";
 import Button from "devextreme-react/button";
 import styles from "../styles/MovementsPage.module.css";
 import { useInventoryMovements } from "../../../hooks/useInventoryMovement";
-import { InventoryMovement } from "../../../types/inventoryMovement"; // Ajuste le chemin si besoin
+import { MovementLine } from "../../../types/inventoryMovement";
 
 export default function MovementsPage() {
-  const { movements, loading, error, loadAllMovements, exportCSV } =
+  const { lines, loading, error, loadAllLines, exportCSV } =
     useInventoryMovements();
 
   // filtres locaux
   const [dateFrom, setDateFrom] = useState<string>("");
   const [dateTo, setDateTo] = useState<string>("");
   const [productFilter, setProductFilter] = useState<string>("");
-  const [operatorFilter, setOperatorFilter] = useState<string>("");
 
   useEffect(() => {
-    loadAllMovements();
-  }, [loadAllMovements]);
+    loadAllLines();
+  }, [loadAllLines]);
 
   const resetFilters = () => {
     setDateFrom("");
     setDateTo("");
     setProductFilter("");
-    setOperatorFilter("");
-    loadAllMovements();
+    loadAllLines();
   };
 
   // filtrage
-  const filtered: InventoryMovement[] = useMemo(() => {
-    return movements
+  const filtered: MovementLine[] = useMemo(() => {
+    return lines
       .filter((m) => {
-        // m.date peut être string (ISO) ou Date
-        const raw = m.date as string | Date;
-        const d =
-          typeof raw === "string"
-            ? raw.slice(0, 10)
-            : raw.toISOString().slice(0, 10);
-        if (dateFrom && d < dateFrom) return false;
-        if (dateTo && d > dateTo) return false;
+        const dateStr = new Date(m.createdAt).toISOString().slice(0, 10);
+        if (dateFrom && dateStr < dateFrom) return false;
+        if (dateTo && dateStr > dateTo) return false;
         return true;
       })
       .filter((m) =>
         productFilter
           ? m.productBarcode.toLowerCase().includes(productFilter.toLowerCase())
           : true
-      )
-      .filter((m) =>
-        operatorFilter
-          ? m.userUUID.toLowerCase().includes(operatorFilter.toLowerCase())
-          : true
       );
-  }, [movements, dateFrom, dateTo, productFilter, operatorFilter]);
+  }, [lines, dateFrom, dateTo, productFilter]);
 
-  // définition des colonnes
-  const columns = [
-    {
-      header: "Produit",
-      accessor: "productBarcode" as const,
-    },
-    {
-      header: "Type",
-      accessor: "operationType" as const,
-      render: (m: InventoryMovement) =>
-        m.operationType === "ENTREE" ? (
-          <>
-            <i
-              className="dx-icon-arrowup"
-              style={{ color: "green", fontSize: "1.2rem" }}
-            />
-            ENTREE
-          </>
-        ) : (
-          <>
-            <i
-              className="dx-icon-arrowdown"
-              style={{ color: "red", fontSize: "1.2rem" }}
-            />
-            SORTIE
-          </>
-        ),
-    },
-    {
-      header: "Quantité",
-      accessor: "quantity" as const,
-      render: (m: InventoryMovement) => m.quantity,
-    },
-    {
-      header: "Date",
-      accessor: "date" as const,
-      render: (m: InventoryMovement) => new Date(m.date).toLocaleDateString(),
-    },
-    {
-      header: "Opérateur",
-      accessor: "userUUID" as const,
-    },
-  ];
-
-  // calcul des totaux pour le footer
+  // Totaux pour le footer
   const totalEntered = useMemo(
     () =>
       filtered
@@ -115,33 +59,32 @@ export default function MovementsPage() {
     [filtered]
   );
 
-  const footerData: Partial<Record<keyof InventoryMovement, React.ReactNode>> =
-    {
-      quantity: (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-around",
-            fontWeight: 600,
-          }}
-        >
-          <span>
-            <i
-              className="dx-icon-arrowup"
-              style={{ color: "green", marginRight: 4 }}
-            />
-            {totalEntered}
-          </span>
-          <span>
-            <i
-              className="dx-icon-arrowdown"
-              style={{ color: "red", marginRight: 4 }}
-            />
-            {totalExited}
-          </span>
-        </div>
-      ),
-    };
+  const footerData: Partial<Record<keyof MovementLine, React.ReactNode>> = {
+    quantity: (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-around",
+          fontWeight: 600,
+        }}
+      >
+        <span>
+          <i
+            className="dx-icon-arrowup"
+            style={{ color: "green", marginRight: 4 }}
+          />
+          {totalEntered}
+        </span>
+        <span>
+          <i
+            className="dx-icon-arrowdown"
+            style={{ color: "red", marginRight: 4 }}
+          />
+          {totalExited}
+        </span>
+      </div>
+    ),
+  };
 
   return (
     <div style={{ padding: 20 }}>
@@ -167,19 +110,12 @@ export default function MovementsPage() {
           onChange={(e) => setProductFilter(e.target.value)}
           className={styles.filterInput}
         />
-        <input
-          type="text"
-          placeholder="Filtrer par opérateur"
-          value={operatorFilter}
-          onChange={(e) => setOperatorFilter(e.target.value)}
-          className={styles.filterInput}
-        />
 
         <Button
           className={styles.filterButton}
           icon="filter"
           text="Filtrer"
-          onClick={() => loadAllMovements()}
+          onClick={loadAllLines}
         />
         <Button
           className={styles.filterButton}
@@ -205,19 +141,42 @@ export default function MovementsPage() {
       </div>
 
       {!loading && !error && (
-        <DynamicTable<InventoryMovement>
+        <DynamicTable<MovementLine>
           data={filtered}
-          columns={columns}
+          columns={[
+            { header: "Produit", accessor: "productBarcode" as const },
+            {
+              header: "Type",
+              accessor: "operationType" as const,
+              render: (m: MovementLine) =>
+                m.operationType === "ENTREE" ? (
+                  <>
+                    <i className="dx-icon-arrowup" style={{ color: "green" }} />{" "}
+                    ENTREE
+                  </>
+                ) : (
+                  <>
+                    <i className="dx-icon-arrowdown" style={{ color: "red" }} />{" "}
+                    SORTIE
+                  </>
+                ),
+            },
+            { header: "Quantité", accessor: "quantity" as const },
+            {
+              header: "Date",
+              accessor: "createdAt" as const,
+              render: (m: MovementLine) =>
+                new Date(m.createdAt).toLocaleDateString(),
+            },
+          ]}
           rowKey="uuid"
-          pageSizeOptions={[5, 10, 20, 50]}
-          defaultPageSize={10}
           footerData={footerData}
           showActions={false}
         />
       )}
 
       {loading && <p>Chargement des mouvements...</p>}
-      {error && <p>Erreur : {error.message}</p>}
+      {error && <p>Erreur : {error.message}</p>}
     </div>
   );
 }

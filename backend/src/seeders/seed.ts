@@ -6,17 +6,17 @@ import { seedTransactions } from "./transaction.seeder";
 import { seedInventoryMovements } from "./inventoryMovement.seeder";
 import { UserModel } from "../models/user";
 import { ProductModel } from "../models/product";
-import { seedConfigurations } from "./configuration.seeder";
 
 (async () => {
   try {
     await sequelize.sync({ force: true }); // wipe + recreate
     console.log("🔄 DB synced");
 
+    // 1️⃣ Seed users & products
     await seedUsers();
     await seedProducts();
-    await seedConfigurations();
 
+    // 2️⃣ Récupère un user et un product existants
     const user = await UserModel.findOne();
     const product = await ProductModel.findOne();
 
@@ -24,19 +24,20 @@ import { seedConfigurations } from "./configuration.seeder";
       throw new Error("❌ Aucun utilisateur ou produit trouvé après seeding");
     }
 
-    // Créer les mouvements d'inventaire
-    const inventoryMovements = await seedInventoryMovements(
+    // 3️⃣ Seed inventory movements (order + lines)
+    //    → on passe product.barcode ici
+    const { order, lines } = await seedInventoryMovements(
       user.uuid,
-      product.uuid
+      product.barcode
     );
 
-    if (inventoryMovements.length === 0) {
-      throw new Error("❌ Aucune entrée de mouvement d'inventaire créée");
+    if (lines.length === 0) {
+      throw new Error("❌ Aucune ligne de mouvement d'inventaire créée");
     }
 
-    // Utiliser le premier mouvement pour créer une transaction
-    const firstMovementUUID = inventoryMovements[0].uuid;
-    await seedTransactions(firstMovementUUID);
+    // 4️⃣ Seed transactions pour cet order
+    //    → on passe order.uuid (pas la ligne)
+    await seedTransactions(order.uuid);
 
     console.log("🌱 Tous les seeders ont été exécutés avec succès !");
     process.exit(0);

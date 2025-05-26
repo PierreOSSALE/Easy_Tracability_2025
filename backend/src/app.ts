@@ -15,7 +15,6 @@ import productRoutes from "./routes/product.route";
 import inventoryMovementRoutes from "./routes/inventoryMovement.route";
 import transactionRoutes from "./routes/transaction.route";
 import stateRoutes from "./routes/stats.routes";
-import configurationRoutes from "./routes/configuration.route";
 
 const app = express();
 
@@ -47,7 +46,6 @@ app.use("/api/products", productRoutes);
 app.use("/api/inventoryMovements", inventoryMovementRoutes);
 app.use("/api/transactions", transactionRoutes);
 app.use("/api/states", stateRoutes);
-app.use("/api/configurations", configurationRoutes);
 
 // 5) Gestion des erreurs
 app.use(errorHandler);

@@ -20,7 +20,7 @@ router.get(
 
 router.post(
   "/",
-  authorizeRole(["Admin", "Manager"]),
+  authorizeRole(["Operator"]),
   catchAsync(TransactionController.createTransaction)
 );
 router.get(

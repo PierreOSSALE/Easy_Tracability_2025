@@ -1,4 +1,4 @@
-// EASY-TRACABILITY:frontend/src/features/admin/components/DashboardCharts.tsx
+// EASY-TRACABILITY: frontend/src/features/admin/components/DashboardCharts.tsx
 
 import { useEffect, useRef, useState } from "react";
 import {
@@ -16,12 +16,12 @@ import PieChart, {
   Label,
   Connector,
 } from "devextreme-react/pie-chart";
-import { fetchInventoryMovements } from "../../../services/InventoryMovement.service";
+import { fetchMovementLines } from "../../../services/InventoryMovement.service";
 import { fetchUsers } from "../services/user.service";
-import { InventoryMovement } from "../../../types/inventoryMovement";
+import { MovementLine, OperationType } from "../../../types/inventoryMovement";
 import { User, UserRole } from "../types/user";
 import styles from "../styles/DashboardCharts.module.css";
-import html2canvas from "html2canvas/dist/html2canvas.esm.js";
+import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
 interface MovementChartData {
@@ -48,44 +48,45 @@ export const DashboardCharts = () => {
     if (!exportRef.current) return;
     const canvas = await html2canvas(exportRef.current);
     const imgData = canvas.toDataURL("image/png");
-
     const pdf = new jsPDF("p", "mm", "a4");
     const pdfWidth = pdf.internal.pageSize.getWidth();
     const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-
     pdf.addImage(imgData, "PNG", 0, 10, pdfWidth, pdfHeight);
     pdf.save("dashboard_charts.pdf");
   };
 
   useEffect(() => {
     const loadData = async () => {
-      const [movementRes, users] = await Promise.all([
-        fetchInventoryMovements(),
+      const [movRes, users] = await Promise.all([
+        fetchMovementLines(),
         fetchUsers(),
       ]);
 
-      const filtered = movementRes.rows.filter((m: InventoryMovement) => {
-        const date =
-          typeof m.date === "string"
-            ? (m.date as string).slice(0, 10)
-            : new Date(m.date as Date).toISOString().slice(0, 10);
-        return date >= startDate && date <= endDate;
+      // filter by createdAt
+      const filtered = movRes.rows.filter((m: MovementLine) => {
+        const d = m.createdAt.slice(0, 10);
+        return d >= startDate && d <= endDate;
       });
 
-      const groupByDate: Record<string, { ENTREE: number; SORTIE: number }> =
-        {};
-      filtered.forEach((m: InventoryMovement) => {
-        const date = new Date(m.date).toLocaleDateString();
-        if (!groupByDate[date]) groupByDate[date] = { ENTREE: 0, SORTIE: 0 };
-        groupByDate[date][m.operationType]++;
+      // group by date / operation
+      const groupByDate: Record<string, Record<OperationType, number>> = {};
+      filtered.forEach((m) => {
+        const day = new Date(m.createdAt).toLocaleDateString();
+        if (!groupByDate[day]) {
+          groupByDate[day] = {
+            [OperationType.ENTREE]: 0,
+            [OperationType.SORTIE]: 0,
+          };
+        }
+        groupByDate[day][m.operationType]++;
       });
 
-      const movementArr = Object.entries(groupByDate).map(([date, values]) => ({
-        date,
-        ...values,
-      }));
+      const movementArr: MovementChartData[] = Object.entries(groupByDate).map(
+        ([date, values]) => ({ date, ...values })
+      );
       setMovementData(movementArr);
 
+      // user roles pie
       const roleCounts: Record<UserRole, number> = {
         [UserRole.ADMIN]: 0,
         [UserRole.MANAGER]: 0,
@@ -104,7 +105,6 @@ export const DashboardCharts = () => {
 
   return (
     <div>
-      {/* Filtres */}
       <div className={styles.controls}>
         <label>
           Début :
@@ -127,9 +127,7 @@ export const DashboardCharts = () => {
         </button>
       </div>
 
-      {/* Contenu exportable */}
       <div className={styles.container} ref={exportRef}>
-        {/* Line Chart */}
         <div className={styles.chartBox}>
           <Chart dataSource={movementData}>
             <Title text="Évolution quotidienne des mouvements" />
@@ -141,30 +139,22 @@ export const DashboardCharts = () => {
               argumentField="date"
               name="Entrées"
               type="line"
-              color="var(--color-success)"
             />
             <Series
               valueField="SORTIE"
               argumentField="date"
               name="Sorties"
               type="line"
-              color="var(--color-error)"
             />
             <DxTooltip enabled />
             <Export enabled={false} />
           </Chart>
         </div>
 
-        {/* Pie Chart */}
         <div className={styles.chartBox}>
           <PieChart
             dataSource={userRoleData}
             title="Répartition des rôles utilisateurs"
-            palette={[
-              "var(--color-primary)", // 1er secteur
-              "var(--color-success)", // 2e secteur
-              "var(--color-error)", // 3e secteur
-            ]}
           >
             <PieSeries argumentField="role" valueField="count">
               <Label visible>

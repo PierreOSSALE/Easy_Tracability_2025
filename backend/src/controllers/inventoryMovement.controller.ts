@@ -1,26 +1,24 @@
 //EASY-TRACABILITY: backend/src/controllers/inventoryMovement.controller.ts
 
-import { Request, Response } from "express";
-import { InventoryMovementService } from "../services/inventoryMovement.service";
 import { Parser } from "json2csv"; // pour export CSV
 import { Op } from "sequelize";
-
+import { Request, Response } from "express";
+import { InventoryMovementService } from "../services/inventoryMovement.service";
 const inventoryMovementService = new InventoryMovementService();
 
 export class InventoryMovementController {
   static async createInventoryMovement(req: Request, res: Response) {
     const userUUID = (req.user as any).uuid;
-    const { productBarcode, date, operationType, quantity } = req.body;
+    const { ticketId, date, lines } = req.body;
 
-    const movement = await inventoryMovementService.createMovement({
-      productBarcode,
+    const result = await inventoryMovementService.createMovement({
+      ticketId,
       userUUID,
-      date: new Date(date),
-      operationType,
-      quantity,
+      date,
+      lines, // tableau de { productBarcode, operationType, quantity, price }
     });
 
-    return res.status(201).json(movement);
+    return res.status(201).json(result);
   }
 
   static async getAllInventoryMovements(

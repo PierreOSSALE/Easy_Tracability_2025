@@ -2,14 +2,11 @@
 
 import React, { useMemo } from "react";
 import DynamicTable from "./DynamicTable";
-import {
-  InventoryMovement,
-  OperationType,
-} from "../../types/inventoryMovement";
+import { MovementLine, OperationType } from "../../types/inventoryMovement";
 import { useProducts } from "../../hooks/useProduct";
 
 interface Props {
-  movements: InventoryMovement[];
+  movements: MovementLine[];
 }
 
 export const MovementTable: React.FC<Props> = ({ movements }) => {
@@ -26,23 +23,19 @@ export const MovementTable: React.FC<Props> = ({ movements }) => {
     return { totalIn: inSum, totalOut: outSum };
   }, [movements]);
 
-  const columns: {
-    header: string;
-    accessor: keyof InventoryMovement;
-    render?: (m: InventoryMovement) => React.ReactNode;
-  }[] = [
+  const columns = [
     {
       header: "Produit",
-      accessor: "productBarcode",
-      render: (m: InventoryMovement) => {
+      accessor: "productBarcode" as const,
+      render: (m: MovementLine) => {
         const prod = products.find((p) => p.barcode === m.productBarcode);
         return prod?.name || "—";
       },
     },
     {
       header: "Type",
-      accessor: "operationType",
-      render: (m: InventoryMovement) =>
+      accessor: "operationType" as const,
+      render: (m: MovementLine) =>
         m.operationType === OperationType.ENTREE ? (
           <span style={{ color: "green" }}>Entrée</span>
         ) : (
@@ -51,25 +44,19 @@ export const MovementTable: React.FC<Props> = ({ movements }) => {
     },
     {
       header: "Quantité",
-      accessor: "quantity",
-      render: (m: InventoryMovement) => m.quantity,
+      accessor: "quantity" as const,
     },
     {
       header: "Date",
-      accessor: "date",
-      render: (m: InventoryMovement) =>
-        new Date(m.date).toLocaleDateString("fr-FR"),
-    },
-    {
-      header: "Opérateur",
-      accessor: "userUUID",
-      render: (m: InventoryMovement) => m.userUUID,
+      accessor: "createdAt" as const,
+      render: (m: MovementLine) =>
+        new Date(m.createdAt).toLocaleDateString("fr-FR"),
     },
   ];
 
   return (
     <div style={{ padding: "1rem" }}>
-      <DynamicTable<InventoryMovement>
+      <DynamicTable<MovementLine>
         data={movements}
         columns={columns}
         showActions={false}

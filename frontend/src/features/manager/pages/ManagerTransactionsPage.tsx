@@ -1,6 +1,6 @@
 // EASY-TRACABILITY: frontend/src/features/manager/components/ManagerTransactionsPage.tsx
 
-import { useState, useEffect, useMemo, useRef } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useTransaction } from "../../../hooks/useTransaction";
 import { useProducts } from "../../../hooks/useProduct";
 import { useInventoryMovements } from "../../../hooks/useInventoryMovement";
@@ -9,22 +9,21 @@ import Button from "devextreme-react/button";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import SelectField from "../../../components/common/SelectField";
-import "../../../index.css";
 
 import { Transaction, TransactionType } from "../../../types/transaction";
-import { InventoryMovement } from "../../../types/inventoryMovement";
+import { MovementLine } from "../../../types/inventoryMovement";
 
-function ManagerTransactionsPage() {
+const ManagerTransactionsPage: React.FC = () => {
   const { transactions, loading, loadTransactions, downloadCSV } =
     useTransaction();
   const { products } = useProducts();
-  const { movements } = useInventoryMovements();
+  const { lines } = useInventoryMovements();
 
   // Filters
   const [dateFrom, setDateFrom] = useState<string>("");
   const [dateTo, setDateTo] = useState<string>("");
   const [productFilter, setProductFilter] = useState<string>("");
-  const [typeFilter, setTypeFilter] = useState<string>("");
+  const [typeFilter, setTypeFilter] = useState<TransactionType | "">("");
 
   const tableRef = useRef<HTMLDivElement>(null);
 
@@ -35,63 +34,52 @@ function ManagerTransactionsPage() {
   // Enrich transactions with product name
   const enriched = useMemo(() => {
     return transactions.map((tx) => {
-      const mv = movements.find(
-        (m: InventoryMovement) => m.uuid === tx.inventoryMovementUUID
+      const mv = lines.find(
+        (m: MovementLine) => m.uuid === tx.movementOrderUUID
       );
-      const prod = mv
-        ? products.find((p) => p.barcode === mv.productBarcode)
-        : undefined;
-
-      return { ...tx, productName: prod ? prod.name : "—" };
+      const productName = mv
+        ? (products.find((p) => p.barcode === mv.productBarcode)?.name ?? "—")
+        : "—";
+      return { ...tx, productName };
     });
-  }, [transactions, movements, products]);
+  }, [transactions, lines, products]);
 
-  // Product list from DB
   const productOptions = useMemo(() => products.map((p) => p.name), [products]);
 
   // Apply filters
   const filtered = useMemo(() => {
     return enriched.filter((tx) => {
-      const d = new Date(tx.createdAt).toISOString().slice(0, 10);
-      if (dateFrom && d < dateFrom) return false;
-      if (dateTo && d > dateTo) return false;
+      const isoDate = new Date(tx.createdAt).toISOString().slice(0, 10);
+      if (dateFrom && isoDate < dateFrom) return false;
+      if (dateTo && isoDate > dateTo) return false;
       if (typeFilter && tx.transactionType !== typeFilter) return false;
       if (productFilter && tx.productName !== productFilter) return false;
       return true;
     });
   }, [enriched, dateFrom, dateTo, typeFilter, productFilter]);
 
-  // Table columns
   const columns = [
     {
       header: "Type",
-      accessor: "transactionType",
-      render: (tx: any) =>
-        tx.transactionType === TransactionType.ACHAT ? "ACHAT" : "VENTE",
+      accessor: "transactionType" as const,
+      render: (tx: Transaction) => tx.transactionType,
     },
-    {
-      header: "Produit",
-      accessor: "productName" as keyof Transaction & "productName",
-    },
+    { header: "Produit", accessor: "productName" as const },
     {
       header: "Quantité",
-      accessor: "quantity" as keyof Transaction & "quantity",
-      render: (tx: any) => {
-        const mv = movements.find(
-          (m: InventoryMovement) => m.uuid === tx.inventoryMovementUUID
-        );
-        return mv?.quantity ?? "—";
-      },
+      accessor: "movementOrderUUID" as const,
+      render: (tx: Transaction) =>
+        lines.find((m) => m.uuid === tx.movementOrderUUID)?.quantity ?? 0,
     },
     {
       header: "Montant total (€)",
-      accessor: "totalPrice",
-      render: (tx: any) => `${tx.totalPrice.toFixed(2)} €`,
+      accessor: "totalPrice" as const,
+      render: (tx: Transaction) => `${tx.totalPrice.toFixed(2)} €`,
     },
     {
       header: "Date",
-      accessor: "createdAt",
-      render: (tx: any) => new Date(tx.createdAt).toLocaleDateString(),
+      accessor: "createdAt" as const,
+      render: (tx: Transaction) => new Date(tx.createdAt).toLocaleDateString(),
     },
   ];
 
@@ -107,7 +95,6 @@ function ManagerTransactionsPage() {
     pdf.save("transactions.pdf");
   };
 
-  // Totaux pied de tableau
   const totalIn = useMemo(
     () =>
       filtered
@@ -115,7 +102,6 @@ function ManagerTransactionsPage() {
         .reduce((sum, m) => sum + m.totalPrice, 0),
     [filtered]
   );
-
   const totalOut = useMemo(
     () =>
       filtered
@@ -124,20 +110,18 @@ function ManagerTransactionsPage() {
     [filtered]
   );
 
-  const footerData: Partial<Record<keyof InventoryMovement, React.ReactNode>> =
-    {
-      quantity: (
-        <>
-          ACHAT: <strong style={{ color: "green" }}>{totalIn}€</strong> — VENTE:{" "}
-          <strong style={{ color: "red" }}>{totalOut}€</strong>
-        </>
-      ),
-    };
+  const footerData = {
+    quantity: (
+      <>
+        ACHAT: <strong>{totalIn.toFixed(2)} €</strong> — VENTE:{" "}
+        <strong>{totalOut.toFixed(2)} €</strong>
+      </>
+    ),
+  } as Partial<Record<keyof MovementLine, React.ReactNode>>;
 
   return (
     <div style={{ padding: 20 }}>
       <h4>Transactions (Achats / Ventes)</h4>
-      {/* Filtres & actions */}
       <div className="FiltresActions">
         <input
           type="date"
@@ -149,35 +133,21 @@ function ManagerTransactionsPage() {
           value={dateTo}
           onChange={(e) => setDateTo(e.target.value)}
         />
-        <SelectField<string>
+        <SelectField
           value={productFilter}
           onChange={setProductFilter}
           options={productOptions}
           placeholder="Tous produits"
-          className="SelectField"
         />
-        <SelectField<string>
+        <SelectField
           value={typeFilter}
           onChange={setTypeFilter}
           options={[TransactionType.ACHAT, TransactionType.VENTE]}
-          placeholder="Tous transaction"
-          className="SelectField"
+          placeholder="Type de transaction"
         />
-        <Button
-          icon="exportxlsx"
-          text="Export CSV"
-          onClick={downloadCSV}
-          className="btn"
-        />
-        <Button
-          icon="print"
-          text="Export PDF"
-          onClick={handleExportPDF}
-          className="btn"
-        />
+        <Button icon="exportxlsx" text="Export CSV" onClick={downloadCSV} />
+        <Button icon="print" text="Export PDF" onClick={handleExportPDF} />
       </div>
-
-      {/* Tableau */}
       <div ref={tableRef}>
         {!loading ? (
           <DynamicTable<any>
@@ -193,6 +163,6 @@ function ManagerTransactionsPage() {
       </div>
     </div>
   );
-}
+};
 
 export default ManagerTransactionsPage;

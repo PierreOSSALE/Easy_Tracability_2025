@@ -15,7 +15,7 @@ export class TransactionInstance
   declare uuid: string;
   declare transactionType: TransactionType;
   declare totalPrice: number;
-  declare inventoryMovementUUID: string;
+  declare movementOrderUUID: string;
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
 }
@@ -27,13 +27,11 @@ export const TransactionModel = TransactionInstance.init(
       primaryKey: true,
       defaultValue: DataTypes.UUIDV4,
     },
-    inventoryMovementUUID: {
+
+    movementOrderUUID: {
       type: DataTypes.UUID,
       allowNull: false,
-      references: {
-        model: "inventory_movements",
-        key: "uuid",
-      },
+      references: { model: "movement_orders", key: "uuid" },
     },
     transactionType: {
       type: DataTypes.ENUM(...Object.values(TransactionType)),

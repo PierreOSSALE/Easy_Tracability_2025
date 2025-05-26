@@ -2,57 +2,52 @@
 
 import { UserModel } from "./user";
 import { ProductModel } from "./product";
-import { IInventoryMovementModel } from "./inventoryMovement";
+import { MovementOrderModel } from "./movementOrder";
+import { MovementLineModel } from "./movementLine";
 import { TransactionModel } from "./transaction";
-import { ConfigurationModel } from "./configuration";
 
-// Association: Un User peut avoir plusieurs InventoryMovements.
-UserModel.hasMany(IInventoryMovementModel, {
-  foreignKey: "userUUID",
-  as: "movements",
+// Associations:
+
+// Un User a plusieurs MovementOrders
+UserModel.hasMany(MovementOrderModel, { foreignKey: "userUUID", as: "orders" });
+MovementOrderModel.belongsTo(UserModel, { foreignKey: "userUUID", as: "user" });
+
+// Un MovementOrder a plusieurs MovementLines
+MovementOrderModel.hasMany(MovementLineModel, {
+  foreignKey: "movementOrderUUID",
+  as: "lines",
 });
-IInventoryMovementModel.belongsTo(UserModel, {
-  foreignKey: "userUUID",
-  as: "user",
+MovementLineModel.belongsTo(MovementOrderModel, {
+  foreignKey: "movementOrderUUID",
+  as: "order",
 });
 
-// Association: Un Product peut être impliqué dans plusieurs InventoryMovements.
-ProductModel.hasMany(IInventoryMovementModel, {
+// Un MovementLine référence un Product
+ProductModel.hasMany(MovementLineModel, {
   foreignKey: "productBarcode",
   sourceKey: "barcode",
-  as: "movements",
+  as: "movementLines",
 });
-IInventoryMovementModel.belongsTo(ProductModel, {
+MovementLineModel.belongsTo(ProductModel, {
   foreignKey: "productBarcode",
   targetKey: "barcode",
   as: "product",
 });
 
-// Association: Une Transaction est liée à un InventoryMovement.
-IInventoryMovementModel.hasOne(TransactionModel, {
-  foreignKey: "inventoryMovementUUID",
+// Un MovementOrder a une Transaction
+MovementOrderModel.hasOne(TransactionModel, {
+  foreignKey: "movementOrderUUID",
   as: "transaction",
 });
-TransactionModel.belongsTo(IInventoryMovementModel, {
-  foreignKey: "inventoryMovementUUID",
-  as: "inventoryMovement",
-});
-
-// Association optionnelle: Une Configuration peut être modifiée par un User.
-// Cela permet de tracer qui a effectué la dernière modification.
-ConfigurationModel.belongsTo(UserModel, {
-  foreignKey: "lastModifiedBy",
-  as: "modifiedBy",
-});
-UserModel.hasMany(ConfigurationModel, {
-  foreignKey: "lastModifiedBy",
-  as: "configurations",
+TransactionModel.belongsTo(MovementOrderModel, {
+  foreignKey: "movementOrderUUID",
+  as: "order",
 });
 
 export {
   UserModel,
   ProductModel,
-  IInventoryMovementModel,
+  MovementOrderModel,
+  MovementLineModel,
   TransactionModel,
-  ConfigurationModel,
 };

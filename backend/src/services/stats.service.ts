@@ -1,11 +1,10 @@
 //EASY-TRACABILITY: backend/src/services/stats.service.ts
 
 import {
-  IInventoryMovementModel,
   ProductModel,
   TransactionModel,
+  MovementLineModel, // ← Ajouté
 } from "../models/associations";
-import { Op } from "sequelize";
 
 export class StatsService {
   async getOverview() {
@@ -14,10 +13,10 @@ export class StatsService {
 
     // 2) Somme des quantités IN (ENTREE) et OUT (SORTIE)
     const [totalInventoryIn, totalInventoryOut] = await Promise.all([
-      IInventoryMovementModel.sum("quantity", {
+      MovementLineModel.sum("quantity", {
         where: { operationType: "ENTREE" },
       }),
-      IInventoryMovementModel.sum("quantity", {
+      MovementLineModel.sum("quantity", {
         where: { operationType: "SORTIE" },
       }),
     ]);
