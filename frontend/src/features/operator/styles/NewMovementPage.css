@@ -159,3 +159,22 @@
   margin-bottom: 0.5rem;
   font-weight: 500;
 }
+.transaction-type-label {
+  font-weight: bold;
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.transaction-type-label.vente {
+  background-color: #ffe5e5;
+  color: #c62828;
+  border: 1px solid #c62828;
+}
+
+.transaction-type-label.achat {
+  background-color: #e0f2f1;
+  color: #00695c;
+  border: 1px solid #00695c;
+}

@@ -1,6 +1,6 @@
 // EASY-TRACABILITY:frontend/src/components/common/GenericEntityPage.tsx
 
-import React, { ReactNode, useState, useMemo, useRef } from "react";
+import React, { ReactNode, useState, useMemo, useRef, useEffect } from "react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import DynamicTable from "./DynamicTable";
@@ -8,6 +8,7 @@ import AddButtonWithModal from "./AddButtonWithModal";
 import styles from "./styles/GenericEntityPage.module.css";
 import { UserRole } from "../../features/admin/types/user";
 import Papa from "papaparse";
+import GenericModal from "./GenericModal";
 
 export interface Column<T> {
   header: string;
@@ -23,6 +24,7 @@ export interface FilterConfig<T> {
 
 export interface GenericEntityPageProps<T> {
   title?: string;
+  titleBtn?: string;
   items: T[];
   loading: boolean;
   error: Error | null;
@@ -32,16 +34,19 @@ export interface GenericEntityPageProps<T> {
   itemKey: keyof T;
   columns: Column<T>[];
   renderAddForm: (state: any, setState: (state: any) => void) => ReactNode;
+  renderEditForm?: (
+    state: T,
+    setState: React.Dispatch<React.SetStateAction<T>>
+  ) => ReactNode;
   defaultNewItemState: any;
   filterConfigs?: FilterConfig<T>[];
   pageSizeOptions?: number[];
-  defaultPageSize?: number;
-  tableFooter?: ReactNode;
   tableFooterData?: Partial<Record<keyof T, React.ReactNode>>;
 }
 
 export function GenericEntityPage<T extends { [key: string]: any }>({
   title,
+  titleBtn,
   items,
   loading,
   error,
@@ -51,30 +56,69 @@ export function GenericEntityPage<T extends { [key: string]: any }>({
   itemKey,
   columns,
   renderAddForm,
+  renderEditForm,
   defaultNewItemState,
   filterConfigs = [],
   pageSizeOptions = [5, 10, 20, 50],
   tableFooterData,
 }: GenericEntityPageProps<T>) {
   const [newItemState, setNewItemState] = useState(defaultNewItemState);
-  const [filters, setFilters] = useState<Record<string, string>>(
-    Object.fromEntries(filterConfigs.map((f) => [String(f.key), ""]))
-  );
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [editState, setEditState] = useState<T | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const tableRef = useRef<HTMLDivElement>(null);
-  //   const [pageSize, setPageSize] = useState(defaultPageSize);
 
+  // Gestion des filtres persistés en localStorage
+  const storageKey = title || "EntityPage";
+  const [filters, setFilters] = useState<Record<string, string>>(() => {
+    const saved = localStorage.getItem(`filters:${storageKey}`);
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {
+        // ignore parse error
+      }
+    }
+    return Object.fromEntries(filterConfigs.map((f) => [String(f.key), ""]));
+  });
+
+  // Sauvegarde des filtres à chaque modification
+  useEffect(() => {
+    localStorage.setItem(`filters:${storageKey}`, JSON.stringify(filters));
+  }, [filters, storageKey]);
+
+  // Ajout d'un nouvel item
   const handleAdd = async () => {
     await addItem(newItemState);
     setNewItemState(defaultNewItemState);
   };
 
-  const filteredItems = useMemo(() => {
-    if (!Array.isArray(items)) return [];
-    return items.filter((item) =>
-      filterConfigs.every((cfg) => cfg.filterFn(item, filters[String(cfg.key)]))
-    );
-  }, [items, filters]);
+  // Flux d'édition
+  const handleEditClick = (item: T) => {
+    setEditingId(String(item[itemKey]));
+    setEditState(item);
+    setIsEditOpen(true);
+  };
 
+  const handleEditConfirm = async () => {
+    if (editingId && editState) {
+      await updateItem(editingId, editState);
+      setIsEditOpen(false);
+    }
+  };
+
+  // Filtrage des items
+  const filteredItems = useMemo(
+    () =>
+      items.filter((item) =>
+        filterConfigs.every((cfg) =>
+          cfg.filterFn(item, filters[String(cfg.key)])
+        )
+      ),
+    [items, filters, filterConfigs]
+  );
+
+  // Export en PDF
   const exportAsPDF = async () => {
     if (!tableRef.current) return;
     const canvas = await html2canvas(tableRef.current);
@@ -83,47 +127,47 @@ export function GenericEntityPage<T extends { [key: string]: any }>({
     const pdfWidth = pdf.internal.pageSize.getWidth();
     const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
     pdf.addImage(imgData, "PNG", 0, 10, pdfWidth, pdfHeight);
-    pdf.save(`${title}.pdf`);
+    pdf.save(`${title || "export"}.pdf`);
   };
 
-  if (loading) return <p>Chargement...</p>;
-  if (error) return <p>Erreur : {error.message}</p>;
-
+  // Import CSV
   const handleCSVImport = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     Papa.parse(file, {
       header: true,
       skipEmptyLines: true,
       complete: async (result) => {
         try {
-          const items = result.data as any[];
-          for (const item of items) {
-            await addItem(item);
+          const itemsToAdd = result.data as any[];
+          for (const it of itemsToAdd) {
+            await addItem(it);
           }
           alert("✅ Importation terminée");
-        } catch (err) {
-          console.error("❌ Erreur d'import :", err);
-          alert("Erreur pendant l'import");
+        } catch {
+          alert("❌ Erreur pendant l’import");
         }
       },
     });
   };
 
+  if (loading) return <p>Chargement...</p>;
+  if (error) return <p>Erreur : {error.message}</p>;
+
   return (
     <div className={styles.EntityPage} style={{ margin: "20px" }}>
-      {/* Filters */}
+      {/* Barre de filtres */}
       {filterConfigs.length > 0 && (
         <div className={styles.filterBar}>
           {filterConfigs.map((cfg) => {
+            const key = String(cfg.key);
             if (cfg.key === "role") {
               return (
                 <select
-                  key="role"
-                  value={filters["role"]}
+                  key={key}
+                  value={filters[key]}
                   onChange={(e) =>
-                    setFilters({ ...filters, role: e.target.value })
+                    setFilters((prev) => ({ ...prev, [key]: e.target.value }))
                   }
                 >
                   <option value="">Tous les rôles</option>
@@ -137,11 +181,11 @@ export function GenericEntityPage<T extends { [key: string]: any }>({
             }
             return (
               <input
-                key={String(cfg.key)}
+                key={key}
                 placeholder={cfg.placeholder}
-                value={filters[String(cfg.key)]}
+                value={filters[key]}
                 onChange={(e) =>
-                  setFilters({ ...filters, [String(cfg.key)]: e.target.value })
+                  setFilters((prev) => ({ ...prev, [key]: e.target.value }))
                 }
               />
             );
@@ -161,14 +205,11 @@ export function GenericEntityPage<T extends { [key: string]: any }>({
         </div>
       )}
 
-      {/* Action Bar: Export, Add, PageSize */}
+      {/* Barre d'actions */}
       <div className={styles.actionBar}>
         <button className={styles.exportButton} onClick={exportAsPDF}>
-          <span className={styles.exportIcon}>🖨️</span>{" "}
-          <span>Exporter PDF</span>
+          🖨️ Exporter PDF
         </button>
-
-        {/* 🔄 Bouton Import CSV */}
         <label className={styles.importLabel}>
           📥 Import CSV
           <input
@@ -178,31 +219,47 @@ export function GenericEntityPage<T extends { [key: string]: any }>({
             style={{ display: "none" }}
           />
         </label>
-
         <AddButtonWithModal
-          buttonLabel={`+ Ajouter ${title}`}
-          modalTitle={`Ajouter ${title}`}
+          buttonLabel={`+ Ajouter ${titleBtn}`}
+          modalTitle={`Ajouter ${titleBtn}`}
           onConfirm={handleAdd}
-          keepOpen={true}
+          keepOpen
         >
           {renderAddForm(newItemState, setNewItemState)}
         </AddButtonWithModal>
       </div>
 
-      {/* Exportable section */}
+      {/* Tableau */}
       <div ref={tableRef}>
         <DynamicTable<T>
           data={filteredItems}
           columns={columns}
-          onEdit={(item) => updateItem(String(item[itemKey]), {})}
+          title={title}
+          onEdit={renderEditForm ? handleEditClick : undefined}
           onDelete={(item) => deleteItem(String(item[itemKey]))}
           showActions
           rowKey={itemKey}
           pageSizeOptions={pageSizeOptions}
-          /** Passe le footerData ici */
           footerData={tableFooterData}
         />
       </div>
+
+      {/* Modal d'édition */}
+      {renderEditForm && isEditOpen && editState && (
+        <GenericModal
+          isOpen
+          title={`Modifier ${title}`}
+          onClose={() => setIsEditOpen(false)}
+          onSubmit={handleEditConfirm}
+          submitLabel="Enregistrer"
+          cancelLabel="Annuler"
+        >
+          {renderEditForm(
+            editState,
+            setEditState as React.Dispatch<React.SetStateAction<T>>
+          )}
+        </GenericModal>
+      )}
     </div>
   );
 }

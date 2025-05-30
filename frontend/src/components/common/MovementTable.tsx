@@ -7,6 +7,7 @@ import { useProducts } from "../../hooks/useProduct";
 
 interface Props {
   movements: MovementLine[];
+  title: string;
 }
 
 export const MovementTable: React.FC<Props> = ({ movements }) => {
@@ -57,6 +58,7 @@ export const MovementTable: React.FC<Props> = ({ movements }) => {
   return (
     <div style={{ padding: "1rem" }}>
       <DynamicTable<MovementLine>
+        title="Historique des mouvements d’inventaire"
         data={movements}
         columns={columns}
         showActions={false}

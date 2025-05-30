@@ -26,6 +26,9 @@ const OperatorNewMovementPage: React.FC = () => {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [ticketId] = useState<string>(() => `TICKET-${Date.now()}`);
+  const [operationType, setOperationType] = useState<OperationType>(
+    OperationType.SORTIE
+  ); // VENTE par défaut
   const ticketRef = useRef<HTMLDivElement>(null);
 
   const totalAmount = cart.reduce(
@@ -34,42 +37,84 @@ const OperatorNewMovementPage: React.FC = () => {
   );
 
   const handleLookup = () => {
-    const found = products.find((p) => p.barcode === productBarcode);
+    const match = productBarcode.match(/^(\d+)\s*([\+\-\*])\s*(\d+)$/);
+    let barcode = productBarcode;
+    let quantity = 1;
+    let operation: "+" | "-" | "*" | null = null;
+
+    if (match) {
+      barcode = match[1];
+      operation = match[2] as "+" | "-" | "*";
+      quantity = parseInt(match[3], 10);
+      if (isNaN(quantity) || quantity <= 0) {
+        setError("Quantité invalide");
+        return;
+      }
+    }
+
+    const found = products.find((p) => p.barcode === barcode);
     if (!found) {
       setError("Produit non trouvé");
       return;
     }
+
     const stock = found.stockQuantity;
+
     setCart((prev) => {
       const exist = prev.find((i) => i.barcode === found.barcode);
+
       if (exist) {
-        const newQty = exist.quantity + 1;
-        if (newQty > stock) {
+        let newQty = exist.quantity;
+
+        if (operation === "+") {
+          newQty += quantity;
+        } else if (operation === "*") {
+          newQty *= quantity;
+        } else if (operation === "-") {
+          newQty -= quantity;
+        } else {
+          newQty += 1;
+        }
+
+        if (operationType === OperationType.SORTIE && newQty > stock) {
           setError(`Quantité en stock insuffisante (max ${stock})`);
           return prev;
         }
+
+        if (newQty <= 0) {
+          return prev.filter((i) => i.barcode !== barcode);
+        }
+
         setError(null);
         return prev.map((i) =>
-          i.barcode === found.barcode ? { ...i, quantity: newQty } : i
+          i.barcode === barcode ? { ...i, quantity: newQty } : i
         );
       }
-      if (stock < 1) {
-        setError("Aucun stock disponible");
+
+      if (operation === "-" || operation === "*") {
+        setError("Produit non encore ajouté");
         return prev;
       }
+
+      if (operationType === OperationType.SORTIE && stock < quantity) {
+        setError(`Stock insuffisant pour ${quantity} unités`);
+        return prev;
+      }
+
       setError(null);
       return [
         ...prev,
         {
-          barcode: found.barcode,
+          barcode,
           name: found.name,
-          quantity: 1,
+          quantity,
           price: found.price,
-          operationType: OperationType.ENTREE,
+          operationType,
           stockQuantity: stock,
         },
       ];
     });
+
     setProductBarcode("");
   };
 
@@ -78,7 +123,10 @@ const OperatorNewMovementPage: React.FC = () => {
       prev.map((i) => {
         if (i.barcode === barcode) {
           const newQty = i.quantity + 1;
-          if (newQty > i.stockQuantity) {
+          if (
+            i.operationType === OperationType.SORTIE &&
+            newQty > i.stockQuantity
+          ) {
             setError(`Quantité en stock insuffisante (max ${i.stockQuantity})`);
             return i;
           }
@@ -95,18 +143,21 @@ const OperatorNewMovementPage: React.FC = () => {
       setError("Veuillez ajouter au moins un produit");
       return;
     }
+
     for (const item of cart) {
-      if (item.quantity > item.stockQuantity) {
+      if (
+        item.operationType === OperationType.SORTIE &&
+        item.quantity > item.stockQuantity
+      ) {
         setError(`Quantité pour ${item.name} dépasse le stock disponible`);
         return;
       }
     }
 
     try {
-      // Appel unique pour créer ordre + lignes + transaction
       await createMovement({
         ticketId,
-        userUUID: "TODO_USER_UUID", // récupérer depuis contexte/auth
+        userUUID: "TODO_USER_UUID",
         date: new Date().toISOString(),
         lines: cart.map((item) => ({
           productBarcode: item.barcode,
@@ -145,11 +196,39 @@ const OperatorNewMovementPage: React.FC = () => {
       {/* LEFT SIDE */}
       <div className="left-panel">
         <h2 className="page-title">EASY Cash Register</h2>
+
+        {/* Sélecteur de type de mouvement */}
+        <div className="input-row">
+          <select
+            value={operationType}
+            onChange={(e) => setOperationType(e.target.value as OperationType)}
+            className="operation-select"
+          >
+            <option value={OperationType.SORTIE}>
+              VENTE (Sortie de stock)
+            </option>
+            <option value={OperationType.ENTREE}>
+              ACHAT / Réception (Entrée)
+            </option>
+          </select>
+        </div>
+
+        {/* Bandeau visuel */}
+        <div
+          className={`transaction-type-label ${
+            operationType === OperationType.SORTIE ? "vente" : "achat"
+          }`}
+        >
+          {operationType === OperationType.SORTIE
+            ? "🛒 Mode VENTE"
+            : "📦 Mode ACHAT / RÉCEPTION"}
+        </div>
+
         <div className="input-row">
           <TextBox
             value={productBarcode}
             onValueChanged={(e) => setProductBarcode(e.value)}
-            placeholder="Code-barres produit"
+            placeholder="Code-barres ou code+quantité (ex. 123456+2)"
             className="w-full"
           />
           <Button
@@ -159,7 +238,9 @@ const OperatorNewMovementPage: React.FC = () => {
             onClick={handleLookup}
           />
         </div>
+
         {error && <div className="error-text">{error}</div>}
+
         <div className="table-container">
           <table className="product-table">
             <thead>
@@ -200,15 +281,29 @@ const OperatorNewMovementPage: React.FC = () => {
             </tbody>
           </table>
         </div>
+
         <div className="numpad">
-          {[1, 2, 3, 4, 5, 6, 7, 8, 9, ".", 0].map((val, idx) => (
+          {[
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            ".",
+            "0",
+            "+",
+            "-",
+            "*",
+          ].map((val, idx) => (
             <Button
               key={idx}
-              text={val.toString()}
+              text={val}
               onClick={() =>
-                setProductBarcode((prev) =>
-                  prev === "0" ? val.toString() : prev + val.toString()
-                )
+                setProductBarcode((prev) => (prev === "0" ? val : prev + val))
               }
               height={60}
             />
@@ -222,13 +317,14 @@ const OperatorNewMovementPage: React.FC = () => {
             }
             height={60}
           />
-          <Button text="OK" type="success" height={60} onClick={handleLookup} />
           <Button
             text="CLR"
             onClick={() => setProductBarcode("")}
             height={60}
           />
+          <Button text="OK" type="success" height={60} onClick={handleLookup} />
         </div>
+
         <Button
           text="Imprimer Ticket"
           type="success"
@@ -237,10 +333,16 @@ const OperatorNewMovementPage: React.FC = () => {
           className="success-btn"
         />
       </div>
+
       {/* RIGHT SIDE - VISUAL TICKET */}
       <div className="right-panel">
         <div ref={ticketRef} className="ticket-preview">
           <div className="ticket-header">🧾 EASY SHOP</div>
+          <div className="ticket-line ticket-mode">
+            {operationType === OperationType.SORTIE
+              ? "VENTE"
+              : "ACHAT / RÉCEPTION"}
+          </div>
           <div className="ticket-line">
             <span>Ticket#</span>
             <span>{ticketId}</span>

@@ -4,7 +4,7 @@ import React from "react";
 import { BaseProductsPage } from "../../../components/common/BaseProductsPage";
 
 const AdminProductsPage: React.FC = () => {
-  return <BaseProductsPage title="Produits (Admin)" />;
+  return <BaseProductsPage title="Historique des Produits" />;
 };
 
 export default AdminProductsPage;

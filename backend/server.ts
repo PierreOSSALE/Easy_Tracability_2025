@@ -5,6 +5,10 @@ import { seedUsers } from "./src/seeders/user.seeder";
 import { seedProducts } from "./src/seeders/product.seeder";
 import { seedTransactions } from "./src/seeders/transaction.seeder";
 import { seedInventoryMovements } from "./src/seeders/inventoryMovement.seeder";
+import { seedDimProduct } from "./src/seeders/dimProduct.seeder";
+import { seedDimTime } from "./src/seeders/dimTime.seeder";
+import { seedDimUser } from "./src/seeders/dimUser.seeder";
+import { seedFactInventory } from "./src/seeders/factInventory.seeder";
 import { UserModel, ProductModel } from "./src/models/associations";
 
 const port = app.get("port");
@@ -16,7 +20,7 @@ app.listen(port, async () => {
     await sequelize.sync({ force: false });
     console.log("✅ Connexion à la base de données réussie.");
 
-    // Seed Users et Products
+    // 📦 1️⃣ Seed des données OLTP : Users, Products, Orders & Lines, Transactions
     await seedUsers();
     await seedProducts();
 
@@ -29,19 +33,26 @@ app.listen(port, async () => {
       );
     }
 
-    // 🔁 Créer l’ordre et ses lignes d’inventaire
     const { order, lines } = await seedInventoryMovements(
       user.uuid,
       product.barcode
     );
 
     if (lines.length > 0) {
-      // Passez order.uuid ici (pas firstLine.uuid)
       await seedTransactions(order.uuid);
     }
 
+    // 🏗️ 2️⃣ Seed du Data Warehouse : dimensions et faits
+    await seedDimProduct();
+    await seedDimTime();
+    await seedDimUser();
+    await seedFactInventory();
+
     console.log("🌱 Toutes les tables ont été remplies !");
   } catch (error) {
-    console.error("❌ Échec de la connexion à la base de données:", error);
+    console.error(
+      "❌ Échec de la connexion à la base de données ou du seeding :",
+      error
+    );
   }
 });

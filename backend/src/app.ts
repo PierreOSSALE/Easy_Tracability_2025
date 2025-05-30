@@ -15,6 +15,9 @@ import productRoutes from "./routes/product.route";
 import inventoryMovementRoutes from "./routes/inventoryMovement.route";
 import transactionRoutes from "./routes/transaction.route";
 import stateRoutes from "./routes/stats.routes";
+import { etlRouter } from "./routes/etl.route";
+import { dwRouter } from "./routes/dataWarehouse.route";
+import { dashboardRouter } from "./routes/dashboard.route";
 
 const app = express();
 
@@ -46,6 +49,11 @@ app.use("/api/products", productRoutes);
 app.use("/api/inventoryMovements", inventoryMovementRoutes);
 app.use("/api/transactions", transactionRoutes);
 app.use("/api/states", stateRoutes);
+
+// … dans app.use("/api", …)
+app.use("/api/etl", etlRouter);
+app.use("/api/dw", dwRouter);
+app.use("/api/dashboard", dashboardRouter);
 
 // 5) Gestion des erreurs
 app.use(errorHandler);

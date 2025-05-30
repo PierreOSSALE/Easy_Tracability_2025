@@ -142,6 +142,7 @@ export default function MovementsPage() {
 
       {!loading && !error && (
         <DynamicTable<MovementLine>
+          title="Historique des mouvements d’inventaire"
           data={filtered}
           columns={[
             { header: "Produit", accessor: "productBarcode" as const },

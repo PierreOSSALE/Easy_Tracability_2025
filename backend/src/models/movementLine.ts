@@ -17,6 +17,7 @@ export class MovementLineInstance
   declare productBarcode: string;
   declare operationType: OperationType;
   declare quantity: number;
+  declare processed: boolean;
 }
 
 export const MovementLineModel = MovementLineInstance.init(
@@ -63,6 +64,11 @@ export const MovementLineModel = MovementLineInstance.init(
           msg: "La quantité doit être au moins 1.",
         },
       },
+    },
+    processed: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
     },
   },
   {

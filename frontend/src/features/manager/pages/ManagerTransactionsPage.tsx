@@ -31,16 +31,19 @@ const ManagerTransactionsPage: React.FC = () => {
     loadTransactions();
   }, [loadTransactions]);
 
-  // Enrich transactions with product name
+  // Enrich transactions with productName and quantity
   const enriched = useMemo(() => {
     return transactions.map((tx) => {
+      const movUUID = tx.movementOrderUUID;
+      // match on the movementOrderUUID field of each movement line
       const mv = lines.find(
-        (m: MovementLine) => m.uuid === tx.movementOrderUUID
+        (m: MovementLine) => m.movementOrderUUID === movUUID
       );
       const productName = mv
         ? (products.find((p) => p.barcode === mv.productBarcode)?.name ?? "—")
         : "—";
-      return { ...tx, productName };
+      const quantity = mv ? mv.quantity : 0;
+      return { ...tx, productName, quantity };
     });
   }, [transactions, lines, products]);
 
@@ -58,6 +61,7 @@ const ManagerTransactionsPage: React.FC = () => {
     });
   }, [enriched, dateFrom, dateTo, typeFilter, productFilter]);
 
+  // Define table columns
   const columns = [
     {
       header: "Type",
@@ -65,12 +69,7 @@ const ManagerTransactionsPage: React.FC = () => {
       render: (tx: Transaction) => tx.transactionType,
     },
     { header: "Produit", accessor: "productName" as const },
-    {
-      header: "Quantité",
-      accessor: "movementOrderUUID" as const,
-      render: (tx: Transaction) =>
-        lines.find((m) => m.uuid === tx.movementOrderUUID)?.quantity ?? 0,
-    },
+    { header: "Quantité", accessor: "quantity" as const },
     {
       header: "Montant total (€)",
       accessor: "totalPrice" as const,
@@ -94,30 +93,6 @@ const ManagerTransactionsPage: React.FC = () => {
     pdf.addImage(imgData, "PNG", 0, 10, pdfWidth, pdfHeight);
     pdf.save("transactions.pdf");
   };
-
-  const totalIn = useMemo(
-    () =>
-      filtered
-        .filter((m) => m.transactionType === TransactionType.ACHAT)
-        .reduce((sum, m) => sum + m.totalPrice, 0),
-    [filtered]
-  );
-  const totalOut = useMemo(
-    () =>
-      filtered
-        .filter((m) => m.transactionType === TransactionType.VENTE)
-        .reduce((sum, m) => sum + m.totalPrice, 0),
-    [filtered]
-  );
-
-  const footerData = {
-    quantity: (
-      <>
-        ACHAT: <strong>{totalIn.toFixed(2)} €</strong> — VENTE:{" "}
-        <strong>{totalOut.toFixed(2)} €</strong>
-      </>
-    ),
-  } as Partial<Record<keyof MovementLine, React.ReactNode>>;
 
   return (
     <div style={{ padding: 20 }}>
@@ -154,7 +129,6 @@ const ManagerTransactionsPage: React.FC = () => {
             data={filtered}
             columns={columns}
             rowKey="uuid"
-            footerData={footerData}
             showActions={false}
           />
         ) : (

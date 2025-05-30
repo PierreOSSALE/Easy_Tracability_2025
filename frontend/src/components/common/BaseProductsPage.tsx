@@ -16,7 +16,7 @@ export interface BaseProductsPageProps {
 }
 
 export const BaseProductsPage: React.FC<BaseProductsPageProps> = ({
-  title = "Produits",
+  title = "Historique des Produits",
   canAdd = true,
   canEdit = true,
   canDelete = true,
@@ -102,14 +102,25 @@ export const BaseProductsPage: React.FC<BaseProductsPageProps> = ({
     },
   ];
 
-  const totalPrice = useMemo(
-    () => products.reduce((sum, p) => sum + p.price, 0).toFixed(2),
+  // 1. Valeur totale du stock : somme de (prix * quantité)
+  const totalInventoryValue = useMemo(() => {
+    const value = products.reduce(
+      (sum, p) => sum + p.price * p.stockQuantity,
+      0
+    );
+    return value.toFixed(2);
+  }, [products]);
+
+  // 2. Nombre de produits en rupture de stock
+  const outOfStockCount = useMemo(
+    () => products.filter((p) => p.stockQuantity === 0).length,
     [products]
   );
 
   return (
     <GenericEntityPage<Product>
       title={title}
+      titleBtn="produit"
       items={products}
       loading={loading}
       error={error}
@@ -173,9 +184,44 @@ export const BaseProductsPage: React.FC<BaseProductsPageProps> = ({
           </>
         )
       }
+      renderEditForm={(state, setState) => (
+        <>
+          <InputField
+            icon="fa fa-tag"
+            value={state.name}
+            onChange={(v) => setState((s) => ({ ...s, name: v }))}
+            placeholder="Nom du produit"
+          />
+          <InputNumberField
+            icon="fa fa-euro-sign"
+            value={state.price}
+            onChange={(n) => setState((s) => ({ ...s, price: n }))}
+            placeholder="Prix"
+            min={0}
+          />
+          <InputNumberField
+            icon="fa fa-boxes"
+            value={state.stockQuantity}
+            onChange={(n) => setState((s) => ({ ...s, stockQuantity: n }))}
+            placeholder="Stock"
+            min={0}
+          />
+        </>
+      )}
       filterConfigs={filters}
       tableFooterData={{
-        price: <span style={{ color: "red" }}>{totalPrice} €</span>,
+        // colonne "Prix (€)" devient valeur totale du stock
+        price: (
+          <span style={{ fontWeight: 600, color: "var(--color-success)" }}>
+            Valeur stock : {totalInventoryValue} €
+          </span>
+        ),
+        // colonne "Stock" affiche aussi le nombre de ruptures
+        stockQuantity: (
+          <span style={{ fontWeight: 600, color: "var(--color-error)" }}>
+            Ruptures : {outOfStockCount}
+          </span>
+        ),
       }}
       pageSizeOptions={pageSizeOptions}
     />

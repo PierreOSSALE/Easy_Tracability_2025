@@ -19,56 +19,86 @@ export const sidebarConfig: SidebarConfig = {
   navItems: {
     Admin: [
       {
-        items: [{ icon: "home", label: "Dashboard" }],
+        title: "Vue d'ensemble",
+        items: [{ icon: "home", label: "Dashboard", path: "/admin" }],
       },
       {
+        title: "OLTP",
         items: [
-          { icon: "group", label: "Users" },
-          { icon: "product", label: "Products" },
-          { icon: "repeat", label: "Movements" },
+          { icon: "group", label: "Utilisateurs", path: "/admin/users" },
+          { icon: "product", label: "Produits", path: "/admin/products" },
+          { icon: "repeat", label: "Mouvements", path: "/admin/movements" },
+          { icon: "money", label: "Transactions", path: "/admin/transactions" },
         ],
       },
       {
-        items: [{ icon: "chart", label: "Statistics" }],
+        title: "DW & ETL",
+        items: [
+          { icon: "preferences", label: "ETL", path: "/admin/etl" },
+          { icon: "contentlayout", label: "DataWarehouse", path: "/admin/dw" },
+        ],
       },
       {
-        items: [{ icon: "preferences", label: "Settings" }],
+        title: "Analyse",
+        items: [
+          {
+            icon: "chart",
+            label: "Statistiques",
+            path: "/admin/statistics",
+          },
+          {
+            icon: "warning",
+            label: "Ventes & Alertes",
+            path: "/admin/sales-alerts",
+          },
+        ],
       },
     ],
+
     Manager: [
       {
         title: "Vue d'ensemble",
-        items: [{ icon: "home", label: "Dashboard" }],
+        items: [{ icon: "home", label: "Dashboard", path: "/manager" }],
       },
       {
         title: "Stock & Produits",
         items: [
-          { icon: "product", label: "Products" },
-          { icon: "repeat", label: "Movements" },
+          { icon: "product", label: "Produits", path: "/manager/products" },
+          { icon: "repeat", label: "Mouvements", path: "/manager/movements" },
         ],
       },
       {
         title: "Suivi Transactions",
-        items: [{ icon: "money", label: "Transactions" }],
+        items: [
+          {
+            icon: "money",
+            label: "Transactions",
+            path: "/manager/transactions",
+          },
+        ],
       },
       {
         title: "Analyse",
-        items: [{ icon: "chart", label: "Statistics" }],
+        items: [
+          { icon: "chart", label: "Statistiques", path: "/manager/statistics" },
+        ],
       },
     ],
+
     Operator: [
       {
         title: "Vue d'ensemble",
-
-        items: [{ icon: "home", label: "Dashboard" }],
+        items: [{ icon: "home", label: "Dashboard", path: "/operator" }],
       },
       {
-        title: "Ajout de Mouvement",
-
-        items: [{ icon: "add", label: "New Movement" }],
+        title: "Opérations",
+        items: [
+          { icon: "add", label: "New Movement", path: "/operator/newmovement" },
+        ],
       },
     ],
   },
+
   logos: {
     top: "/logo2.png",
     bottom: "/logo-easy-tracability.png",

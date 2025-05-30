@@ -13,6 +13,7 @@ interface Column<T> {
 }
 
 interface DynamicTableProps<T> {
+  title?: string; // Nouveau prop pour titre dynamique
   data: T[];
   columns: Column<T>[];
   onEdit?: (item: T) => void;
@@ -21,11 +22,12 @@ interface DynamicTableProps<T> {
   rowKey: keyof T;
   pageSizeOptions?: number[];
   defaultPageSize?: number;
-  /** Footer data: map accessor to a custom cell in the tfoot */
   footerData?: Partial<Record<keyof T, React.ReactNode>>;
+  disablePagination?: boolean; // option pour désactiver la pagination
 }
 
 function DynamicTable<T extends { [key: string]: any }>({
+  title,
   data,
   columns,
   onEdit,
@@ -35,28 +37,31 @@ function DynamicTable<T extends { [key: string]: any }>({
   pageSizeOptions = [5, 10, 20, 50],
   defaultPageSize = 8,
   footerData,
+  disablePagination = false,
 }: DynamicTableProps<T>) {
   const [selectedItem, setSelectedItem] = useState<T | null>(null);
-  const [modalType, setModalType] = useState<"edit" | "delete" | null>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(defaultPageSize);
 
-  const totalPages = Math.ceil(data.length / pageSize);
-  const startIdx = (currentPage - 1) * pageSize;
-  const paginatedData = data.slice(startIdx, startIdx + pageSize);
+  const totalPages = disablePagination ? 1 : Math.ceil(data.length / pageSize);
+  const startIdx = disablePagination ? 0 : (currentPage - 1) * pageSize;
+  const paginatedData = disablePagination
+    ? data
+    : data.slice(startIdx, startIdx + pageSize);
 
-  const openModal = (item: T, type: "edit" | "delete") => {
+  // Handlers
+  const handleEditClick = (item: T) => onEdit?.(item);
+  const handleDeleteClick = (item: T) => {
     setSelectedItem(item);
-    setModalType(type);
+    setIsDeleteModalOpen(true);
   };
   const closeModal = () => {
     setSelectedItem(null);
-    setModalType(null);
+    setIsDeleteModalOpen(false);
   };
-  const handleModalSubmit = () => {
-    if (modalType === "edit" && selectedItem && onEdit) onEdit(selectedItem);
-    if (modalType === "delete" && selectedItem && onDelete)
-      onDelete(selectedItem);
+  const confirmDelete = async () => {
+    if (selectedItem && onDelete) await onDelete(selectedItem);
     closeModal();
   };
   const goToPage = (page: number) => {
@@ -65,26 +70,30 @@ function DynamicTable<T extends { [key: string]: any }>({
 
   return (
     <div>
-      {/* Page size selector */}
-      <div className={styles.pageSizeControl}>
-        <label>Afficher </label>
-        <select
-          value={pageSize}
-          onChange={(e) => {
-            setPageSize(Number(e.target.value));
-            setCurrentPage(1);
-          }}
-        >
-          {pageSizeOptions.map((opt) => (
-            <option key={opt} value={opt}>
-              {opt} / page
-            </option>
-          ))}
-        </select>
-      </div>
+      {/* Contrôle taille de page */}
+      {!disablePagination && (
+        <div className={styles.pageSizeControl}>
+          <label>Afficher </label>
+          <select
+            value={pageSize}
+            onChange={(e) => {
+              setPageSize(Number(e.target.value));
+              setCurrentPage(1);
+            }}
+          >
+            {pageSizeOptions.map((opt) => (
+              <option key={opt} value={opt}>
+                {opt} / page
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
       {/* Table */}
       <div className={styles.movementTableWrapper}>
+        {/* Titre dynamique du tableau */}
+        {title && <h5 className={styles.tableTitle}>{title}</h5>}
         <table className={styles.table}>
           <thead>
             <tr>
@@ -107,13 +116,15 @@ function DynamicTable<T extends { [key: string]: any }>({
                     {onEdit && (
                       <FaEdit
                         className="action-icon"
-                        onClick={() => openModal(item, "edit")}
+                        onClick={() => handleEditClick(item)}
+                        style={{ cursor: "pointer" }}
                       />
                     )}
                     {onDelete && (
                       <FaTrash
                         className="action-icon"
-                        onClick={() => openModal(item, "delete")}
+                        onClick={() => handleDeleteClick(item)}
+                        style={{ cursor: "pointer", color: "red" }}
                       />
                     )}
                   </td>
@@ -125,16 +136,7 @@ function DynamicTable<T extends { [key: string]: any }>({
             <tfoot>
               <tr>
                 {columns.map((col, i) => (
-                  <td
-                    key={i}
-                    style={
-                      footerData[col.accessor]
-                        ? { fontWeight: "400" }
-                        : undefined
-                    }
-                  >
-                    {footerData[col.accessor] ?? ""}
-                  </td>
+                  <td key={i}>{footerData[col.accessor] ?? ""}</td>
                 ))}
                 {showActions && <td />}
               </tr>
@@ -144,42 +146,37 @@ function DynamicTable<T extends { [key: string]: any }>({
       </div>
 
       {/* Pagination */}
-      <div className={styles.pagination}>
-        <Button
-          icon="chevronleft"
-          stylingMode="text"
-          disabled={currentPage === 1}
-          onClick={() => goToPage(currentPage - 1)}
-          className={styles.pageButton}
-        />
-        <span className={styles.pageInfo}>
-          {currentPage} / {totalPages}
-        </span>
-        <Button
-          icon="chevronright"
-          stylingMode="text"
-          disabled={currentPage === totalPages}
-          onClick={() => goToPage(currentPage + 1)}
-          className={styles.pageButton}
-        />
-      </div>
+      {!disablePagination && (
+        <div className={styles.pagination}>
+          <Button
+            icon="chevronleft"
+            stylingMode="text"
+            disabled={currentPage === 1}
+            onClick={() => goToPage(currentPage - 1)}
+          />
+          <span className={styles.pageInfo}>
+            {currentPage} / {totalPages}
+          </span>
+          <Button
+            icon="chevronright"
+            stylingMode="text"
+            disabled={currentPage === totalPages}
+            onClick={() => goToPage(currentPage + 1)}
+          />
+        </div>
+      )}
 
-      {/* Edit/Delete modal */}
-      {modalType && selectedItem && (
+      {/* Modal suppression */}
+      {isDeleteModalOpen && selectedItem && (
         <GenericModal
           isOpen
-          title={
-            modalType === "edit"
-              ? "Modifier l'élément"
-              : "Confirmer la suppression"
-          }
+          title="Confirmer la suppression"
           onClose={closeModal}
-          onSubmit={handleModalSubmit}
-          submitLabel={modalType === "edit" ? "Enregistrer" : "Supprimer"}
+          onSubmit={confirmDelete}
+          submitLabel="Supprimer"
+          cancelLabel="Annuler"
         >
-          {modalType === "delete" && (
-            <p>Es-tu sûr de vouloir supprimer cet élément ?</p>
-          )}
+          <p>Êtes-vous sûr de vouloir supprimer cet élément ?</p>
         </GenericModal>
       )}
     </div>

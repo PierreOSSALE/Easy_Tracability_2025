@@ -2,7 +2,7 @@
   "info": {
     "name": "Easy Tracability API",
     "_postman_id": "e-tracability-api",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "Collection complète de tests Easy Tracability avec préfixe /api",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -33,7 +33,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{ \"token\": \"{{refreshToken}}\" }"
+              "raw": "{ }"
             },
             "url": {
               "raw": "{{baseUrl}}/api/auth/refresh",
@@ -79,12 +79,26 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{ \"token\": \"resetTokenHere\", \"newPassword\": \"newPassword123\" }"
+              "raw": "{ \"token\": \"{{resetToken}}\", \"newPassword\": \"newPassword123\" }"
             },
             "url": {
               "raw": "{{baseUrl}}/api/auth/reset-password",
               "host": ["{{baseUrl}}"],
               "path": ["api", "auth", "reset-password"]
+            }
+          }
+        },
+        {
+          "name": "Get Me",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "me"]
             }
           }
         }
@@ -103,7 +117,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{ \"username\": \"newuser\", \"hashedPassword\": \"Password123!\", \"email\": \"newuser@example.com\", \"role\": \"Administrateur\" }"
+              "raw": "{ \"username\": \"newuser\", \"hashedPassword\": \"Password123!\", \"email\": \"newuser@example.com\", \"role\": \"ADMIN\" }"
             },
             "url": {
               "raw": "{{baseUrl}}/api/users",
@@ -134,14 +148,14 @@
               { "key": "Authorization", "value": "Bearer {{accessToken}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/users/:uuid",
+              "raw": "{{baseUrl}}/api/users/{{userUUID}}",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "users", ":uuid"]
+              "path": ["api", "users", "{{userUUID}}"]
             }
           }
         },
         {
-          "name": "Search User by Username",
+          "name": "Search Users by Username",
           "request": {
             "method": "GET",
             "header": [
@@ -156,22 +170,22 @@
           }
         },
         {
-          "name": "Search User by Role",
+          "name": "Search Users by Role",
           "request": {
             "method": "GET",
             "header": [
               { "key": "Authorization", "value": "Bearer {{accessToken}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/users/role?role=Administrateur",
+              "raw": "{{baseUrl}}/api/users/role?role=ADMIN",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "users", "search"],
-              "query": [{ "key": "role", "value": "Administrateur" }]
+              "path": ["api", "users", "role"],
+              "query": [{ "key": "role", "value": "ADMIN" }]
             }
           }
         },
         {
-          "name": "Update User by UUID",
+          "name": "Update User",
           "request": {
             "method": "PUT",
             "header": [
@@ -180,31 +194,31 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{ \"username\": \"updateduser\", \"email\": \"updated@example.com\", \"role\": \"Administrateur\" }"
+              "raw": "{ \"email\":\"upd@example.com\" }"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/users/:uuid",
+              "raw": "{{baseUrl}}/api/users/{{userUUID}}",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "users", ":uuid"]
+              "path": ["api", "users", "{{userUUID}}"]
             }
           }
         },
         {
-          "name": "Delete User by UUID",
+          "name": "Delete User",
           "request": {
             "method": "DELETE",
             "header": [
               { "key": "Authorization", "value": "Bearer {{accessToken}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/users/:uuid",
+              "raw": "{{baseUrl}}/api/users/{{userUUID}}",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "users", ":uuid"]
+              "path": ["api", "users", "{{userUUID}}"]
             }
           }
         },
         {
-          "name": "Update My Profile [NEW]",
+          "name": "Update My Profile",
           "request": {
             "method": "PUT",
             "header": [
@@ -215,10 +229,10 @@
               "formdata": [
                 {
                   "key": "email",
-                  "value": "nouvelemail@example.com",
+                  "value": "newmail@example.com",
                   "type": "text"
                 },
-                { "key": "profilePicture", "type": "file", "src": "" }
+                { "key": "profilePicture", "type": "file", "src": [""] }
               ]
             },
             "url": {
@@ -243,7 +257,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{ \"name\": \"ProduitTest\", \"barcode\": \"123456789\", \"description\": \"Test produit\", \"price\": 19.99, \"stockQuantity\": 100 }"
+              "raw": "{ \"name\":\"Test\",\"description\":\"Desc\",\"price\":10,\"stockQuantity\":5 }"
             },
             "url": {
               "raw": "{{baseUrl}}/api/products",
@@ -274,39 +288,24 @@
               { "key": "Authorization", "value": "Bearer {{accessToken}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/products/:uuid",
+              "raw": "{{baseUrl}}/api/products/{{productUUID}}",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "products", ":uuid"]
+              "path": ["api", "products", "{{productUUID}}"]
             }
           }
         },
         {
-          "name": "Search Product by Name",
+          "name": "Search Products",
           "request": {
             "method": "GET",
             "header": [
               { "key": "Authorization", "value": "Bearer {{accessToken}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/products/search?name=ProduitTest",
+              "raw": "{{baseUrl}}/api/products/search?name=Test",
               "host": ["{{baseUrl}}"],
               "path": ["api", "products", "search"],
-              "query": [{ "key": "name", "value": "ProduitTest" }]
-            }
-          }
-        },
-        {
-          "name": "Search Product by Barcode",
-          "request": {
-            "method": "GET",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/api/products/search?barcode=123456789",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "products", "search"],
-              "query": [{ "key": "barcode", "value": "123456789" }]
+              "query": [{ "key": "name", "value": "Test" }]
             }
           }
         },
@@ -332,10 +331,10 @@
               { "key": "Authorization", "value": "Bearer {{accessToken}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/products/low-stock?threshold=5",
+              "raw": "{{baseUrl}}/api/products/low-stock?threshold=2",
               "host": ["{{baseUrl}}"],
               "path": ["api", "products", "low-stock"],
-              "query": [{ "key": "threshold", "value": "5" }]
+              "query": [{ "key": "threshold", "value": "2" }]
             }
           }
         },
@@ -361,10 +360,10 @@
               { "key": "Authorization", "value": "Bearer {{accessToken}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/products/above-price?price=50",
+              "raw": "{{baseUrl}}/api/products/above-price?price=20",
               "host": ["{{baseUrl}}"],
               "path": ["api", "products", "above-price"],
-              "query": [{ "key": "price", "value": "50" }]
+              "query": [{ "key": "price", "value": "20" }]
             }
           }
         },
@@ -376,11 +375,11 @@
               { "key": "Content-Type", "value": "application/json" },
               { "key": "Authorization", "value": "Bearer {{accessToken}}" }
             ],
-            "body": { "mode": "raw", "raw": "{ \"price\": 149.99 }" },
+            "body": { "mode": "raw", "raw": "{ \"price\":15 }" },
             "url": {
-              "raw": "{{baseUrl}}/api/products/:uuid",
+              "raw": "{{baseUrl}}/api/products/{{productUUID}}",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "products", ":uuid"]
+              "path": ["api", "products", "{{productUUID}}"]
             }
           }
         },
@@ -392,9 +391,9 @@
               { "key": "Authorization", "value": "Bearer {{accessToken}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/products/:uuid",
+              "raw": "{{baseUrl}}/api/products/{{productUUID}}",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "products", ":uuid"]
+              "path": ["api", "products", "{{productUUID}}"]
             }
           }
         }
@@ -404,7 +403,7 @@
       "name": "Inventory Movements",
       "item": [
         {
-          "name": "Create Inventory Movement",
+          "name": "Create Movement",
           "request": {
             "method": "POST",
             "header": [
@@ -413,116 +412,113 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"userUUID\": \"{{userUUID}}\",\"productUUID\": \"{{productUUID}}\",\"quantity\": 10,\"operationType\": \"ENTREE\"}"
+              "raw": "{ \"ticketId\":\"TICKET-001\",\"lines\":[{\"productBarcode\":\"{{productBarcode}}\",\"operationType\":\"ENTREE\",\"quantity\":10,\"price\":2.5}],\"date\":\"2025-05-27T10:00:00Z\" }"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/inventoryMovement",
+              "raw": "{{baseUrl}}/api/inventoryMovements",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "inventoryMovement"]
+              "path": ["api", "inventoryMovements"]
             }
           }
         },
         {
-          "name": "Get All Inventory Movements",
+          "name": "Get All Movements",
           "request": {
             "method": "GET",
             "header": [
               { "key": "Authorization", "value": "Bearer {{accessToken}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/inventoryMovement",
+              "raw": "{{baseUrl}}/api/inventoryMovements",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "inventoryMovement"]
+              "path": ["api", "inventoryMovements"]
             }
           }
         },
         {
-          "name": "Get Recent Inventory Movements",
+          "name": "Get Recent Movements",
           "request": {
             "method": "GET",
             "header": [
               { "key": "Authorization", "value": "Bearer {{accessToken}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/inventoryMovement/recent",
+              "raw": "{{baseUrl}}/api/inventoryMovements/recent",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "inventoryMovement", "recent"]
+              "path": ["api", "inventoryMovements", "recent"]
             }
           }
         },
         {
-          "name": "Get Inventory Movements By Operation",
+          "name": "Get Movements by Operation",
           "request": {
             "method": "GET",
             "header": [
               { "key": "Authorization", "value": "Bearer {{accessToken}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/inventoryMovement/by-operation?type=ENTREE",
+              "raw": "{{baseUrl}}/api/inventoryMovements/by-operation?type=ENTREE",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "inventoryMovement", "by-operation"],
-              "query": [{ "key": "operationType", "value": "ENTREE" }]
+              "path": ["api", "inventoryMovements", "by-operation"],
+              "query": [{ "key": "type", "value": "ENTREE" }]
             }
           }
         },
         {
-          "name": "Get Inventory Movement by UUID",
+          "name": "Get Movement by UUID",
           "request": {
             "method": "GET",
             "header": [
               { "key": "Authorization", "value": "Bearer {{accessToken}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/inventoryMovement/:uuid",
+              "raw": "{{baseUrl}}/api/inventoryMovements/{{movementUUID}}",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "inventoryMovement", ":uuid"]
+              "path": ["api", "inventoryMovements", "{{movementUUID}}"]
             }
           }
         },
         {
-          "name": "Update Inventory Movement",
+          "name": "Update Movement",
           "request": {
             "method": "PUT",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
               { "key": "Authorization", "value": "Bearer {{accessToken}}" }
             ],
-            "body": {
-              "mode": "raw",
-              "raw": "{ \"quantity\": 20 }"
-            },
+            "body": { "mode": "raw", "raw": "{ \"quantity\": 5 }" },
             "url": {
-              "raw": "{{baseUrl}}/api/inventoryMovement/:uuid",
+              "raw": "{{baseUrl}}/api/inventoryMovements/{{movementUUID}}",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "inventoryMovement", ":uuid"]
+              "path": ["api", "inventoryMovements", "{{movementUUID}}"]
             }
           }
         },
         {
-          "name": "Delete Inventory Movement",
+          "name": "Delete Movement",
           "request": {
             "method": "DELETE",
             "header": [
               { "key": "Authorization", "value": "Bearer {{accessToken}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/inventoryMovement/:uuid",
+              "raw": "{{baseUrl}}/api/inventoryMovements/{{movementUUID}}",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "inventoryMovement", ":uuid"]
+              "path": ["api", "inventoryMovements", "{{movementUUID}}"]
             }
           }
         },
         {
-          "name": "Export Inventory Movements CSV",
+          "name": "Export Movements CSV",
           "request": {
             "method": "GET",
             "header": [
               { "key": "Authorization", "value": "Bearer {{accessToken}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/inventoryMovement/export",
+              "raw": "{{baseUrl}}/api/inventoryMovements/export",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "inventoryMovement", "export"]
+              "path": ["api", "inventoryMovements", "export"]
             }
           }
         }
@@ -541,7 +537,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{  \"inventoryMovementUUID\": \"{{inventoryMovementUUID}}\",\"transactionType\": \"ACHAT\", \"totalPrice\": 150.75 }"
+              "raw": "{ \"movementOrderUUID\":\"{{orderUUID}}\",\"transactionType\":\"VENTE\",\"totalPrice\":25.0 }"
             },
             "url": {
               "raw": "{{baseUrl}}/api/transactions",
@@ -572,9 +568,9 @@
               { "key": "Authorization", "value": "Bearer {{accessToken}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/transactions/:uuid",
+              "raw": "{{baseUrl}}/api/transactions/{{transactionUUID}}",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "transactions", ":uuid"]
+              "path": ["api", "transactions", "{{transactionUUID}}"]
             }
           }
         },
@@ -586,14 +582,11 @@
               { "key": "Content-Type", "value": "application/json" },
               { "key": "Authorization", "value": "Bearer {{accessToken}}" }
             ],
-            "body": {
-              "mode": "raw",
-              "raw": "{ \"totalPrice\": 200.50 }"
-            },
+            "body": { "mode": "raw", "raw": "{ \"totalPrice\":35.0 }" },
             "url": {
-              "raw": "{{baseUrl}}/api/transactions/:uuid",
+              "raw": "{{baseUrl}}/api/transactions/{{transactionUUID}}",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "transactions", ":uuid"]
+              "path": ["api", "transactions", "{{transactionUUID}}"]
             }
           }
         },
@@ -605,45 +598,23 @@
               { "key": "Authorization", "value": "Bearer {{accessToken}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/transactions/:uuid",
+              "raw": "{{baseUrl}}/api/transactions/{{transactionUUID}}",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "transactions", ":uuid"]
+              "path": ["api", "transactions", "{{transactionUUID}}"]
             }
           }
         },
         {
-          "name": "Search Transactions with Filters",
+          "name": "Export CSV",
           "request": {
             "method": "GET",
             "header": [
               { "key": "Authorization", "value": "Bearer {{accessToken}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/transactions?type=ACHAT&minPrice=50&maxPrice=500&limit=10&offset=0",
+              "raw": "{{baseUrl}}/api/transactions/export/csv",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "transactions"],
-              "query": [
-                { "key": "type", "value": "ACHAT" },
-                { "key": "minPrice", "value": "50" },
-                { "key": "maxPrice", "value": "500" },
-                { "key": "limit", "value": "10" },
-                { "key": "offset", "value": "0" }
-              ]
-            }
-          }
-        },
-        {
-          "name": "Export Transactions CSV (with type filter)",
-          "request": {
-            "method": "GET",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/api/transactions/export/csv?type=ACHAT",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "transactions", "export", "csv"],
-              "query": [{ "key": "type", "value": "ACHAT" }]
+              "path": ["api", "transactions", "export", "csv"]
             }
           }
         },
@@ -655,9 +626,9 @@
               { "key": "Authorization", "value": "Bearer {{accessToken}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/transactions/:uuid/invoice",
+              "raw": "{{baseUrl}}/api/transactions/{{transactionUUID}}/invoice",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "transactions", ":uuid", "invoice"]
+              "path": ["api", "transactions", "{{transactionUUID}}", "invoice"]
             }
           }
         }
@@ -683,10 +654,127 @@
       ]
     },
     {
-      "name": "Configuration",
+      "name": "ETL & DataWarehouse",
       "item": [
         {
-          "name": "Create Configuration Parameter",
+          "name": "Trigger ETL",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/etl/run",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "etl", "run"]
+            }
+          }
+        },
+        {
+          "name": "Get ETL Logs",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/etl/logs",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "etl", "logs"]
+            }
+          }
+        },
+        {
+          "name": "Query Facts",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/dw/facts?startDate=2025-05-01&endDate=2025-05-27",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "dw", "facts"],
+              "query": [
+                { "key": "startDate", "value": "2025-05-01" },
+                { "key": "endDate", "value": "2025-05-27" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Query Dimension",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/dw/dimension/product/{{productUUID}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "dw", "dimension", "product", "{{productUUID}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "item": [
+        {
+          "name": "Inventory Trend",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/dashboard/trend?start=2025-05-01&end=2025-05-27",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "dashboard", "trend"],
+              "query": [
+                { "key": "start", "value": "2025-05-01" },
+                { "key": "end", "value": "2025-05-27" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Sales By Product",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/dashboard/sales",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "dashboard", "sales"]
+            }
+          }
+        },
+        {
+          "name": "Alerts",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/dashboard/alerts?threshold=5",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "dashboard", "alerts"],
+              "query": [{ "key": "threshold", "value": "5" }]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Collector",
+      "item": [
+        {
+          "name": "Collect Lines",
           "request": {
             "method": "POST",
             "header": [
@@ -695,159 +783,12 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{ \"parameterKey\": \"new_param_key\", \"parameterValue\": \"value_here\", \"userUUID\": \"{{adminUUID}}\" }"
+              "raw": "{\n  \"ticketId\": \"TICKET-001\",\n  \"userUUID\": \"{{userUUID}}\",\n  \"timestamp\": \"2025-05-27T10:00:00Z\",\n  \"lines\": [\n    { \"productBarcode\": \"{{productBarcode}}\", \"operationType\": \"ENTREE\", \"quantity\": 10 }\n  ]\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/configurations",
+              "raw": "{{baseUrl}}/api/collector/collect",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "configurations"]
-            }
-          }
-        },
-        {
-          "name": "Get All Configurations",
-          "request": {
-            "method": "GET",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/api/configurations",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "configurations"]
-            }
-          }
-        },
-        {
-          "name": "Update Critical Stock Threshold",
-          "request": {
-            "method": "PUT",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{ \"parameterValue\": \"10\", \"userUUID\": \"{{adminUUID}}\" }"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/configurations/critical_stock_threshold",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "configurations", "critical_stock_threshold"]
-            }
-          }
-        },
-        {
-          "name": "Update Report Format",
-          "request": {
-            "method": "PUT",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{ \"parameterValue\": \"PDF\", \"userUUID\": \"{{adminUUID}}\" }"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/configurations/report_format",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "configurations", "report_format"]
-            }
-          }
-        },
-        {
-          "name": "Update Report Frequency",
-          "request": {
-            "method": "PUT",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{ \"parameterValue\": \"weekly\", \"userUUID\": \"{{adminUUID}}\" }"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/configurations/report_frequency",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "configurations", "report_frequency"]
-            }
-          }
-        },
-        {
-          "name": "Enable Notifications",
-          "request": {
-            "method": "PUT",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{ \"parameterValue\": \"true\", \"userUUID\": \"{{adminUUID}}\" }"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/configurations/enable_notifications",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "configurations", "enable_notifications"]
-            }
-          }
-        },
-        {
-          "name": "Set Max Users",
-          "request": {
-            "method": "PUT",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{ \"parameterValue\": \"50\", \"userUUID\": \"{{adminUUID}}\" }"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/configurations/max_users",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "configurations", "max_users"]
-            }
-          }
-        },
-        {
-          "name": "Set Role Permissions",
-          "request": {
-            "method": "PUT",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{ \"parameterValue\": \"Operateur:read-only,Admin:full\", \"userUUID\": \"{{adminUUID}}\" }"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/configurations/role_permissions",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "configurations", "role_permissions"]
-            }
-          }
-        },
-        {
-          "name": "Set Theme Color (custom dynamic)",
-          "request": {
-            "method": "PUT",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{ \"parameterValue\": \"#00FF00\", \"userUUID\": \"{{adminUUID}}\" }"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/configurations/theme_color",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "configurations", "theme_color"]
+              "path": ["api", "collector", "collect"]
             }
           }
         }
@@ -857,6 +798,12 @@
   "variable": [
     { "key": "baseUrl", "value": "http://localhost:3001" },
     { "key": "accessToken", "value": "" },
-    { "key": "refreshToken", "value": "" }
+    { "key": "refreshToken", "value": "" },
+    { "key": "userUUID", "value": "" },
+    { "key": "productUUID", "value": "" },
+    { "key": "movementUUID", "value": "" },
+    { "key": "orderUUID", "value": "" },
+    { "key": "transactionUUID", "value": "" },
+    { "key": "resetToken", "value": "" }
   ]
 }

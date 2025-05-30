@@ -46,7 +46,8 @@ export default function UsersPage() {
     <div style={{ paddingTop: 20 }}>
       <h4>Utilisateurs</h4>
       <GenericEntityPage<User>
-        title="Utilisateurs"
+        title="historique des Utilisateurs"
+        titleBtn="Utilisateurs"
         items={users}
         loading={loading}
         error={error}
@@ -90,6 +91,28 @@ export default function UsersPage() {
             <SelectField<UserRole>
               value={state.role}
               onChange={(value) => setState({ ...state, role: value })}
+              options={Object.values(UserRole)}
+            />
+          </>
+        )}
+        renderEditForm={(state, setState) => (
+          <>
+            <InputField
+              icon="fa fa-user"
+              value={state.username}
+              onChange={(v) => setState((s) => ({ ...s, username: v }))}
+              placeholder="Nom utilisateur"
+            />
+            <InputField
+              icon="fa fa-envelope"
+              value={state.email}
+              onChange={(v) => setState((s) => ({ ...s, email: v }))}
+              placeholder="Email"
+              type="email"
+            />
+            <SelectField<UserRole>
+              value={state.role}
+              onChange={(v) => setState((s) => ({ ...s, role: v }))}
               options={Object.values(UserRole)}
             />
           </>

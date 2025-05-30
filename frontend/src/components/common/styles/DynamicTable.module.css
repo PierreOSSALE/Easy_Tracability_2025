@@ -77,6 +77,11 @@
   background-color: var(--color-gray-light);
   right: 0;
 }
+.tableTitle {
+  color: var(--color-primary);
+  text-align: center;
+  padding: 10px;
+}
 .pagination {
   display: flex;
   align-items: center;
@@ -87,7 +92,11 @@
 .pageButton .dx-button-content {
   font-size: 1.2rem;
 }
-
+svg.action-icon {
+  background: #ff5454;
+  font-size: 2rem;
+  cursor: pointer;
+}
 .pageInfo {
   margin: 0 1rem;
   font-weight: 500;

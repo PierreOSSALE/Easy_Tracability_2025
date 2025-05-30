@@ -11,6 +11,7 @@ export interface IMovementLine {
   productBarcode: string;
   operationType: OperationType;
   quantity: number;
+  processed: boolean;
 }
 
 export interface IMovementLineCreation {
@@ -19,10 +20,12 @@ export interface IMovementLineCreation {
   productBarcode: string;
   operationType: OperationType;
   quantity: number;
+  processed?: boolean;
 }
 
 export interface IMovementLineUpdate {
   productBarcode?: string;
   operationType?: OperationType;
   quantity?: number;
+  processed?: boolean;
 }

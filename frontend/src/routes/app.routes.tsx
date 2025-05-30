@@ -20,6 +20,12 @@ import UsersPage from "../features/admin/pages/UsersPage";
 import ProductsPage from "../features/admin/pages/ProductsPage";
 import MovementsPage from "../features/admin/pages/MovementsPage";
 import StatisticsPage from "../features/admin/pages/StatisticsPage";
+import TransactionsPage from "../features/admin/pages/TransactionsPage";
+
+// **Nouvelles pages Admin**
+import EtlPage from "../features/admin/pages/EtlPage";
+import DwPage from "../features/admin/pages/DwPage";
+import SalesAlertsPage from "../features/admin/pages/SalesAlertsPage";
 
 // Manager pages
 import ManagerDashboardPage from "../features/manager/pages/ManagerDashboardPage";
@@ -35,7 +41,6 @@ import OperatorNewMovementPage from "../features/operator/pages/OperatorNewMovem
 const AppRoutes: React.FC = () => {
   const routes = useRoutes([
     { path: "/", element: <Navigate to="/login" /> },
-
     { path: "/login", element: <LoginPage />, handle: { title: "Connexion" } },
     {
       path: "/forgot-password",
@@ -48,6 +53,7 @@ const AppRoutes: React.FC = () => {
       handle: { title: "Réinitialiser le mot de passe" },
     },
 
+    // --- ADMIN ROUTES ---
     {
       path: "/admin",
       element: <RoleProtectedRoute />,
@@ -77,15 +83,32 @@ const AppRoutes: React.FC = () => {
               handle: { title: "Mouvements" },
             },
             {
+              path: "transactions",
+              element: <TransactionsPage />,
+              handle: { title: "Transactions" },
+            },
+            { path: "etl", element: <EtlPage />, handle: { title: "ETL" } },
+            {
+              path: "dw",
+              element: <DwPage />,
+              handle: { title: "DataWarehouse" },
+            },
+            {
               path: "statistics",
               element: <StatisticsPage />,
               handle: { title: "Statistiques" },
+            },
+            {
+              path: "sales-alerts",
+              element: <SalesAlertsPage />,
+              handle: { title: "Ventes & Alertes" },
             },
           ],
         },
       ],
     },
 
+    // --- MANAGER ROUTES ---
     {
       path: "/manager",
       element: <RoleProtectedRoute />,
@@ -102,12 +125,12 @@ const AppRoutes: React.FC = () => {
             {
               path: "products",
               element: <ManagerProductsPage />,
-              handle: { title: "Products" },
+              handle: { title: "Produits" },
             },
             {
               path: "movements",
               element: <ManagerMovementsPage />,
-              handle: { title: "Movements" },
+              handle: { title: "Mouvements" },
             },
             {
               path: "transactions",
@@ -117,7 +140,7 @@ const AppRoutes: React.FC = () => {
             {
               path: "statistics",
               element: <ManagerStatisticsPage />,
-              handle: { title: "Statistics" },
+              handle: { title: "Statistiques" },
             },
             {
               path: "*",
@@ -129,6 +152,7 @@ const AppRoutes: React.FC = () => {
       ],
     },
 
+    // --- OPERATOR ROUTES ---
     {
       path: "/operator",
       element: <RoleProtectedRoute />,
@@ -157,6 +181,7 @@ const AppRoutes: React.FC = () => {
       ],
     },
 
+    // Fallbacks
     {
       path: "/unauthorized",
       element: <UnauthorizedPage />,
@@ -168,7 +193,6 @@ const AppRoutes: React.FC = () => {
       handle: { title: "Non autorisé" },
     },
   ]);
-
   return routes;
 };
 
