@@ -1,362 +1,219 @@
-<<<<<<< HEAD
-# Easy Traceability System
-=======
-# Easy_Tracability_2025
+# Easy Traceability 2025
 
-Comprehensive solution for coding, stock management, and product traceability for merchants, incorporating IoT tools and an interactive dashboard.
->>>>>>> 7580a4d (26/05/2025)
+> Solution modulaire full‑stack pour la gestion de stocks, la traçabilité, l’entrepôt de données et les notifications, avec IoT et tableau de bord interactif.
 
 ---
 
-&#x20;&#x20;
+## Table des matières
 
-A full-stack, modular solution for warehouse inventory management and product traceability. Designed with best practices in mind to enable developers of all levels to quickly understand, extend, and deploy.
-
----
-
-## Table of Contents
-
-1. [Features](#features)
-2. [Tech Stack & Architecture](#tech-stack--architecture)
-3. [Prerequisites](#prerequisites)
-4. [Installation & Setup](#installation--setup)
-5. [Configuration & Environment Variables](#configuration--environment-variables)
-6. [Development Workflow](#development-workflow)
-7. [Usage](#usage)
-8. [Running with Docker](#running-with-docker)
-9. [Testing & Linting](#testing--linting)
-10. [API Reference](#api-reference)
-11. [Troubleshooting](#troubleshooting)
-12. [Contributing](#contributing)
-13. [Issue & Pull Request Templates](#issue--pull-request-templates)
-14. [Future Enhancements](#future-enhancements)
-15. [License](#license)
-16. [Contact](#contact)
+- [Présentation](#présentation)
+- [Fonctionnalités](#fonctionnalités)
+- [Architecture & Stack](#architecture--stack)
+- [Prérequis](#prérequis)
+- [Installation & Configuration](#installation--configuration)
+- [Démarrage](#démarrage)
+- [Docker](#docker)
+- [Organisation du code](#organisation-du-code)
+- [API & Endpoints](#api--endpoints)
+- [Data Warehouse & ETL](#data-warehouse--etl)
+- [Tests & Qualité](#tests--qualité)
+- [Contribuer](#contribuer)
+- [Roadmap](#roadmap)
+- [Licence](#licence)
+- [Contact](#contact)
 
 ---
 
-<<<<<<< HEAD
-## Features
+## Présentation
 
-* **Barcode Generation**: Code128 barcodes for labelling.
-* **Data Collection**: Simulated scanning & manual entry.
-* **Inventory Management**: Stock levels, thresholds, alerts.
-* **Secure API**: JWT authentication + TLS.
-* **Realtime Reporting**: React dashboard with DevExtreme charts.
-* **Modular**: Clear separation of frontend & backend.
-* **Containerization**: Docker Compose for instant setup.
+**Easy Traceability 2025** centralise la gestion des stocks et la traçabilité produit.
 
----
+- Back‑end Node.js/TypeScript avec Express, Sequelize & Redis
+- Front‑end React/TypeScript avec DevExtreme
+- Data Warehouse MySQL + ETL automatisé
+- Notifications (email) et génération de codes-barres
 
-## Project Structure & Dependencies
+## Fonctionnalités
 
-A clear project structure and understanding of dependencies help developers navigate and maintain the codebase.
+1. **CRUD Inventaire** : articles, mouvements, commandes
+2. **Génération Code128** pour étiquetage
+3. **Authentification & rôles** : JWT, middleware `authorizeRole`, `hybridAuth`
+4. **Cache & sessions** : Redis pour performance & sessions utilisateurs
+5. **Upload images** : profils et seeder-img pour démonstration
+6. **Dashboard** : statistiques, graphiques, filtres dynamiques
+7. **Data Warehouse** : dimensions `dimProduct`, `dimUser`, `dimTime`, faits `factInventory`
+8. **ETL** : logs, planificateur, transformation et chargement
+9. **Notifications** : service `email.service.ts` pour alertes
 
-```
-Easy_Tracability_2025/
-├── backend/                  # Express API server
-│   ├── src/
-│   │   ├── controllers/      # Route handlers
-│   │   ├── models/           # Sequelize models
-│   │   ├── routes/           # Express routes
-│   │   ├── middleware/       # Auth, error handling
-│   │   └── config/           # DB & JWT configuration
-│   ├── tests/                # Jest & Supertest suites
-│   ├── .env.example          # Environment variable template
-│   ├── package.json          # Backend dependencies & scripts
-│   └── Dockerfile            # Container definition for backend
-├── frontend/                 # React single-page application
-│   ├── public/               # Static assets
-│   ├── src/
-│   │   ├── components/       # UI components
-│   │   ├── services/         # API calls (Axios)
-│   │   ├── stores/           # State management (if any)
-│   │   ├── styles/           # Global styles & themes
-│   │   └── App.tsx           # Root component
-│   ├── .env.example          # Environment variable template
-│   ├── package.json          # Frontend dependencies & scripts
-│   └── Dockerfile            # Container definition for frontend
-├── docker-compose.yml        # Orchestrates all services
-├── docs/                     # API specs, swagger.yaml
-├── .github/                  # CI workflows & issue/PR templates
-├── README.md                 # This documentation
-└── LICENSE
-```
-
-### Key Dependencies
-
-* **Backend** (`backend/package.json`):
-
-  * `express`: Web framework for building REST APIs.
-  * `sequelize` & `mysql2`: ORM and driver for MySQL database interactions.
-  * `jsonwebtoken`: JWT creation & verification for secure authentication.
-  * `dotenv`: Loads environment variables.
-  * `jest` & `supertest`: Testing frameworks for unit and integration tests.
-
-* **Frontend** (`frontend/package.json`):
-
-  * `react` & `react-dom`: Core UI library.
-  * `typescript`: Static typing for improved developer experience.
-  * `axios`: HTTP client to communicate with the API.
-  * `devextreme-react`: Rich UI charts and grids for dashboard.
-  * `eslint` & `prettier`: Linting and formatting tools.
-
-* **DevOps & CI**:
-
-  * `docker` & `docker-compose`: Containerization and multi-service orchestration.
-  * GitHub Actions workflows: Automate tests, linting, and coverage reporting.
-
----
-
-## Tech Stack & Architecture
-
-* **Frontend**: React.js, TypeScript, DevExtreme, Axios
-* **Backend**: Node.js, Express, Sequelize ORM, MySQL
-* **Authentication**: JSON Web Tokens (JWT)
-* **CI/CD**: GitHub Actions (build, test, coverage)
-* **Deployment**: Docker, Docker Compose
+## Architecture & Stack
 
 ```mermaid
-graph LR
-  F[Frontend] -->|API calls| B[Backend]
-  B -->|ORM| MySQL(Database)
-  B -->|JWT| AuthService
+flowchart LR
+  subgraph Frontend
+    FE[React + TypeScript]
+  end
+  subgraph Backend
+    API[Express REST]
+    REDIS[Redis]
+    DB[(MySQL)]
+    ETL[ETL Service]
+    MAIL[Email Service]
+  end
+  FE -->|HTTP| API
+  API -->|ORM Sequelize| DB
+  API --> REDIS
+  ETL --> DB
+  API --> MAIL
 ```
 
----
+- **Backend** : Node.js, Express, Sequelize, Redis, JWT, TypeScript
+- **Frontend** : React, TypeScript, DevExtreme, Axios
+- **CI/CD** : GitHub Actions (tests, lint, build)
+- **Containerisation** : Docker Compose
 
-## Prerequisites
+## Prérequis
 
-* Node.js v14+
-* npm or Yarn
-* Docker & Docker Compose (for container)
-* MySQL (if not using Docker)
+- **Node.js** v14+ & npm/Yarn
+- **Docker** & **Docker Compose** (optionnel)
+- **MySQL** (local ou conteneur)
+- **Redis** (facultatif hors Docker)
 
----
+## Installation & Configuration
 
-## Installation & Setup
-
-1. **Clone the repo**
-
-   ```bash
-   git clone https://github.com/PierreOSSALE/Easy_Tracability_2025.git
-   cd Easy_Tracability_2025
-   ```
-2. **Install dependencies**
-
-   ```bash
-   # Backend dependencies (Express, Sequelize, JWT, etc.)
-   cd backend
-   npm install
-   # Frontend dependencies (React, DevExtreme, Axios, etc.)
-   cd ../frontend
-   npm install
-   ```
-
----
-
-## Available Scripts
-
-In each package (`backend` and `frontend`), the following scripts are available:
-
-| Command         | Description                                     |
-| --------------- | ----------------------------------------------- |
-| `npm run dev`   | Start the server in development mode (nodemon)  |
-| `npm start`     | Launch the frontend development server          |
-| `npm test`      | Run unit and integration tests                  |
-| `npm run lint`  | Execute ESLint and Prettier checks              |
-| `npm run build` | Create a production build (frontend or backend) |
-
-Use these scripts to speed up development and maintain consistency.
-
----
-
-## Configuration & Environment Variables
-
-1. **Clone the repo**
+1. **Cloner**
 
    ```bash
    git clone https://github.com/PierreOSSALE/Easy_Tracability_2025.git
    cd Easy_Tracability_2025
    ```
-2. **Install dependencies**
+
+2. **Variables d’environnement**
+
+   - Copier les exemples : `backend/.env.example → backend/.env`, `frontend/.env.example → frontend/.env`
+   - Ajuster selon votre environnement
+
+3. **Installer dépendances**
 
    ```bash
-   # Backend
+   cd backend && npm install
+   cd ../frontend && npm install
    ```
 
-docker-compose run --rm backend npm install
+## Démarrage
 
-# Frontend
-
-docker-compose run --rm frontend npm install
-
-````
-
----
-
-## Configuration & Environment Variables
-
-Rename `.env.example` in each folder and update values:
-
-```ini
-# backend/.env
-DB_HOST=localhost
-DB_PORT=3306
-DB_USER=root
-DB_PASS=your_password
-DB_NAME=traceability_db
-JWT_SECRET=super_secret_key
-
-# frontend/.env
-REACT_APP_API_URL=https://localhost:4000/api
-````
-
-Store secrets securely (e.g., GitHub Secrets, Vault).
-
----
-
-## Development Workflow
-
-1. **Branching Strategy**: Follow GitFlow:
-
-   * `main` for production-ready code
-   * `develop` for integration
-   * `feature/*` for new features
-   * `hotfix/*` for urgent fixes
-2. **Code Style & Linting**:
-
-   * ESLint (frontend & backend)
-   * Prettier for consistent formatting
-3. **Commit Convention**: Use Conventional Commits:
-
-   * `feat:`, `fix:`, `refactor:`, `docs:`, etc.
-4. **Pull Requests**:
-
-   * Target the `develop` branch
-   * Include description, screenshots, tests
-
----
-
-## Usage
-
-### Local Development (without Docker)
+### Local sans Docker
 
 ```bash
-# Backend
-git checkout develop
-cd backend
-npm run dev
-
-# Frontend
-cd ../frontend
-npm start
+# Backend en dev
+cd backend && npm run dev
+# Frontend en dev
+cd ../frontend && npm start
 ```
 
-Open `http://localhost:3000`.
+- Front : [http://localhost:3000](http://localhost:3000)
+- API : [http://localhost:4000/api](http://localhost:4000/api)
 
----
+## Docker
 
-## Running with Docker
+Pour tout en un :
 
 ```bash
 docker-compose up --build
 ```
 
-Services:
+Services :
 
-* Frontend: `http://localhost:3000`
-* Backend: `http://localhost:4000`
-* DB: exposed on `3306`
+- MySQL : 3306
+- Redis : 6379
+- API : 4000
+- Front : 3000
 
----
+## Organisation du code
 
-## Testing & Linting
+```text
+Easy_Tracability_2025/
+├─ backend/
+│  ├─ public/seeder-img/      # Images initiales
+│  ├─ src/
+│  │  ├─ config/               # DB & Redis
+│  │  ├─ controllers/          # Routes handlers
+│  │  ├─ dto/                  # Data transfer objects
+│  │  ├─ interfaces/           # Types TypeScript
+│  │  ├─ middlewares/          # Auth, error, file upload
+│  │  ├─ models/               # Sequelize models & associations
+│  │  ├─ routes/               # API routes
+│  │  ├─ services/             # Business logic (auth, ETL, stats, email...)
+│  │  ├─ utils/                # JWT, async catch, barcode generator, user utils
+│  │  ├─ app.ts                # Initialisation Express
+│  │  └─ server.ts             # Démarrage serveur
+│  └─ package.json
+├─ frontend/
+│  ├─ public/
+│  ├─ src/
+│  │  ├─ api/                  # appels HTTP
+│  │  ├─ assets/
+│  │  ├─ components/           # UI, modals, sidebar, topbar
+│  │  ├─ features/             # admin, manager, operator, auth
+│  │  ├─ hooks/
+│  │  ├─ routes/
+│  │  ├─ services/             # gestion session, tokens
+│  │  ├─ types/
+│  │  └─ utils/
+│  └─ package.json
+└─ docker-compose.yml
+```
 
-* **Backend**:
+## API & Endpoints
 
-  ```bash
-  cd backend
-  npm test
-  npm run lint
-  ```
-* **Frontend**:
+| Méthode | Endpoint                 | Description          |
+| ------- | ------------------------ | -------------------- |
+| POST    | `/api/auth/login`        | Authentification     |
+| POST    | `/api/auth/register`     | Création utilisateur |
+| GET     | `/api/inventory`         | Liste articles       |
+| POST    | `/api/inventory`         | Ajouter article      |
+| PUT     | `/api/inventory/:id`     | Mettre à jour        |
+| DELETE  | `/api/inventory/:id`     | Supprimer article    |
+| POST    | `/api/barcode/generate`  | Code128 image        |
+| GET     | `/api/dashboard/summary` | Statistiques widget  |
+| POST    | `/api/warehouse/etl`     | Lancer ETL           |
 
-  ```bash
-  cd frontend
-  npm test
-  npm run lint
-  ```
+## Data Warehouse & ETL
 
-Aim for >80% coverage.
+- **Dimensions** : `dimProduct`, `dimUser`, `dimTime`
+- **Faits** : `factInventory`
+- **Flux** : `etl.service.ts`, `dataWarehouse.service.ts`
+- **Logs** : `etlLog` pour audit
 
----
+## Tests & Qualité
 
-## API Reference
+- **Backend** : Jest, Supertest (>=80% couverture)
+- **Frontend** : React Testing Library, Jest
+- **Lint** : ESLint, Prettier
+- **CI** : GitHub Actions (pull requests)
 
-| Method | Endpoint                | Description                    |
-| ------ | ----------------------- | ------------------------------ |
-| POST   | `/api/auth/login`       | Returns JWT                    |
-| POST   | `/api/auth/register`    | Create admin account           |
-| GET    | `/api/inventory`        | List items                     |
-| POST   | `/api/inventory`        | Add item                       |
-| PUT    | `/api/inventory/:id`    | Update item                    |
-| DELETE | `/api/inventory/:id`    | Remove item                    |
-| POST   | `/api/barcode/generate` | Generate Code128 barcode image |
-| GET    | `/api/reports/summary`  | Dashboard data                 |
-
-See [Swagger Documentation](docs/swagger.yaml).
-
----
-
-## Troubleshooting
-
-* **DB Connection Failed**: Verify `.env` credentials & DB is running.
-* **CORS Errors**: Ensure `REACT_APP_API_URL` matches backend origin.
-* **Invalid JWT**: Clear cookies/local storage and re-login.
-
----
-
-## Contributing
-
-We welcome all contributions! Steps:
+## Contribuer
 
 1. Fork & clone
-2. Create `feature/` branch
-3. Code & test
-4. Lint and format
-5. Push & open PR against `develop`
+2. Branche `feature/xxx`
+3. Linter & tests
+4. PR vers `develop`
 
-Please read [CONTRIBUTING.md](/CONTRIBUTING.md) and \[CODE\_OF\_CONDUCT.md].
+Lire [`CONTRIBUTING.md`](.github/CONTRIBUTING.md)
 
----
+## Roadmap
 
-## Issue & Pull Request Templates
+- Synchronisation offline
+- Intégration scanners IoT réels
+- Export CSV / PDF dashboards
+- CI/CD déploiement cloud
 
-Templates are provided in `.github/ISSUE_TEMPLATE` and `.github/PULL_REQUEST_TEMPLATE.md`.
+## Licence
 
----
-
-## Future Enhancements
-
-* **Offline Mode**
-* **ERP & IoT Scanner Integration**
-* **Advanced Analytics & Export**
-* **Full CI/CD Pipelines**
-
----
-
-## License
-
-Distributed under the MIT License. See [LICENSE](LICENSE).
-
----
+MIT © Pierre Ossale
 
 ## Contact
 
-**Pierre Ossale** – Fullstack Developer
-Email: [pierre.ossale@example.com](mailto:pierre.ossale@example.com)
+Pierre Ossale – [pierre.ossale@example.com](mailto:pierre.ossale@example.com)
 GitHub: [PierreOSSALE](https://github.com/PierreOSSALE)
-=======
-## 🛠️ Features
->>>>>>> 7580a4d (26/05/2025)
+
+_Cap vers l’avenir de la traçabilité…_
