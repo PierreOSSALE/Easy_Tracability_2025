@@ -213,7 +213,7 @@ MIT © Pierre Ossale
 
 ## Contact
 
-Pierre Ossale – [pierre.ossale@example.com](mailto:pierre.ossale@example.com)
+Pierre Ossale – [pierreossale.devweb@gmail.com](mailto:pierreossale.devweb@gmail.com)
 GitHub: [PierreOSSALE](https://github.com/PierreOSSALE)
 
 _Cap vers l’avenir de la traçabilité…_
