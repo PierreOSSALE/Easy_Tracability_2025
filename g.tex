@@ -1,0 +1,1011 @@
+%----------------------------------------
+% Documentclass et encodage (pour XeLaTeX)
+%----------------------------------------
+\documentclass[12pt,a4paper]{report}
+
+%------------------------------------------------------------
+% 1) Choix de la police principale et police arabe
+%------------------------------------------------------------
+\usepackage{fontspec}
+\setmainfont{TeX Gyre Termes}
+\newfontfamily\arabicfont[Script=Arabic]{Amiri}
+
+%------------------------------------------------------------
+% 2) Chargement des paquets « neutres »
+%------------------------------------------------------------
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{array}
+\usepackage{amsmath}
+\usepackage{amstext}
+\usepackage[inner=2.5cm,outer=2.5cm,top=2.5cm,bottom=2.5cm]{geometry}
+\usepackage{fancyhdr}
+\usepackage{setspace}
+  \setstretch{1.2}
+  \setlength{\parindent}{0pt}
+  \setlength{\parskip}{6pt}
+
+\renewcommand{\arraystretch}{1.5}
+\setlength{\tabcolsep}{12pt}
+\definecolor{lightblue}{HTML}{DCE9F9}
+
+%------------------------------------------------------------
+% 3) hyperref avant polyglossia
+%------------------------------------------------------------
+\usepackage[protrusion=true]{microtype}
+\usepackage[hidelinks]{hyperref}
+
+%------------------------------------------------------------
+% 4) polyglossia pour gérer les langues
+%------------------------------------------------------------
+\usepackage{titlesec}
+\usepackage{polyglossia}
+\setdefaultlanguage{french}
+\setotherlanguages{english,arabic}
+
+%------------------------------------------------------------
+% 5) Configuration de fancyhdr
+%------------------------------------------------------------
+\fancyhf{}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\pagestyle{fancy}
+
+%------------------------------------------------------------
+% 6) Numérotation personnalisée des chapitres et sections
+%------------------------------------------------------------
+% (a) Chapitres en chiffres romains
+\renewcommand{\thechapter}{\Roman{chapter}}
+% (b) Sections en forme « I-1, I-2, … »
+\renewcommand{\thesection}{\Roman{chapter}-\arabic{section}}
+% (c) Sous-sections en « I-2-1, I-2-2, … »
+\renewcommand{\thesubsection}{\Roman{chapter}-\arabic{section}-\arabic{subsection}}
+
+%------------------------------------------------------------
+% 7) Personnalisation de l’affichage des chapitres (titlesec)
+%------------------------------------------------------------
+\usepackage{titlesec}
+
+\titleformat{\chapter}[block]
+  {\normalfont\huge\bfseries}
+  {\thechapter\,-\ }{0em}{\Huge}
+
+%------------------------------------------------------------
+% (Fin du préambule – début du document)
+%------------------------------------------------------------
+\begin{document}
+
+%----------------------------------------
+% Page de garde conforme à finale.pdf
+%----------------------------------------
+\begin{titlepage}
+  \centering
+
+  % Nom de l'école
+  {\large École Supérieure Méditerranéenne Privée des Sciences Informatiques, Économiques et de Gestion de Tunis}\\[1.5cm]
+
+  % Logos gauche et droite
+  \begin{minipage}{0.45\textwidth}\raggedright
+    \includegraphics[height=2.5cm]{figures/UMLT.jpg}
+  \end{minipage}%
+  \hfill
+  \begin{minipage}{0.45\textwidth}\raggedleft
+    \includegraphics[height=2.5cm]{figures/EASY.jpg}
+  \end{minipage}\\[1.5cm]
+
+  % Titre principal
+  {\LARGE\bfseries Rapport de projet fin d’Études}\\[1cm]
+
+  % Indicateur SUJET et lignes
+  {\large\bfseries SUJET}\\[-0.2cm]
+  \rule{0.8\textwidth}{0.4pt}\\[0.3cm]
+  {\Large Solution de Codification et de Gestion des Stocks pour Commerçants}\\[0.3cm]
+  \rule{0.8\textwidth}{0.4pt}\\[1cm]
+
+  % Bloc de présentation
+  {\normalsize Présenté en vue de l’obtention du titre de}\\
+  {\normalsize Licence Co-construite en Informatique Décisionnelle (BI)}\\[1.5cm]
+
+  % Élaboré par
+  {\itshape Élaboré par}\\
+  {\large YAO KOUAME DIEUDONNE}\\[1.5cm]
+
+  % Encadrements
+  \begin{minipage}{0.45\textwidth}\centering
+    {\bfseries Encadrant académique}\\
+    Mme Ben Hamouda Roua
+  \end{minipage}%
+  \hfill
+  \begin{minipage}{0.45\textwidth}\centering
+    {\bfseries Encadrant professionnel}\\
+    Mme Rania Issani
+  \end{minipage}\\[2cm]
+
+  % Année
+  {\normalsize Année Universitaire 2024/2025}
+
+\end{titlepage}
+
+%----------------------------------------
+% Dédicaces
+%----------------------------------------
+\cleardoublepage
+\thispagestyle{empty}
+\chapter*{Dédicaces}
+\phantomsection
+\addcontentsline{toc}{chapter}{Dédicaces}
+Je dédie ce projet de fin d’études à tous ceux qui ont cru en moi et m’ont soutenu tout au long de ce parcours.\\
+À mes parents, pour leur amour inconditionnel, leur soutien constant et leurs encouragements indéfectibles. Merci pour avoir toujours cru en moi et pour les sacrifices que vous avez faits afin de m’offrir les meilleures opportunités.\\
+À mes professeurs et encadrants, pour leur guidance précieuse, leur patience et leur dévouement. Leur expertise et leurs conseils ont été essentiels à la réalisation de ce projet.\\
+À mes amis et collègues, pour leur amitié, leur soutien moral et les moments partagés qui ont rendu cette période plus agréable et motivante.\\
+Enfin, à toutes les personnes qui, de près ou de loin, ont contribué à ce projet. Votre aide et votre soutien ont été inestimables.
+
+%----------------------------------------
+% Remerciements
+%----------------------------------------
+\cleardoublepage
+\phantomsection
+\chapter*{Remerciements}
+\addcontentsline{toc}{chapter}{Remerciements}
+Je tiens à exprimer ma profonde gratitude à tous ceux qui ont contribué à la réalisation de ce projet de fin d’études.\\
+Tout d’abord, je remercie sincèrement Mme Khalfallah Nesrine, présidente du jury, pour son temps, son intérêt et ses remarques constructives lors de l’évaluation de ce projet. Son regard critique et son expertise ont permis d’enrichir cette étude.\\
+Je tiens également à exprimer ma reconnaissance à Mme Dridi Amani, rapporteur, pour son analyse approfondie, ses commentaires pertinents et ses suggestions qui ont grandement amélioré la qualité de ce travail.\\
+Un grand merci à Mme Ben Hamouda Roua, mon encadrante académique, pour son soutien indéfectible, ses conseils précieux et son accompagnement tout au long de ce projet. Son expertise et sa bienveillance ont été des atouts inestimables pour mener à bien cette étude.\\
+Je souhaite également remercier M. Sahli Mohamed, mon encadrant professionnel, pour son encadrement pratique, ses orientations techniques et son implication constante. Son expérience et ses suggestions ont largement contribué à la qualité et à la pertinence de ce travail.
+
+%----------------------------------------
+% Résumé (français)
+%----------------------------------------
+\cleardoublepage
+\chapter*{Résumé}
+\phantomsection
+\addcontentsline{toc}{chapter}{Résumé}
+Ce projet de fin d’études avait pour objectif de concevoir et d’implémenter une plateforme web de codification et de gestion des stocks destinée aux commerçants. Dans un premier temps, une analyse des besoins métier a conduit à la modélisation d’une base de données relationnelle et au développement d’une API REST en Node.js/TypeScript avec Sequelize. Cette API intègre la génération de codes-barres (QR/NFC) et un processus ETL permettant d’alimenter un entrepôt de données dédié. Dans un second temps, une interface utilisateur en React/TypeScript a été réalisée pour permettre aux opérateurs de scanner les produits en temps réel et fournir aux managers des tableaux de bord interactifs et des rapports dynamiques.
+
+Cette démarche a permis de consolider des compétences en développement full-stack, en conception de schéma BI, en intégration de processus ETL et en sécurisation d’applications (authentification JWT, gestion des rôles, middlewares). Par ailleurs, l’adoption de la méthodologie Agile Scrum a favorisé la collaboration au sein de l’équipe, l’itération rapide (incréments toutes les deux semaines) et l’adaptation continue aux retours des utilisateurs. Dans une perspective d’évolution, l’intégration d’un module de Data Mining pour des analyses prédictives de la demande pourrait améliorer l’optimisation des niveaux de stock et la prise de décision des commerçants.\\
+\textbf{Mots clés :} codification, gestion des stocks, QR code, RFID/NFC, Node.js, React, Business Intelligence, ETL, Sequelize, JWT.
+
+%----------------------------------------
+% Abstract (anglais)
+%----------------------------------------
+\cleardoublepage
+\selectlanguage{english}
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+The aim of this end-of-studies project was to design and implement a full-stack web platform for product codification and inventory management tailored to merchants. First, business requirements analysis led to the data modeling of a relational database and the development of a Node.js/TypeScript REST API using Sequelize. This API incorporates barcode generation (QR/NFC) and an ETL pipeline feeding a dedicated data warehouse. Next, a React/TypeScript front-end was built to enable operators to scan products in real time and to supply managers with interactive dashboards and dynamic reports.
+
+This approach strengthened skills in full-stack development, BI schema design, ETL integration, and application security (JWT authentication, role management, middleware). Moreover, the adoption of an Agile Scrum methodology (two-week sprints) promoted effective team collaboration, rapid iteration, and continuous adaptation to user feedback. For future enhancement, integrating a Data Mining module for predictive demand analysis could improve stock level optimization and support merchants in decision making.\\
+\textbf{Keywords:} codification, inventory management, QR code, RFID/NFC, Node.js, React, Business Intelligence, ETL, Sequelize, JWT.
+\selectlanguage{french}
+
+%----------------------------------------
+% ملخص (arabe)
+%----------------------------------------
+\cleardoublepage
+\selectlanguage{arabic}
+\chapter*{ملخص}
+\addcontentsline{toc}{chapter}{ملخص}
+هدف هذا المشروع الختامي هو تصميم وتنفيذ منصة ويب شاملة لترميز وإدارة المخزون موجهة للتجار. في المرحلة الأولى، تم تحليل احتياجات العمل وتصميم قاعدة بيانات علائقية وتطوير واجهة برمجة تطبيقات REST باستخدام Node.js/TypeScript مع مكتبة Sequelize. تتضمن هذه الواجهة توليد أكواد شريطية (QR/NFC) وعملية ETL لتحميل البيانات إلى مستودع بيانات مخصص. في المرحلة الثانية، تم إنشاء واجهة مستخدم باستخدام React/TypeScript لتمكين المشغلين من مسح المنتجات في الوقت الحقيقي وتوفير لوحات بيانات تفاعلية وتقارير ديناميكية للمديرين.  
+
+أتاحت هذه المنهجية تعزيز المهارات في تطوير الواجهة الخلفية والواجهة الأمامية، وتصميم مخططات BI، ودمج عمليات ETL وتأمين التطبيقات (مصادقة JWT، وإدارة الأدوار، والوسائط الوسيطة). بالإضافة إلى ذلك، أدت منهجية Scrum الرشيقة إلى تحسين التعاون داخل الفريق، والتنفيذ السريع (تحديثات كل أسبوعين)، والتكيف المستمر مع ملاحظات المستخدمين. من وجهة نظر التطوير المستقبلي، يمكن أن يؤدي دمج وحدة تنقيب البيانات (Data Mining) لتحليل الطلبات التنبؤية إلى تحسين مستويات المخزون ودعم اتخاذ القرار لدى التجار.\\
+\textbf{الكلمات المفتاحية:} الترميز، إدارة المخزون، رمز الاستجابة السريعة (QR)، RFID/NFC، Node.js، React، ذكاء الأعمال (BI)، ETL، Sequelize، JWT.
+\selectlanguage{french}
+
+
+%==========================================
+% INSÉRER TABLE DES MATIÈRES, LISTE DES FIGURES, LISTE DES TABLEAUX
+%==========================================
+\cleardoublepage
+\tableofcontents
+\listoffigures
+\listoftables
+\cleardoublepage
+
+
+
+%----------------------------------------
+% Introduction générale
+%----------------------------------------
+\chapter*{Introduction générale}
+\addcontentsline{toc}{chapter}{Introduction générale}
+
+Dans un contexte de concurrence accrue, la gestion efficace des stocks et la traçabilité des produits sont devenues des enjeux stratégiques majeurs pour les commerçants, quel que soit leur secteur d’activité. L’adoption de solutions numériques intégrant des technologies comme les QR codes, les étiquettes RFID/NFC et les bases décisionnelles permet non seulement de garantir la conformité réglementaire, mais aussi de renforcer la transparence, la qualité de service et la satisfaction des clients.
+
+Ce projet de fin d’études s’inscrit dans cette dynamique, en proposant une application web de codification et de gestion des produits, destinée à faciliter la traçabilité et la gestion des stocks pour les petites et moyennes entreprises (PME). L'objectif est de permettre aux commerçants de générer des étiquettes intelligentes pour chaque produit, de suivre le parcours de ceux-ci à travers la chaîne logistique et d’en extraire des indicateurs décisionnels pertinents via une base de données dédiée.
+
+La solution repose sur l’intégration de plusieurs technologies complémentaires : un système de génération d’étiquettes QR/NFC, un terminal mobile pour la lecture et l’enregistrement des événements, ainsi qu’un entrepôt de données (Data Warehouse) permettant d’assurer une exploitation intelligente de l’information. Les étiquettes produites sont scannées et stockées en temps réel dans la base opérationnelle ; un processus ETL (Extract, Transform, Load) alimente ensuite régulièrement l’entrepôt de données pour les analyses BI. Ce projet s'appuie également sur des méthodes de Business Intelligence (BI) et d’ETL pour transformer les données brutes en informations utiles à la prise de décision.
+
+La démarche de réalisation a été guidée par la méthodologie **Agile-Scrum** : l’équipe s’est organisée en sprints de deux semaines, avec des réunions quotidiennes (Daily Scrum), des revues de sprint et des rétrospectives. Cette approche a permis de livrer rapidement des incréments fonctionnels et d’ajuster en continu le backlog en fonction des retours des utilisateurs et des parties prenantes.
+
+Ce rapport est structuré en plusieurs chapitres. Le **I - Étude préalable et état de l’art** présente le cadre général du projet : l’entreprise d’accueil, l’état de l’art des technologies mobilisées, l’étude de l’existant et le choix de la méthodologie. Le **II - Phase de planification** sera consacré à la phase de planification, incluant la modélisation UML, le Product Backlog et l’organisation des sprints. Les chapitres suivants détailleront la conception, l’implémentation, les tests, la validation, ainsi que la clôture du projet et les perspectives d’évolution.
+
+% Sources à citer :
+% - R. Kimball, "The Data Warehouse Toolkit", Wiley, 2013. \cite{Kimball2013}
+% - T. H. Davenport, “Competing on Analytics,” Harvard Business Review, 2006. \cite{Davenport2006}
+% - ISO 9001:2015, "Quality management systems – Requirements".
+
+%----------------------------------------
+\chapter{Étude préalable et état de l’art}
+\section{Introduction}
+
+Dans ce chapitre, nous offrons une vue d’ensemble de notre projet de fin d’études. Nous débuterons en présentant l’organisme d’accueil dans la première section. La seconde section sera dédiée à l’identification du contexte et du cadre général du projet, suivie d’une analyse de l’existant qui nous permettra de définir la problématique principale. Ensuite, la troisième section portera sur l’état de l’art. Enfin, la quatrième section abordera le choix de la méthodologie que nous avons adoptée pour la réalisation de notre projet.
+
+\section{Présentation de l’organisme d’accueil}
+Depuis 1999, EasyTechnology fournit son savoir-faire aux entreprises en élaborant des solutions logicielles personnalisées. L’entreprise, créée par des spécialistes en technologies de l’information, a pour vocation d’améliorer la productivité de ses clients (voir Figure~\ref{fig:logo_easy}). EasyTechnology est basée à Tunis, compte environ 50 employés et se spécialise dans les solutions BI, ERP et mobile.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.4\textwidth]{figures/EASY.jpg}
+  \caption{Logo de la société EasyTechnology}
+  \label{fig:logo_easy}
+\end{figure}
+
+\section{Présentation du projet}
+La traçabilité des produits est aujourd’hui essentielle pour garantir la qualité, la conformité réglementaire et la satisfaction client. Notre projet consiste à :
+\begin{itemize}
+  \item Générer des étiquettes QR code ou RFID/NFC pour chaque produit.
+  \item Scanner et enregistrer les événements de production et de distribution via un terminal mobile.
+  \item Stocker et analyser ces données dans une base décisionnelle.
+\end{itemize}
+
+\subsection{Problématique}
+La traçabilité, bien qu’indispensable, souffre d’une absence de cadre unifié et impose des coûts et des complexités qui freinent son adoption, notamment pour les PME disposant de budgets limités. Il est nécessaire de proposer un système à la fois robuste, simple à déployer et conforme aux normes en vigueur.
+
+\subsection{Objectifs}
+\begin{itemize}
+  \item Offrir une garantie de conformité réglementaire.
+  \item Automatiser la collecte des données pour réduire les erreurs manuelles.
+  \item Optimiser la gestion des stocks et des flux logistiques.
+  \item Accroître la transparence et la confiance des partenaires.
+\end{itemize}
+
+\subsection{Solution proposée}
+Nous proposons une application web couplée à une imprimante QR/NFC et un terminal de lecture mobile. Les étiquettes sont générées, scannées en temps réel, puis les événements remontent dans la base opérationnelle. Un processus ETL alimente ensuite régulièrement un entrepôt de données (Data Warehouse) pour l’analyse BI.
+
+\section{État de l’art}
+\subsection{Informatique décisionnelle}
+La Business Intelligence (BI) regroupe les processus et outils destinés à transformer de grandes quantités de données brutes en informations exploitables. Elle comprend quatre phases : collecte, stockage, restitution et analyse (Figure~\ref{fig:bi_phases}).  
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{figures/BI.png}
+  \caption{Les différentes phases d’un projet BI}
+  \label{fig:bi_phases}
+\end{figure}
+
+% Source : Kimball (2013) \cite{Kimball2013}
+
+\subsection{Extract, Transform, Load (ETL)}
+L’ETL est un processus en trois étapes : extraction des données de sources multiples, transformation (nettoyage, formatage), puis chargement dans un entrepôt de données. Ce flux est illustré en Figure~\ref{fig:etl_process}.  
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{figures/etl.jpg}
+  \caption{Processus ETL}
+  \label{fig:etl_process}
+\end{figure}
+
+% Source : Jarke et al. (1999) \cite{Jarke1999}
+
+\subsection{Data Warehouse}
+Il permet d’agréger des données provenant de diverses sources et de les analyser. L’expression « Data Warehousing » se réfère à la procédure de rassemblement et de gestion de données provenant de plusieurs sources, dans le but d’extraire des informations utiles pour l’entreprise. Un « Data Warehouse » est une plateforme conçue pour rassembler et examiner ces données. Elle offre la capacité de stocker une grande quantité de données, de les interroger et de les analyser pour convertir les données brutes en informations pertinentes. Un entrepôt de données est généralement distinct de la base de données opérationnelle d’une société, permettant aux utilisateurs de baser leurs décisions sur des données historiques et actuelles.  
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{figures/Datawarehouse.png}
+  \caption{Architecture simplifiée d’un Data Warehouse}
+  \label{fig:data_warehouse}
+\end{figure}
+
+% Source : Inmon (2005) \cite{Inmon2005}
+
+\subsection{Tableau de bord}
+Un tableau de bord est un dispositif qui centralise les informations d’une activité et les synthétise visuellement grâce à des indicateurs clés de performance (KPI). Il met l’accent sur l’essentiel, c’est pourquoi il doit tenir sur une seule page (Figure~\ref{fig:dashboard_supply}). Les besoins en matière de tableau de bord sont très divers selon les métiers : par exemple, dans la gestion de la supply chain, on suivra les niveaux de stock, les délais de livraison ou la rotation des produits.  
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{figures/Dashboard.png}
+  \caption{Tableau de bord des KPI de gestion de la chaîne d’approvisionnement}
+  \label{fig:dashboard_supply}
+\end{figure}
+
+% Source : Chopra & Meindl (2020) \cite{ChopraMeindl2020}
+
+\subsection{Gestion de produits}
+La gestion de produits désigne l’ensemble des processus qui assurent la disponibilité, la qualité, l’identification et la localisation des produits tout au long de leur cycle de vie. Elle englobe la planification des approvisionnements, le suivi des entrées et sorties de stock, la traçabilité des lots, ainsi que la gestion des catalogues de produits.\\ 
+Dans une entreprise commerciale, la gestion des produits est cruciale car elle permet d’éviter les ruptures de stock, de limiter les surstocks, de prévenir les pertes et de garantir une meilleure satisfaction client. \\ 
+\\Avec l’avènement du numérique, cette gestion est désormais appuyée par des systèmes d’information capables d’automatiser les tâches répétitives, de centraliser les informations et de générer des tableaux de bord décisionnels. Notre solution vise justement à offrir une plateforme unifiée qui simplifie ces opérations tout en les rendant plus précises grâce à la codification intelligente (QR/NFC).
+
+% Source : Chopra & Meindl (2020) \cite{ChopraMeindl2020}
+
+\section{Étude de l’existant}
+\subsection{Analyse de l’existant}
+Nous constatons une fragmentation des outils et des processus, entraînant redondance des données, multiplication des tâches manuelles et coûts élevés pour les petites structures.
+
+\subsection{Critiques de l’existant}
+\begin{itemize}
+  \item \textbf{Répartition des pouvoirs :} Les artisans sont désavantagés face aux grandes entreprises qui peuvent investir dans des ERP onéreux.
+  \item \textbf{Efficacité :} Les saisies manuelles présentent un risque d’erreurs et de retards, affectant la fiabilité des données de stock.
+  \item \textbf{Complexité et coûts :} Les systèmes actuels sont souvent trop onéreux et trop complexes pour des produits à faible marge, ce qui freine l’adoption par les PME.
+  \item \textbf{Interopérabilité :} Les solutions propriétaires peinent à communiquer entre elles et nécessitent de fréquentes synchronisations manuelles, générant des retards.
+\end{itemize}
+
+\section{Méthodologie de travail}
+L’efficacité de la mise en place d’une solution décisionnelle repose largement sur une gestion de projet adéquate. À cet égard, diverses méthodologies sont disponibles pour guider les équipes dans cette démarche. Parmi celles-ci, deux se démarquent dans le domaine des solutions décisionnelles : l’Approche Agile – Scrum et le Cycle en V.
+
+\subsection{Cycle en V}
+Le Cycle en V est un modèle séquentiel de développement logiciel, structuré en phases rigides (spécifications, conception, développement, tests, déploiement) où chaque étape doit être validée avant de passer à la suivante. Cette méthode met l’accent sur la traçabilité et la documentation exhaustive, ce qui la rend particulièrement adaptée aux projets soumis à des exigences réglementaires strictes. Cependant, elle présente des limites en termes de flexibilité : tout changement en cours de projet engendre des retours en arrière coûteux et ralentit la livraison finale \cite{Royce1970}.  
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{figures/cycle-en-v.png}
+  \caption{Modèle en V : phases de développement et de validation}
+  \label{fig:cycle_en_v}
+\end{figure}
+
+\subsection{Approche Agile}
+L’Agilité vise à répondre rapidement aux évolutions des besoins en privilégiant la collaboration, les itérations courtes et la livraison continue de valeur. Elle repose sur les quatre valeurs et les douze principes du Manifeste Agile (2001) qui encouragent la communication directe, l’adaptation au changement et l’amélioration continue des processus \cite{Beck2001}.  
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{figures/methode_agile.jpg}
+  \caption{Cycle Agile : itérations courtes et feedback continu}
+  \label{fig:cycle_agile}
+\end{figure}
+
+\subsection{Approche Agile – Scrum}
+Parmi les cadres Agile, Scrum est l’un des plus répandus pour le développement de solutions décisionnelles. Ses caractéristiques principales sont :
+
+\begin{itemize}
+  \item \textbf{Rôles :}
+    \begin{itemize}
+      \item \textit{Product Owner} : définit la vision produit et priorise le backlog.
+      \item \textit{Scrum Master} : veille au respect de Scrum et facilite la levée des obstacles.
+      \item \textit{Équipe de développement} : pluridisciplinaire, auto-organisée, responsable de la production.
+    \end{itemize}
+  \item \textbf{Événements :}
+    \begin{itemize}
+      \item \textit{Sprint Planning} : planification des objectifs du sprint (environ 2 h pour un sprint de 2 semaines).
+      \item \textit{Daily Scrum} : point quotidien de 15 min pour synchroniser l’équipe.
+      \item \textit{Sprint Review} : démonstration de l’incrément et collecte des retours.
+      \item \textit{Sprint Retrospective} : analyse du processus et définition d’améliorations.
+    \end{itemize}
+  \item \textbf{Artefacts :}
+    \begin{itemize}
+      \item \textit{Product Backlog} : liste ordonnée des besoins et fonctionnalités.
+      \item \textit{Sprint Backlog} : tâches sélectionnées pour le sprint en cours.
+      \item \textit{Incrément} : version potentiellement livrable à la fin de chaque sprint.
+    \end{itemize}
+\end{itemize}
+
+Scrum favorise la livraison rapide d’incréments fonctionnels, l’adaptation continue aux retours utilisateurs et une forte visibilité sur l’avancement du projet \cite{SchwaberBeedle2001}.  
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{figures/methode_scrum.png}
+  \caption{Cadre Scrum : rôles, événements et artefacts}
+  \label{fig:scrum_framework}
+\end{figure}
+
+\subsection{Étude comparative et choix de la méthodologie}
+\begin{table}[H]
+  \centering
+  \rowcolors{2}{lightblue!50}{white}
+  \begin{tabular}{|>{\bfseries}p{3.5cm}|p{5cm}|p{5cm}|}
+    \hline
+    \rowcolor{lightblue!70}
+    Critère & Cycle en V & Scrum \\
+    \hline
+    Flexibilité &
+      Spécifications figées, retours coûteux & 
+      Adaptation continue à chaque sprint \\
+    \hline
+    Délais de livraison &
+      Logiciel livré en fin de projet & 
+      Incréments livrables toutes les 1–4 semaines \\
+    \hline
+    Gestion des risques &
+      Accumulation des risques, résolution tardive & 
+      Identification et atténuation dès chaque sprint \\
+    \hline
+    Implication client &
+      Revues ponctuelles aux jalons & 
+      Collaboration quotidienne et revue de sprint \\
+    \hline
+    Qualité &
+      Tests en fin de cycle, risques de non-conformité & 
+      Tests continus, définition de « Done » explicite \\
+    \hline
+  \end{tabular}
+  \caption{Comparatif des méthodologies : Cycle en V vs Scrum}
+  \label{tab:comparatif-metho}
+\end{table}
+
+Au regard de nos besoins de réactivité (intégration rapide des retours des commerçants), de livraison incrémentale et de collaboration étroite, nous avons choisi le cadre Scrum comme méthodologie de référence pour ce projet.
+
+% Références à ajouter dans la bibliographie :
+% - W. W. Royce, “Managing the Development of Large Software Systems: Concepts and Techniques,” 1970. \cite{Royce1970}
+% - K. Schwaber & M. Beedle, "Agile Software Development with Scrum," Prentice Hall, 2001. \cite{SchwaberBeedle2001}
+% - K. Beck et al., "Manifesto for Agile Software Development," 2001. \cite{Beck2001}
+%----------------------------------------
+% Conclusion Chapitre I
+%----------------------------------------
+\section*{Conclusion}
+Dans ce premier chapitre, nous avons posé les bases de notre projet en présentant l’entreprise d’accueil, le contexte du projet ainsi que les enjeux liés à la traçabilité et à la gestion de produits. Nous avons exposé l’état de l’art des principales technologies mobilisées, telles que l’ETL, le Data Warehouse et les tableaux de bord décisionnels, tout en soulignant les limites des solutions existantes.
+
+Nous avons également défini une méthodologie de travail rigoureuse, adoptant le cadre Scrum pour bénéficier d’itérations courtes et d’une collaboration permanente avec le Product Owner et les utilisateurs. Ces fondations nous permettront d’aborder le prochain chapitre (II) avec une vision claire et structurée.
+
+%----------------------------------------
+% Chapitre II – Phase de planification
+%----------------------------------------
+\cleardoublepage
+\chapter{Phase de planification}
+% Plan du chapitre
+\section*{Plan}
+\addcontentsline{toc}{section}{Plan du Chapitre}
+\begin{itemize}
+  \item II-1. Besoins fonctionnels
+  \item II-2. Besoins non fonctionnels
+  \item II-3. Diagramme de cas d’utilisation global
+  \item II-4. Backlog des produits
+  \item II-5. Diagramme de classes
+  \item II-6. Architecture
+\end{itemize}
+
+% Introduction du chapitre II
+\section*{Introduction}
+\addcontentsline{toc}{section}{Introduction du Chapitre II}
+Dans ce chapitre, nous décrivons la phase de planification du projet, qui comprend la définition précise des besoins (fonctionnels et non fonctionnels), la modélisation à haut niveau via les diagrammes UML, ainsi que l’organisation du travail en sprints selon la méthodologie Agile-Scrum. Nous commencerons par présenter les besoins fonctionnels, puis les besoins non fonctionnels avant de passer aux diagrammes et au backlog produit.
+
+%----------------------------------------
+% II-1. Besoins fonctionnels
+%----------------------------------------
+\section{Besoins fonctionnels}
+
+\subsection{Définition}
+Les besoins fonctionnels décrivent les services attendus d’un système, c’est-à-dire les interactions entre les utilisateurs et la solution logicielle pour accomplir les objectifs métiers. Ils doivent être exprimés de manière claire, précise et vérifiable \cite{Sommerville2011}.
+
+%----------------------------------------
+% II-1-1. Identification des acteurs
+%----------------------------------------
+\subsection{Identification des acteurs}
+Dans le système de codification et de gestion des stocks, trois profils principaux interagissent avec la plateforme :
+\begin{itemize}
+  \item \textbf{Administrateur :}  
+    \begin{itemize}
+      \item Rôle principal : supervise l’ensemble du système, gère les comptes utilisateurs, pilote les processus ETL et accède aux tableaux de bord BI.  
+      \item Responsabilités : création/modification/suppression d’utilisateurs, configuration de l’entrepôt de données, exécution des flux ETL, visualisation des indicateurs de performance.
+    \end{itemize}
+  \item \textbf{Manager (Superviseur) :}  
+    \begin{itemize}
+      \item Rôle principal : gère la codification des produits, suit l’inventaire et génère des rapports décisionnels.  
+      \item Responsabilités : création et validation des étiquettes QR/NFC, consultation des données collectées, génération de rapports et supervision de l’état des stocks.
+    \end{itemize}
+  \item \textbf{Opérateur terrain :}  
+    \begin{itemize}
+      \item Rôle principal : collecte les données sur le terrain à l’aide du terminal mobile et met à jour en temps réel les mouvements de stock.  
+      \item Responsabilités : scan des produits, enregistrement des entrées et sorties de stock, consultation courte des mouvements récents et export des données au format CSV/PDF.
+    \end{itemize}
+\end{itemize}
+
+%----------------------------------------
+% II-1-2. Identification des cas d’utilisation par acteur
+%----------------------------------------
+\subsection{Identification des cas d’utilisation par acteur}
+Pour chaque acteur, la liste des cas d’utilisation (Use Cases) se présente comme suit. Chaque cas porte un identifiant US-XX pour assurer la traçabilité dans le backlog et les sprints.
+
+\medskip
+\noindent\textbf{Acteur : Administrateur}
+\begin{itemize}
+  \item \textbf{US-01 : Se connecter (Login)}  
+    \begin{itemize}
+      \item Description : l’administrateur saisit ses identifiants pour accéder aux fonctionnalités protégées de la plateforme.
+    \end{itemize}
+  \item \textbf{US-02 : Consulter/Modifier son profil}  
+    \begin{itemize}
+      \item Description : l’administrateur peut afficher et mettre à jour ses informations personnelles et paramètres de compte.
+    \end{itemize}
+  \item \textbf{US-03 : Gérer les utilisateurs}  
+    \begin{itemize}
+      \item Description : l’administrateur crée, modifie ou supprime des comptes utilisateurs et définit leurs droits d’accès.
+    \end{itemize}
+  \item \textbf{US-04 : Gérer l’entrepôt de données}  
+    \begin{itemize}
+      \item Description : l’administrateur organise et supervise le stockage des données (création/maintenance de schémas, sauvegardes, configuration).
+    \end{itemize}
+  \item \textbf{US-05 : Exécuter le pipeline ETL}  
+    \begin{itemize}
+      \item Description : l’administrateur déclenche, surveille et valide le processus d’extraction, transformation et chargement des données vers l’entrepôt de données.
+    \end{itemize}
+  \item \textbf{US-06 : Visualiser les dashboards BI}  
+    \begin{itemize}
+      \item Description : l’administrateur consulte des tableaux de bord interactifs pour analyser les indicateurs clés de performance du système.
+    \end{itemize}
+  \item \textbf{US-07 : Gérer les produits}  
+    \begin{itemize}
+      \item Description : l’administrateur crée, liste, modifie ou supprime un produit, génère des codes‑barres (QR/NFC) et filtre la liste pour affiner la recherche.
+    \end{itemize}
+  \item \textbf{US-08 : Gérer les transactions}  
+    \begin{itemize}
+      \item Description : l’administrateur crée, consulte, modifie ou supprime une transaction (vente, achat, transfert) et applique des filtres pour la recherche.
+    \end{itemize}
+  \item \textbf{US-09 : Gérer les mouvements de stock}  
+    \begin{itemize}
+      \item Description : l’administrateur enregistre, liste, filtre, modifie ou supprime un mouvement d’entrée ou de sortie et peut exporter la liste en CSV/PDF.
+    \end{itemize}
+  \item \textbf{US-10 : Se déconnecter (Logout)}  
+    \begin{itemize}
+      \item Description : l’administrateur termine sa session et quitte l’application en toute sécurité.
+    \end{itemize}
+\end{itemize}
+
+\medskip
+\noindent\textbf{Acteur : Manager (Superviseur)}
+\begin{itemize}
+  \item \textbf{US-11 : Se connecter (Login)}  
+    \begin{itemize}
+      \item Description : le manager saisit ses identifiants pour accéder aux fonctionnalités réservées aux superviseurs.
+    \end{itemize}
+  \item \textbf{US-12 : Consulter/Modifier son profil}  
+    \begin{itemize}
+      \item Description : le manager peut afficher et mettre à jour ses informations personnelles.
+    \end{itemize}
+  \item \textbf{US-13 : Codification et étiquetage}  
+    \begin{itemize}
+      \item Description : le manager génère et valide des codes‑barres (QR/NFC) pour chaque produit afin d’assurer leur identification univoque.
+    \end{itemize}
+  \item \textbf{US-14 : Gérer les produits}  
+    \begin{itemize}
+      \item Description : le manager crée, liste ou supprime un produit, génère des codes‑barres et filtre la liste pour faciliter la recherche.
+    \end{itemize}
+  \item \textbf{US-15 : Gérer l’inventaire et les mouvements de stock}  
+    \begin{itemize}
+      \item Description : le manager suit les mouvements (entrées/sorties), affiche l’historique, applique des filtres, modifie ou supprime un mouvement existant, et exporte les données en CSV/PDF.
+    \end{itemize}
+  \item \textbf{US-16 : Gérer les transactions}  
+    \begin{itemize}
+      \item Description : le manager consulte la liste des transactions, applique des filtres et exporte les données en CSV/PDF.
+    \end{itemize}
+  \item \textbf{US-17 : Consultation et reporting}  
+    \begin{itemize}
+      \item Description : le manager consulte les données collectées (inventaire, mouvements, transactions) et génère des rapports sous forme de graphiques ou tableaux pour la prise de décision.
+    \end{itemize}
+  \item \textbf{US-18 : Vue d’ensemble \& Graphiques}  
+    \begin{itemize}
+      \item Description : le manager visualise des tableaux de bord synthétiques et des graphiques pour suivre les indicateurs clés (KPI) liés à l’inventaire et aux ventes.
+    \end{itemize}
+  \item \textbf{US-19 : Se déconnecter (Logout)}  
+    \begin{itemize}
+      \item Description : le manager termine sa session de manière sécurisée.
+    \end{itemize}
+\end{itemize}
+
+\medskip
+\noindent\textbf{Acteur : Opérateur terrain}
+\begin{itemize}
+  \item \textbf{US-20 : Se connecter (Login)}  
+    \begin{itemize}
+      \item Description : l’opérateur saisit ses identifiants pour accéder à l’application sur le terrain.
+    \end{itemize}
+  \item \textbf{US-21 : Consulter/Modifier son profil}  
+    \begin{itemize}
+      \item Description : l’opérateur peut afficher et mettre à jour ses informations personnelles et paramètres de compte.
+    \end{itemize}
+  \item \textbf{US-22 : Collecte des données produit}  
+    \begin{itemize}
+      \item Description : l’opérateur scanne et recueille les informations du produit (QR/NFC) pour alimenter la base de données en temps réel.
+    \end{itemize}
+  \item \textbf{US-23 : Gérer les mouvements de stock}  
+    \begin{itemize}
+      \item Description : l’opérateur enregistre, liste, filtre ou modifie un mouvement d’entrée/sortie de stock, et exporte la liste en CSV/PDF.
+    \end{itemize}
+  \item \textbf{US-24 : Gérer les transactions}  
+    \begin{itemize}
+      \item Description : l’opérateur consulte la liste des transactions, applique des filtres et exporte les données en CSV/PDF.
+    \end{itemize}
+  \item \textbf{US-25 : Gestion rapide de l’inventaire}  
+    \begin{itemize}
+      \item Description : l’opérateur consulte l’état actuel des stocks (quantités disponibles, seuils d’alerte) pour prise de décision immédiate sur le terrain.
+    \end{itemize}
+  \item \textbf{US-26 : Se déconnecter (Logout)}  
+    \begin{itemize}
+      \item Description : l’opérateur termine sa session de manière sécurisée avant de quitter le terminal mobile.
+    \end{itemize}
+\end{itemize}
+
+
+
+\medskip
+% (Optionnel) Vous pouvez ajouter d’autres Use Cases selon l’évolution des besoins.
+
+\cleardoublepage
+%----------------------------------------
+% II-2. Besoins non fonctionnels
+%----------------------------------------
+\section{Besoins non fonctionnels}
+
+\subsection{Définition}
+Les besoins non fonctionnels décrivent les contraintes qualité et les exigences transverses du système : performance, sécurité, maintenabilité, portabilité, conformité, ainsi que les critères de disponibilité et de rapidité d’accès aux données BI \cite{Sommerville2011}.
+
+\subsection{Catalogue des besoins non fonctionnels}
+
+\begin{itemize}
+  \item \textbf{Performance et BI} :  
+    \begin{itemize}
+      \item Les contrôleurs backend (Node.js/Express) sont asynchrones pour minimiser le temps de réponse des API lors de la création d’un produit ou de la saisie d’un mouvement.  
+      \item Le service ETL (\texttt{etl.service.ts}) alimente régulièrement le Data Warehouse pour que les rapports et graphiques React se mettent à jour en moins de 15 minutes après les opérations terrain.  
+    \end{itemize}
+
+  \item \textbf{Sécurité :}  
+    \begin{itemize}
+      \item Authentification et autorisation :  
+        \begin{itemize}
+          \item Utilisation de JWT (\texttt{jwt.utils.ts}) pour générer un token à la connexion, avec dates d’émission et d’expiration configurables.  
+          \item Middleware \texttt{authorizeRole.middleware.ts} pour restreindre l’accès des routes selon le rôle (Admin, Manager, Opérateur).  
+        \end{itemize}
+      \item Protection des données :  
+        \begin{itemize}
+          \item Mots de passe hachés (bcrypt via \texttt{user.utils.ts}).  
+          \item Données personnelles (email, profil) stockées uniquement sous forme chiffrée ou hachée en base.  
+          \item Communication HTTPS (configuration prévue dans le déploiement).  
+        \end{itemize}
+    \end{itemize}
+
+  \item \textbf{Scalabilité :}  
+    \begin{itemize}
+      \item Architecture modulaire (séparation \texttt{backend/src}, \texttt{frontend/src}, \texttt{services/ETL}, Data Warehouse) permettant de monter en charge indépendamment chaque composant.  
+      \item Utilisation de Redis (\texttt{config/redis.ts}) pour le cache des sessions et des données fréquentées, limitant la charge sur la base relationnelle.  
+      \item Les modèles Sequelize supportent la pagination et la limitation (e.g., \texttt{findAll({ limit, offset })}) pour éviter des requêtes coûtant trop cher en ressources.
+    \end{itemize}
+
+  \item \textbf{Disponibilité et rapidité d’accès BI :}  
+    \begin{itemize}
+      \item Le pipeline ETL (\texttt{dataWarehouse.service.ts}) s’exécute périodiquement (cron configuré) pour mettre à jour les tables \texttt{DimProduct}, \texttt{DimTime}, \texttt{FactInventory}.  
+      \item Les endpoints statistiques (\texttt{stats.service.ts}, \texttt{stats.controller.ts}) sont optimisés avec des requêtes agrégées Sequelize afin de fournir les indicateurs nécessaires aux composants React du dashboard en moins de quelques secondes.
+    \end{itemize}
+
+    \item \textbf{Maintenabilité} :  
+    \begin{itemize}
+      \item \emph{Architecture modulaire} :  
+        \begin{itemize}
+          \item Le code backend est organisé en modules (config, interfaces, modèles, services, contrôleurs, middlewares, routes).  
+          \item Le code frontend est structuré en fonctionnalités (auth, admin, manager, opérateur), chaque fonctionnalité contenant ses composants, hooks et services.  
+        \end{itemize}
+      \item \emph{Documentation du code} :  
+        \begin{itemize}
+          \item Des commentaires JSDoc sont ajoutés aux services et aux modèles Sequelize.  
+          \item Les fichiers \texttt{README.md} détaillent l’installation, la configuration et l’architecture globale.  
+        \end{itemize}
+    \end{itemize}
+
+  
+\item \textbf{Ergonomie (UX/UI)}
+\begin{itemize}
+  \item \emph{Interface opérateur terrain (DataCollector) :}  
+    \begin{itemize}
+      \item La page \texttt{OperatorNewMovementPage.tsx} expose un bouton « Scanner » déclenchant la lecture du QR code/codes-barres.  
+      \item Après scan, elle affiche instantanément les informations du produit scanné (nom, photo, stock), puis propose d’enregistrer l’entrée ou la sortie.  
+      \item Un retour visuel (toast ou notification in-app) confirme la bonne prise en compte du mouvement, sans rechargement de page, pour assurer une prise de vue fluide en mobilité.
+    \end{itemize}
+  \item \emph{Dashboard desktop :}  
+    \begin{itemize}
+      \item Les composants React sous \texttt{frontend/src/features/manager/pages} affichent des graphiques interactifs (Recharts) et des tableaux, avec filtres par date et produit, afin de consulter rapidement l’état des stocks et les indicateurs BI.
+    \end{itemize}
+\end{itemize}
+
+  \item \textbf{Portabilité et compatibilité :}  
+    \begin{itemize}
+      \item Frontend compatible avec les navigateurs modernes (Chrome 90+, Firefox 88+, Edge 90+).  
+      \item Terminal DataCollector validé sur Android 8.0 et ultérieur (tests sur appareils Android 9, 10).  
+      \item Code TypeScript transpilé vers ES2018 pour garantir la compatibilité descendante minimalisée.
+    \end{itemize}
+
+  \item \textbf{Conformité réglementaire :}  
+    \begin{itemize}
+      \item Respect du RGPD :  
+        \begin{itemize}
+          \item Les données personnelles sensible comme le mot de passe sont stockées hachées en base.  
+          \item Les opérations de suppression de compte utilisent un « soft delete » puis purge définitive après délai réglementaire.  
+        \end{itemize}
+      \item Politique de conservation des logs (middleware \texttt{errorHandler.middleware.ts} génère un fichier de logs quotidien, archivé 30 jours).
+    \end{itemize}
+\end{itemize}
+\cleardoublepage
+
+%----------------------------------------
+% II-3. Diagramme de cas d’utilisation global
+%----------------------------------------
+\section{Diagramme de cas d’utilisation global}
+
+\begin{figure}[H]
+  \centering
+  % Remplacer "figures/UseCaseDiagram.png" par le chemin vers votre diagramme UML
+  \includegraphics[width=0.8\textwidth]{figures/UML/UML_useCase_Globale.png}
+  \caption{Use-Case Diagram général}
+  \label{fig:use_case_global}
+\end{figure}
+
+%----------------------------------------
+% II-4. Backlog des produits
+%----------------------------------------
+\section{Backlog des produits}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{figures/backlo-product.png}
+  \caption{Backlog produit}
+  \label{fig:backlog_product}
+\end{figure}
+
+\vspace{1em}
+
+Le \emph{Backlog des produits} (Product Backlog) en Scrum est une liste ordonnée et dynamique de toutes les fonctionnalités, exigences, améliorations et corrections requises pour créer et faire évoluer un produit. Il s’agit d’un artefact vivant, géré exclusivement par le \emph{Product Owner}, qui veille à ce que chaque élément (appelé \emph{Product Backlog Item} ou \emph{PBI}) soit priorisé en fonction de sa valeur métier, de son urgence et de sa cohérence avec la vision stratégique.  
+
+Ce backlog se caractérise par :
+\begin{itemize}
+  \item \textbf{Propriété et responsabilité :} Le Product Owner détient la responsabilité exclusive du contenu, de l’ordre et de la transparence du Backlog des produits.
+  \item \textbf{Priorisation continue :} Les éléments à la plus forte valeur métier ou aux délais les plus pressants sont systématiquement positionnés en tête de liste, tandis que les autres attendent d’être affinés ou précisés ultérieurement.
+  \item \textbf{Affinage régulier :} Par le biais du \emph{Backlog Refinement}, l’équipe Scrum et le Product Owner ajustent la granularité, l’estimation et la compréhension de chaque PBI, assurant ainsi que le backlog reste exploitable et aligné sur les objectifs.
+  \item \textbf{Transparence et visibilité :} Tout membre de l’équipe, ainsi que les parties prenantes, peut consulter l’état du Backlog, garantissant une communication fluide et une capacité d’adaptation rapide face aux imprévus.
+\end{itemize}
+
+Ainsi, le Backlog des produits n’est pas une simple liste statique, mais un guide évolutif, reflet des retours utilisateurs, des découvertes techniques et des impératifs du marché.  
+
+\cleardoublepage
+
+%----------------------------------------
+% II-4-1. Planification des sprints
+%----------------------------------------
+\subsection{Planification des sprints}
+
+L’une des étapes les plus importantes dans un projet Scrum est la planification des sprints : pour chaque itération de deux semaines, l’équipe sélectionne les user stories prioritaires, estime leur charge (story points) et définit un objectif clair (Sprint Goal) garantissant un incrément fonctionnel à la fin du sprint \cite{SchwaberBeedle2001}.  
+\\ 
+\begin{table}[H]
+  \centering
+  % Augmenter la hauteur des lignes
+  \renewcommand{\arraystretch}{2.0}
+  \rowcolors{2}{lightblue!50}{white}
+  \begin{tabular}{|
+      >{\bfseries\centering\arraybackslash}m{0.10\textwidth} % Sprint
+      |>{\centering\arraybackslash}m{0.20\textwidth}           % Durée
+      |>{\centering\arraybackslash}m{0.55\textwidth}           % Objectifs
+    |}
+    \hline
+    \rowcolor{lightblue!70}
+    Sprint & Durée & Objectifs \\
+    \hline
+    Sprint 1 & 05/04–18/04/2025 &  
+      Implémenter l’authentification JWT et session, la pages de connexion et le modules CRUD Utilisateur. \\
+    \hline
+    Sprint 2 & 19/04–02/05/2025 &  
+      Développer les modules CRUD produits et transactions, avec génération de codes-barres pour les produits. \\
+    \hline
+    Sprint 3 & 03/05–16/05/2025 &  
+      Mettre en place la collecte terrain (scan de mouvement d’inventaire) et le pipeline ETL pour alimenter le Data Warehouse. \\
+    \hline
+    Sprint 4 & 17/05–28/05/2025 &  
+      Finaliser la gestion des rôles et autorisations, le dashboard manager et exécuter les tests finaux. \\
+    \hline
+  \end{tabular}
+  \caption{Planification des sprints : Durée et objectifs résumés par itération}
+  \label{tab:planning_sprints}
+\end{table}
+
+\cleardoublepage
+
+%----------------------------------------
+% II-4-2. Backlog des sprints
+%----------------------------------------
+\subsection{Backlog des sprints}
+
+Ce tableau présente le backlog du Sprint N° 1 :\\
+
+\begin{table}[H]
+  \centering
+  \rowcolors{2}{lightblue!50}{white}
+  \renewcommand{\arraystretch}{2}
+  \begin{tabular}{|
+      >{\bfseries\centering\arraybackslash}m{0.20\textwidth} % Cas d'utilisation
+      |>{\raggedright\arraybackslash}m{0.45\textwidth}       % Description
+      |>{\centering\arraybackslash}m{0.08\textwidth}         % Priorité
+      |>{\centering\arraybackslash}m{0.08\textwidth}         % Risque
+    |}
+    \hline
+    \rowcolor{lightblue!70}
+    Cas d’utilisation & Description & Priorité & Risque \\
+    \hline
+    US-01 : Se connecter & Permet à un utilisateur (Admin, Manager, Opérateur) de s’authentifier via identifiants (username/password) et de recevoir un token JWT. & Haute & Moyen \\
+    \hline
+    US-02 : Créer un compte & Offre le formulaire d’inscription en React et crée un nouvel utilisateur en base avec rôle par défaut, en hachant le mot de passe. & Haute & Moyen \\
+    \hline
+    US-03 : Consulter/Modifier profil & Affiche les informations personnelles et permet à l’utilisateur de mettre à jour son profil (email, mot de passe). & Moyenne & Faible \\
+    \hline
+  \end{tabular}
+  \caption{Backlog du Sprint N° 1}
+  \label{tab:backlog_sprint1}
+\end{table}
+
+Ce tableau présente le backlog du Sprint N° 2 :\\
+
+\begin{table}[H]
+  \centering
+  \rowcolors{2}{lightblue!50}{white}
+  \renewcommand{\arraystretch}{2}
+  \begin{tabular}{|
+      >{\bfseries\centering\arraybackslash}m{0.20\textwidth} % Cas d'utilisation
+      |>{\raggedright\arraybackslash}m{0.45\textwidth}       % Description
+      |>{\centering\arraybackslash}m{0.08\textwidth}         % Priorité
+      |>{\centering\arraybackslash}m{0.08\textwidth}         % Risque
+    |}
+    \hline
+    \rowcolor{lightblue!70}
+    Cas d’utilisation & Description & Priorité & Risque \\
+    \hline
+    US-07 : Gérer les produits & CRUD complet pour les produits (création, lecture, mise à jour, suppression) avec génération de code-barres QR via \texttt{barcodeGenerator.ts}. & Haute & Élevé \\
+    \hline
+    US-13 : Codification et étiquetage & Génère et associe un code-barres (QR/NFC) à chaque produit lors de sa création pour identification univoque. & Haute & Moyen \\
+    \hline
+  \end{tabular}
+  \caption{Backlog du Sprint N° 2}
+  \label{tab:backlog_sprint2}
+\end{table}
+\cleardoublepage
+
+Ce tableau présente le backlog du Sprint N° 3 :\\
+
+\begin{table}[H]
+  \centering
+  \rowcolors{2}{lightblue!50}{white}
+  \renewcommand{\arraystretch}{2}
+  \begin{tabular}{|
+      >{\bfseries\centering\arraybackslash}m{0.20\textwidth} % Cas d'utilisation
+      |>{\raggedright\arraybackslash}m{0.45\textwidth}       % Description
+      |>{\centering\arraybackslash}m{0.08\textwidth}         % Priorité
+      |>{\centering\arraybackslash}m{0.08\textwidth}         % Risque
+    |}
+    \hline
+    \rowcolor{lightblue!70}
+    Cas d’utilisation & Description & Priorité & Risque \\
+    \hline
+    US-22 : Scanner un produit & Composant \texttt{OperatorNewMovementPage.tsx} pour scanner le code-barres/QR d’un produit et récupérer ses informations en temps réel. & Haute & Élevé \\
+    \hline
+    US-23 : Enregistrer un mouvement & Enregistre un mouvement d’entrée ou de sortie de stock après validation du scan, en mettant à jour la table des mouvements. & Haute & Moyen \\
+    \hline
+    US-05 : Exécuter le pipeline ETL & Implémentation du service ETL (\texttt{etl.service.ts}, \texttt{dataWarehouse.service.ts}) pour peupler \texttt{DimProduct} et \texttt{DimTime} puis charger \texttt{FactInventory}. & Moyenne & Élevé \\
+    \hline
+    US-17 : Générer rapports BI & Service \texttt{stats.service.ts} fournissant des agrégations pour les graphiques du dashboard manager afin d’afficher indicateurs clés (KPI). & Moyenne & Moyen \\
+    \hline
+  \end{tabular}
+  \caption{Backlog du Sprint N° 3}
+  \label{tab:backlog_sprint3}
+\end{table}
+\cleardoublepage
+
+Ce tableau présente le backlog du Sprint N° 4 :\\
+
+\begin{table}[H]
+  \centering
+  \rowcolors{2}{lightblue!50}{white}
+  \renewcommand{\arraystretch}{2}
+  \begin{tabular}{|
+      >{\bfseries\centering\arraybackslash}m{0.20\textwidth} % Cas d'utilisation
+      |>{\raggedright\arraybackslash}m{0.45\textwidth}       % Description
+      |>{\centering\arraybackslash}m{0.08\textwidth}         % Priorité
+      |>{\centering\arraybackslash}m{0.08\textwidth}         % Risque
+    |}
+    \hline
+    \rowcolor{lightblue!70}
+    Cas d’utilisation & Description & Priorité & Risque \\
+    \hline
+    US-03 : Gérer les comptes utilisateur & Module d’administration permettant à l’Administrateur de créer, modifier, supprimer un utilisateur et lui attribuer un rôle. & Haute & Moyen \\
+    \hline
+    US-04 : Configurer paramètres globaux & Page d’administration des paramètres système (cache, logs, sauvegardes) pour régler la configuration générale. & Moyenne & Faible \\
+    \hline
+    US-15 : Gérer l’inventaire et mouvements de stock & Tests finaux sur le module mouvements : vérification des flux d’entrée/sortie et ajustements du stock en conditions réelles. & Haute & Moyen \\
+    \hline
+    US-18 : Vue d’ensemble \& Graphiques & Compléter le dashboard manager avec graphiques interactifs et filtres pour l’analyse BI, et valider la cohérence des données. & Moyenne & Moyen \\
+    \hline
+  \end{tabular}
+  \caption{Backlog du Sprint N° 4}
+  \label{tab:backlog_sprint4}
+\end{table}
+
+
+\cleardoublepage
+
+%----------------------------------------
+% II-5. Diagramme de classes
+%----------------------------------------
+\section{Diagramme de classes}
+
+Le diagramme de classes est un diagramme statique de l’UML (Unified Modeling Language) qui décrit la structure d’un système en montrant les classes, leurs attributs, méthodes et les relations (associations, héritage, etc.) entre elles \cite{Fowler2003}. Il permet de visualiser la modélisation objet du domaine métier et sert de base à l’implémentation du code.
+\\ \\
+Cette figure, répresente le diagramme de classe de notre système.\\
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{figures/UML/UML_CLASS.png}
+  \caption{Diagramme de classes UML global du projet}
+  \label{fig:class_diagram}
+\end{figure}
+
+\cleardoublepage
+
+%----------------------------------------
+% II-6. Diagramme ER
+%----------------------------------------
+\section{Diagramme ER}
+
+Le diagramme de type Entité-Relation (ER) est un modèle conceptuel pour représenter les données d’un système d’information en identifiant les entités, leurs attributs et les relations entre elles \cite{Chen1976}. Il sert de fondement à la conception de la base de données relationnelle.\\
+\\
+Cette figure représente le schéma de la base de données de notre système.\\
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{figures/UML/UML_ER.png}
+  \caption{Diagramme Entité-Relation du schéma de la base de données}
+  \label{fig:er_diagram}
+\end{figure}
+
+\cleardoublepage
+
+%----------------------------------------
+% II-7. Architecture
+%----------------------------------------
+\section{Architecture}
+L’architecture logicielle est la structure ou ensemble de structures nécessaires pour raisonner sur le système, incluant les composants logiciels, leurs relations (interactions et dépendances), ainsi que les propriétés externes et internes visibles de ces composants \cite{BassClementsKazman2012}.  
+Définir une architecture permet de :
+\begin{itemize}
+  \item Clarifier la séparation des responsabilités entre les différents modules (frontend, backend, base de données, cache, ETL, entrepôt de données).  
+  \item Garantir la maintenabilité et la scalabilité du système, en rendant possible la mise à l’échelle indépendante des composants critiques (serveur API, base relationnelle, cache, entrepôt BI).  
+  \item Faciliter la communication au sein de l’équipe projet et auprès des parties prenantes, en fournissant une vue d’ensemble partagée.  
+  \item Améliorer la performance et la sécurité, par exemple via l’utilisation d’un cache Redis pour réduire la latence ou la gestion des sessions et des tokens JWT dans le backend.  
+\end{itemize}
+Pour notre projet, l’architecture retenue est de type « Frontend React ↔ API Node.js (MVC) ↔ Base de données », avec Redis pour le cache/sessions et un pipeline ETL vers le Data Warehouse afin de séparer clairement les traitements transactionnels des traitements analytiques.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{figures/architecture.png}
+  \caption{Schéma d’architecture globale du système}
+  \label{fig:architecture_diagram}
+\end{figure}
+
+
+%----------------------------------------
+% Conclusion Chapitre II
+%----------------------------------------
+
+\section*{Conclusion}
+Dans ce deuxième chapitre, nous avons défini les besoins du système, tant fonctionnels (acteurs, cas d’utilisation) que non fonctionnels (performances, sécurité, scalabilité, maintenabilité, ergonomie). Nous avons ensuite illustré l’organisation du travail en Scrum via le backlog et les sprints, et posé les fondations du modèle de données à travers les diagrammes UML (classes et entités-relations). Enfin, nous avons présenté l’architecture logicielle globale (React ↔ Node.js ↔ Base de données + Redis + ETL/Data Warehouse), justifiant nos choix pour garantir modularité, performance et évolutivité. Ces éléments préparent la phase suivante, consacrée à la conception détaillée et à l’implémentation technique.
+
+
+
+%----------------------------------------
+% Bibliographie
+%----------------------------------------
+\cleardoublepage
+\begin{thebibliography}{99}
+  \addcontentsline{toc}{chapter}{Bibliographie}
+  \bibitem{Kimball2013} 
+    R. Kimball, \textit{The Data Warehouse Toolkit}, Wiley, 2013.  
+  \bibitem{Davenport2006} 
+    T. H. Davenport, “Competing on Analytics,” \textit{Harvard Business Review}, 2006.  
+  \bibitem{Royce1970} 
+    W. W. Royce, “Managing the Development of Large Software Systems: Concepts and Techniques,” 1970.  
+  \bibitem{Beck2001} 
+    K. Beck \emph{et al.}, “Manifesto for Agile Software Development,” 2001.  
+  \bibitem{SchwaberBeedle2001} 
+    K. Schwaber \& M. Beedle, \textit{Agile Software Development with Scrum}, Prentice Hall, 2001.  
+  \bibitem{ChopraMeindl2020} 
+    A. Chopra \& P. Meindl, \textit{Supply Chain Management: Strategy, Planning, and Operation}, Pearson, 2020.  
+  \bibitem{Jarke1999} 
+    M. Jarke \emph{et al.}, “The Information Warehouse: A Conceptual Framework,” 1999.  
+  \bibitem{Inmon2005} 
+    W. H. Inmon, \textit{Building the Data Warehouse}, 4\textsuperscript{e} édition, Wiley, 2005.  
+  \bibitem{Sommerville2011}
+    I. Sommerville, \textit{Software Engineering}, 9\textsuperscript{e} édition, Pearson, 2011.
+  \bibitem{SchwaberSutherland2020}
+    K. Schwaber \& J. Sutherland, \textit{The Scrum Guide}, Scrum.org, 2020.
+  \bibitem{Fowler2003}
+    M. Fowler, \textit{UML Distilled: A Brief Guide to the Standard Object Modeling Language}, 3\textsuperscript{e} édition, Addison-Wesley, 2003.
+  \bibitem{Chen1976}
+    P. P. Chen, “The Entity-Relationship Model—Toward a Unified View of Data,” \textit{ACM Transactions on Database Systems}, vol. 1, no. 1, pp. 9–36, 1976.
+  \bibitem{BassClementsKazman2012}
+    L. Bass, P. Clements \& R. Kazman, \textit{Software Architecture in Practice}, 3\textsuperscript{e} édition, Addison-Wesley, 2012.
+\end{thebibliography}
+
+\end{document}
