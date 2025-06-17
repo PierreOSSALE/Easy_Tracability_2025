@@ -35,7 +35,7 @@ function DynamicTable<T extends { [key: string]: any }>({
   showActions = false,
   rowKey,
   pageSizeOptions = [5, 10, 20, 50],
-  defaultPageSize = 8,
+  defaultPageSize = 5,
   footerData,
   disablePagination = false,
 }: DynamicTableProps<T>) {

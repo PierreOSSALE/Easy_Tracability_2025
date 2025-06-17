@@ -1,7 +1,7 @@
+import { ProductModel } from "./../models/product";
 // backend/seeders/dimProduct.seeder.ts
 
-import { ProductModel } from "../models/product";
-import { DimProductModel } from "../models/dimProduct";
+import { DimProductModel } from "./../models/dimProduct";
 
 export async function seedDimProduct() {
   const products = await ProductModel.findAll();

@@ -1,7 +1,7 @@
 // backend/seeders/dimUser.seeder.ts
 
-import { UserModel } from "../models/user";
-import { DimUserModel } from "../models/dimUser";
+import { UserModel } from "./../models/user";
+import { DimUserModel } from "./../models/dimUser";
 
 export async function seedDimUser() {
   const users = await UserModel.findAll();

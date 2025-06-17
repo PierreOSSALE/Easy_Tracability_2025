@@ -123,18 +123,22 @@ const OperatorDashboardPage: React.FC = () => {
   ];
 
   return (
-    <div className={styles.container}>
-      <h4>Tableau de bord Opérateur</h4>
-      <div className={styles.filterRow}>
+    <div className={styles.dashboardContainer}>
+      <div
+        className={styles.filterRow}
+        style={{
+          margin: "15px 0",
+          padding: "15px",
+          boxShadow: "0 2px 6px rgba(0, 0, 0, 0.05)",
+        }}
+      >
         <select
           value={dateFilter}
-          onChange={(e) => setDateFilter(e.target.value as DateFilter)}
+          onChange={(e) => setDateFilter(e.target.value as any)}
         >
           <option value="today">Aujourd’hui</option>
-          <option value="7days">7 jours</option>
-          <option value="1month">1 mois</option>
-          <option value="3months">3 mois</option>
-          <option value="1year">1 an</option>
+          <option value="7days">7 derniers jours</option>
+          <option value="30days">30 derniers jours</option>
           <option value="custom">Personnalisé</option>
         </select>
         {dateFilter === "custom" && (
@@ -153,7 +157,10 @@ const OperatorDashboardPage: React.FC = () => {
         )}
       </div>
 
-      <div className={styles.chartBox}>
+      <div
+        className={styles.chartBox}
+        style={{ background: "var(--color-white)", margin: "5px 0 50px 0" }}
+      >
         <PieTitle text="Vos activités" />
         <PieChart dataSource={pieData} innerRadius={0.5}>
           <PieSeries argumentField="category" valueField="value">
@@ -166,8 +173,8 @@ const OperatorDashboardPage: React.FC = () => {
       </div>
 
       {/* Table des mouvements */}
-      <h5>Derniers mouvements</h5>
       <DynamicTable<MovementLineWithUser>
+        title="Derniers mouvements"
         data={myMovements}
         columns={[
           {
@@ -188,8 +195,8 @@ const OperatorDashboardPage: React.FC = () => {
         showActions={false}
       />
 
-      <h5>Dernières transactions</h5>
       <DynamicTable<Transaction>
+        title="Dernières transactions"
         data={myTransactions}
         columns={[
           { header: "Type", accessor: "transactionType" as const },

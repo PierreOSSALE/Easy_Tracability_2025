@@ -1,12 +1,12 @@
 // backend/seeders/factInventory.seeder.ts
 
 import { Op } from "sequelize";
-import { MovementLineModel } from "../models/movementLine";
-import { MovementOrderModel } from "../models/movementOrder";
-import { TransactionModel } from "../models/transaction";
-import { ProductModel } from "../models/product";
-import { FactInventoryModel } from "../models/factInventory";
-import { DimTimeModel } from "../models/dimTime";
+import { MovementLineModel } from "./../models/movementLine";
+import { MovementOrderModel } from "./../models/movementOrder";
+import { TransactionModel } from "./../models/transaction";
+import { ProductModel } from "./../models/product";
+import { FactInventoryModel } from "./../models/factInventory";
+import { DimTimeModel } from "./../models/dimTime";
 
 /**
  * Seed la table FactInventory en transformant les MovementLine non traitées

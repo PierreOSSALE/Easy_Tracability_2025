@@ -28,40 +28,14 @@ const OperatorLayout = () => {
 
   return (
     <SidebarProvider>
-      <div
-        className="layout"
-        style={{
-          display: "flex",
-          height: "100vh",
-          overflow: "hidden",
-        }}
-      >
-        {/* 1. Sidebar à gauche */}
+      <div className="layout">
+        {/* Sidebar à gauche */}
         <Sidebar />
 
-        {/* 2. Colonne principale */}
-        <div
-          className="main-column"
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            flex: 1,
-            position: "relative",
-          }}
-        >
-          {/* TopBar affiche le titre dynamique */}
+        {/* Colonne principale */}
+        <div className="mainColumn">
           <TopBar title={titleWithIcon} />
-
-          {/* Contenu chargé par React Router */}
-          <main
-            className="content"
-            style={{
-              flex: 1,
-              overflowY: "auto",
-              padding: "20px",
-              marginTop: "60px",
-            }}
-          >
+          <main className="content">
             <Outlet />
           </main>
         </div>

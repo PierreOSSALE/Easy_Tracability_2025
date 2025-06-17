@@ -1,3 +1,5 @@
+// EASY-TRACABILITY: frontend/src/features/admin/pages/DwPage.tsx
+
 import { useState, useMemo, useEffect } from "react";
 import { useDataWarehouse } from "../../../hooks/useDataWarehouse";
 import Button from "devextreme-react/button";

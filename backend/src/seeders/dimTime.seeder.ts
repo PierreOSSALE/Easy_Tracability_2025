@@ -3,7 +3,7 @@
 import { v4 as uuidv4 } from "uuid";
 import { addDays } from "date-fns";
 import { Op } from "sequelize";
-import { DimTimeModel } from "../models/dimTime";
+import { DimTimeModel } from "./../models/dimTime";
 
 export async function seedDimTime(days: number = 365) {
   const start = new Date();

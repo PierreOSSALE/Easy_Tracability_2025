@@ -1,8 +1,8 @@
 // EASY-TRACABILITY: backend/seeders/inventoryMovement.seeder.ts
 
-import { MovementOrderModel } from "../models/movementOrder";
-import { MovementLineModel } from "../models/movementLine";
-import { OperationType } from "../interfaces/MovementLineModel.interface";
+import { MovementOrderModel } from "./../models/movementOrder";
+import { MovementLineModel } from "./../models/movementLine";
+import { OperationType } from "./../interfaces/MovementLineModel.interface";
 
 export async function seedInventoryMovements(
   userUUID: string,

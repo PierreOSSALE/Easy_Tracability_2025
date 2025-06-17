@@ -1,6 +1,6 @@
 // backend/seeders/seed.ts
 
-import sequelize from "../config/database";
+import sequelize from "./../config/database";
 import { seedUsers } from "./user.seeder";
 import { seedProducts } from "./product.seeder";
 import { seedTransactions } from "./transaction.seeder";
@@ -19,9 +19,9 @@ import { seedFactInventory } from "./factInventory.seeder";
     // OLTP
     await seedUsers();
     await seedProducts();
-    const user = await (await import("../models/user")).UserModel.findOne();
+    const user = await (await import("./../models/user")).UserModel.findOne();
     const product = await (
-      await import("../models/product")
+      await import("./../models/product")
     ).ProductModel.findOne();
     const { order } = await seedInventoryMovements(
       user!.uuid,

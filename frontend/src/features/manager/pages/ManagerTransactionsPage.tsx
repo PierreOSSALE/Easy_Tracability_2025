@@ -96,7 +96,6 @@ const ManagerTransactionsPage: React.FC = () => {
 
   return (
     <div style={{ padding: 20 }}>
-      <h4>Transactions (Achats / Ventes)</h4>
       <div className="FiltresActions">
         <input
           type="date"

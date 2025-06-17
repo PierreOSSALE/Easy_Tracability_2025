@@ -1,6 +1,6 @@
 // backend/seeders/product.seeder.ts
-import { ProductModel } from "../models/product";
-import { generateUniqueBarcode } from "../utils/barcodeGenerator";
+import { ProductModel } from "./../models/product";
+import { generateUniqueBarcode } from "./../utils/barcodeGenerator";
 
 export async function seedProducts() {
   const rawProducts = [

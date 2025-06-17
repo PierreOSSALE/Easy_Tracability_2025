@@ -1,11 +1,10 @@
 // EASY-TRACABILITY: backend/src/seeders/user.seeder.ts
 
-import { UserModel } from "../models/user";
-import { UserRole } from "../interfaces/user.interface";
+import { UserModel } from "./../models/user";
+import { UserRole } from "./../interfaces/user.interface";
 import bcrypt from "bcrypt";
 
 export async function seedUsers() {
-  // Images seedées dans public/profile/
   const profileImages = [
     "profile-2.jpg",
     "profile-1.jpg",
@@ -92,23 +91,31 @@ export async function seedUsers() {
     },
   ];
 
-  const users = rawUsers.map((u) => ({
-    uuid: u.uuid,
-    username: u.username,
-    hashedPassword: bcrypt.hashSync(
-      u.role === UserRole.ADMIN
-        ? "admin123"
-        : u.role === UserRole.MANAGER
-        ? "manager123"
-        : "operator123",
-      10
-    ),
-    role: u.role,
-    email: u.email,
-    // On utilise directement les fichiers existants dans public/profile
-    profilePicture: `/profile/${u.img}`,
-  }));
+  const existingUsers = await UserModel.findAll({ attributes: ["uuid"] });
+  const existingUUIDs = existingUsers.map((u) => u.uuid);
 
-  await UserModel.bulkCreate(users);
-  console.log("✅ Users seeded avec images existantes");
+  const users = rawUsers
+    .filter((u) => !existingUUIDs.includes(u.uuid))
+    .map((u) => ({
+      uuid: u.uuid,
+      username: u.username,
+      hashedPassword: bcrypt.hashSync(
+        u.role === UserRole.ADMIN
+          ? "admin123"
+          : u.role === UserRole.MANAGER
+          ? "manager123"
+          : "operator123",
+        10
+      ),
+      role: u.role,
+      email: u.email,
+      profilePicture: `/profile/${u.img}`,
+    }));
+
+  if (users.length === 0) {
+    console.log("ℹ️ Aucun nouvel utilisateur à insérer");
+  } else {
+    await UserModel.bulkCreate(users);
+    console.log(`✅ ${users.length} utilisateur(s) seedé(s)`);
+  }
 }

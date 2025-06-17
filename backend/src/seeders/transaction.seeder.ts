@@ -1,6 +1,6 @@
 // backend/seeders/transaction.seeder.ts
-import { TransactionModel } from "../models/associations";
-import { TransactionType } from "../interfaces/transaction.interface";
+import { TransactionModel } from "./../models/associations";
+import { TransactionType } from "./../interfaces/transaction.interface";
 
 export async function seedTransactions(orderUUID: string) {
   const transactions = [

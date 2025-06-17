@@ -160,7 +160,7 @@ const ManagerDashboardPage: React.FC = () => {
       <div className={styles.chartRow}>
         <DashboardCharts />
       </div>
-      <MovementTable movements={filteredMovements} />
+      <MovementTable movements={filteredMovements} title="Mouvements filtrés" />
     </div>
   );
 };
